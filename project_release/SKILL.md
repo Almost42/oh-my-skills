@@ -59,37 +59,11 @@ Previous_Version: X.Y.W
 - [债务项2]
 ```
 
-### Step 4: Consolidate Memory
-对 `docs/memory/` 执行合并清理，减少碎片化存档对后续 `session_resume` 的负担：
+### Step 4: Clean Memory Archive
+由于 `session_resume` 已在每次恢复时将散档合并入 `memory_active.md`，此步骤仅做归档目录的清理：
 
-1. **识别可合并文件**：筛选所有冷区文件（创建时间超过 30 天）且其 `Related_Specs` 中的 spec 已全部为 `Archived` 状态。
-2. **生成合并摘要**：将这些文件的 `Key_Decisions` 和未完成的 `Backlog` 条目提取合并，生成一个摘要文件，命名规则：`consolidated_vX.Y.Z_YYYYMMDD.md`。
-
-   ```markdown
-   ---
-   Created: YYYY-MM-DD
-   Consolidated_From: [被合并的文件名列表]
-   Related_Release: vX.Y.Z
-   Decay_Tier: consolidated
-   ---
-
-   # Memory Consolidated: vX.Y.Z
-
-   ## Key_Decisions (merged)
-   | 决策 | 选择方案 | 否决方案 | 原因 | 原始来源 |
-   | :--- | :--- | :--- | :--- | :--- |
-   | [决策1] | [选A] | [选B] | [原因] | [原文件名] |
-
-   ## Residual Backlog
-   从已归档会话中遗留的未完成任务（若仍有效则迁移至最新 memory 的 Backlog）：
-   - [任务项] (来源: [原文件名])
-
-   ## Notes
-   [合并过程中发现的值得保留的信息]
-   ```
-
-3. **清理原始散档**：合并完成后，删除被合并的原始文件。**此操作需用户确认**——先列出将被删除的文件清单，用户确认后再执行。
-4. **迁移遗留任务**：若 `Residual Backlog` 中存在仍然有效的任务，将其追加到最新的活跃 memory 文件的 `Backlog` 中。
+1. **清理 `.archive/`**：检查 `docs/memory/.archive/` 中的散档，删除其 `Related_Specs` 已全部为 `Archived` 状态的文件（这些信息已沉淀到 `docs/history/` 中，不再需要保留）。**此操作需用户确认**——先列出将被删除的文件清单，用户确认后再执行。
+2. **精简 `memory_active.md`**：移除 `Key_Decisions` 中仅与本次已归档 spec 相关的条目（这些决策已记录在 history 中），清理已完成的 Backlog 条目。
 
 ### Step 5: Update Project Artifacts
 - 更新 `README.md` 中的版本号。
@@ -107,11 +81,10 @@ Previous_Version: X.Y.W
 **技术债务**：Z 条
 
 **Memory 清理**：
-- 合并散档：X 个 → consolidated_vX.Y.Z_YYYYMMDD.md
-- 迁移遗留任务：Y 条
-- 当前 memory 目录文件数：Z 个
+- 清理归档散档：X 个已删除
+- memory_active.md 已精简：移除 Y 条已归档决策
 
-所有相关 spec 已归档，history 已记录，memory 已合并，README 已更新。
+所有相关 spec 已归档，history 已记录，memory 已清理，README 已更新。
 ```
 
 - 自检项目整体架构描述与代码现状是否一致，有不一致处向用户提示。

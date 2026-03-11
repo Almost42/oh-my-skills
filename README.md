@@ -28,13 +28,13 @@ project_init → session_resume → feature_plan → feature_confirm → code_im
 | Skill | 职责 | 触发场景 |
 | :--- | :--- | :--- |
 | `project_init` | 建立项目骨架，生成 `AGENTS.md` 和 `docs/` 目录结构 | 新项目冷启动 |
-| `session_resume` | 按时间衰减策略读取 memory，恢复跨会话上下文 | 开启新对话或恢复中断任务 |
+| `session_resume` | 读取并合并所有 memory 为唯一活跃快照，恢复跨会话上下文 | 开启新对话或恢复中断任务 |
 | `feature_plan` | 将需求转化为结构化 spec 草案，含冲突检测和 Anti-Pattern 回溯 | 收到新功能或需求变更 |
 | `feature_confirm` | 锁定 spec 状态为 Implementing，衔接编码阶段 | 用户确认方案 |
 | `code_implement_plan` | 输出变更树、Diff 预览、跨 spec 冲突检测、风险评估 | 准备编写代码 |
 | `code_implement_confirm` | 执行代码变更、自测、输出实施报告，含回滚机制 | 用户确认变更计划 |
-| `session_archive` | 将会话记忆固化为结构化存档，带时间衰减元数据 | 对话接近上限或阶段性完成 |
-| `project_release` | 归档 spec、合并冷区 memory、记录演进历程与反面模式 | 版本定版发布 |
+| `session_archive` | 将会话记忆固化为结构化存档快照 | 对话接近上限或阶段性完成 |
+| `project_release` | 归档 spec、清理 memory 归档、记录演进历程与反面模式 | 版本定版发布 |
 
 ## 项目目录结构
 
@@ -46,7 +46,7 @@ project_init → session_resume → feature_plan → feature_confirm → code_im
 ├── README.md              # 项目全景图
 └── docs/
     ├── spec/              # 需求详述（状态驱动：Draft → Implementing → Archived）
-    ├── memory/            # 会话记忆（时间衰减：热区 → 温区 → 冷区 → 合并归档）
+    ├── memory/            # 会话记忆（活跃快照模型：散档 → 合并为唯一 memory_active.md → 旧档归入 .archive/）
     └── history/           # 演进日志（含 Anti-Patterns 反面模式记录）
 ```
 
@@ -70,17 +70,25 @@ Spec 支持两种 Scope：
 - **Feature**：完整功能，走全套流程。
 - **Patch**：小版本修复（bug 修复、文案修正），流程不变但 spec 内容可简化。
 
-### Memory 时间衰减
+### Memory 活跃快照
 
-`docs/memory/` 中的存档文件按创建时间自动分层，降低旧记忆对上下文窗口的占用：
+Memory 的本质是"运行时内存的固化"，而非历史日志。`docs/memory/` 始终只保留一份活跃文件：
 
-| 层级 | 时间范围 | 读取策略 |
-| :--- | :--- | :--- |
-| 热区 (Hot) | ≤ 7 天 | 完整读取所有字段 |
-| 温区 (Warm) | 8 - 30 天 | 仅读取 Backlog 和 Key_Decisions |
-| 冷区 (Cold) | > 30 天 | 不主动读取，按需检索 |
+```
+session_archive  ──→  生成 session_*.md 散档（快照）
+                              │
+session_resume   ──→  读取所有散档 + memory_active.md
+                      ──→  去重合并为唯一的 memory_active.md
+                      ──→  旧散档移入 .archive/
+                              │
+project_release  ──→  清理 .archive/ 中已归档的散档
+```
 
-版本发布时，`project_release` 会将冷区散档合并为摘要文件，防止 memory 目录无限膨胀。
+- **存档时**：`session_archive` 将当前会话的工作记忆写入一份新的散档。
+- **恢复时**：`session_resume` 读取所有 memory 文件，按主题去重、合并为唯一的 `memory_active.md`，旧散档移入 `.archive/`。
+- **发布时**：`project_release` 清理 `.archive/` 中与已归档 spec 关联的散档，精简 `memory_active.md`。
+
+这确保了 AI 恢复上下文时只需读取一份文件，token 效率最优。
 
 ### 冲突检测（双重防线）
 
@@ -124,6 +132,27 @@ AI 将自动创建 `AGENTS.md`、`docs/` 目录结构和 `README.md`。
 - **执行编码**："确认，开始写代码" → 触发 `code_implement_confirm`
 - **保存进度**："今天先到这里" → 触发 `session_archive`
 - **版本发布**："功能做完了，定版吧" → 触发 `project_release`
+
+### 4. 跨模型 / 跨工具切换
+
+借助 `session_archive` + `session_resume` 的存档-恢复机制，你可以在不同 AI 模型或工具之间无缝接力，同一份 memory 文件就是它们之间的"共享内存"：
+
+```
+Cursor (Claude)                          Cursor (Gemini)
+  │                                        │
+  ├─ 处理后端 API 逻辑                      ├─ 处理前端 UI 组件
+  ├─ session_archive → 存档进度             ├─ session_resume → 恢复上下文
+  │                                        ├─ 继续前端开发...
+  │       ┌────────────────────┐           │
+  │       │  docs/memory/      │           │
+  │       │  memory_active.md  │ ←─────────┤
+  │       └────────────────────┘           │
+```
+
+典型场景：
+- **按擅长领域分工**：用 Claude 处理后端逻辑，用 Gemini 处理前端样式，通过存档-恢复共享上下文。
+- **切换 IDE**：在 Cursor 中完成一半工作，存档后在 Claude Code CLI 中继续，不丢失任何决策和进度。
+- **团队协作**：不同成员使用各自偏好的工具，通过 `docs/memory/` 目录实现上下文共享。
 
 ## 兼容性
 

@@ -33,7 +33,6 @@ description: >-
 Created: YYYY-MM-DD HH:MM
 Session_Topic: [本次会话主题]
 Related_Specs: [关联的 spec 文件列表]
-Decay_Tier: hot
 ---
 
 # Session Archive: [主题]
@@ -55,11 +54,6 @@ Decay_Tier: hot
 ## Notes
 [其他值得记录的信息、风险提醒、技术债务等]
 ```
-
-**`Decay_Tier` 说明**：
-- 新创建的存档默认标记为 `hot`。
-- `session_resume` 根据文件创建时间自动判断衰减层级（hot / warm / cold），此字段仅作辅助参考。
-- 当 `project_release` 执行 memory 合并时，被合并的散档标记为 `consolidated`。
 
 ### Step 3: Update Related Specs
 - 检查当前 `Status: Implementing` 的 spec 文件，在其 `Related_Memory` 字段中添加本次存档文件名。
