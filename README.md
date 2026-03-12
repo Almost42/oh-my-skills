@@ -108,7 +108,7 @@ project_release  ──→  清理 .archive/ 中已归档的散档
 
 ### 1. 安装
 
-通过 [skillshare](https://github.com/AtelierSnek/skillshare) CLI 安装（推荐）：
+通过 [skillshare](https://github.com/runkids/skillshare) CLI 安装（推荐）：
 
 ```bash
 skillshare install https://github.com/Almost42/oh-my-skills.git
