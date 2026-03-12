@@ -97,7 +97,7 @@ description: >-
 ```
 
 ### Step 5: Skill Availability Check
-快速检测 `AGENTS.md` 中"技能调用触发规约"声明的所有 Skill 是否在当前环境中可用。以简要的行内列表输出（无需完整表格），附加在上下文恢复报告末尾：
+快速检测 `AGENTS.md` 中"工作流协议"声明的所有动作标识对应的 Skill 是否在当前环境中可用。以简要的行内列表输出（无需完整表格），附加在上下文恢复报告末尾：
 
 ```
 **可用 Skills**：project_init ✓ | session_resume ✓ | feature_plan ✓ | feature_confirm ✓ | code_implement_plan ✓ | code_implement_confirm ✓ | session_archive ✓ | project_release ✓
