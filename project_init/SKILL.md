@@ -73,7 +73,7 @@ docs/
 
 ## 4. 质量门禁 (Quality Gates)
 - **变更审计**：任何代码变更前，必须通过 `code_implement_plan` 确认，禁止直接在大文件中进行未声明的全局替换。
-- **规则合并**：若项目同时存在 `.cursor/rules/` 等工具特定的规则文件，以工具原生规则系统的优先级为准。本文件作为工具无关的基线协议，与工具特定规则互补而非覆盖。
+- **规则合并**：若项目中存在当前工具的原生规则文件（如 Cursor 的 `.cursor/rules/`、Windsurf 的 `.windsurfrules`、Claude Code 的 `CLAUDE.md` 等），以工具原生规则系统的优先级为准。本文件作为工具无关的基线协议，与工具特定规则互补而非覆盖。
 - **Spec 冲突检测**：当存在多个 `Status: Implementing` 的 spec 时，`code_implement_plan` 必须检测各 spec 影响分析中是否存在同文件修改冲突，发现冲突时报告用户并暂停。
 
 ## 5. 编码与架构原则
@@ -87,10 +87,20 @@ docs/
 
 ### Step 3b: Merge Existing Tool-Specific Rules
 
-若项目中已存在 `.cursor/rules/` 目录或 `.cursorrules` 文件：
-1. 读取其中与**项目特定约定相关的规则**（排除通用格式化规则等已被工具原生处理的内容）。
-2. 将提取的规则追加到 `AGENTS.md` 末尾，以 `## 6. 项目自定义规则` 章节呈现。
-3. **保留原始的 `.cursor/rules/` 文件不做删改。**
+根据当前运行环境，检测项目中是否存在工具特定的规则文件。以下是主流编辑器/工具的规则路径对照表：
+
+| 工具 | 规则路径 |
+| :--- | :--- |
+| Cursor | `.cursor/rules/`、`.cursorrules` |
+| Windsurf | `.windsurf/rules/`、`.windsurfrules` |
+| Claude Code | `CLAUDE.md`、`.claude/` |
+| GitHub Copilot | `.github/copilot-instructions.md` |
+
+检测步骤：
+1. 按上表扫描项目目录，识别所有已存在的工具特定规则文件。
+2. 读取其中与**项目特定约定相关的规则**（排除通用格式化规则等已被工具原生处理的内容）。
+3. 将提取的规则追加到 `AGENTS.md` 末尾，以 `## 6. 项目自定义规则` 章节呈现，并标注规则来源工具。
+4. **保留所有原始规则文件不做删改。**
 
 若不存在任何工具特定规则文件，跳过此步骤。
 
@@ -161,26 +171,71 @@ Type: Init
 5. 将技术栈分析结果同步填入 `AGENTS.md` 的"专业领域"字段。
 
 ### Step 6: Validate
-- 输出项目树状结构 (Tree Structure)。
 - 逐条检查 `AGENTS.md` 是否包含模版要求的全部 5 个章节：角色定义、核心维护协议、工作流管线、质量门禁、编码与架构原则。
-- **技能就绪检查**：检测以下 Skill 是否在当前环境中可用：`project_init`, `session_resume`, `feature_plan`, `feature_confirm`, `code_implement_plan`, `code_implement_confirm`, `session_archive`, `project_release`。以表格形式输出检查结果（格式仅作参考）：
+- 向用户输出初始化报告，格式如下：
 
-  | Skill 名称 | 状态 |
-  | :--- | :--- |
-  | `...` | 已就绪 / 未安装 |
+```
+## 项目初始化报告
 
+**项目目录**：[根目录路径]
 
-  若存在未安装的 skill，明确告知用户哪些 skill 缺失，并建议其安装后再开始正式开发。
+### 生成文件清单
+
+| 文件 | 操作 | 说明 |
+| :--- | :--- | :--- |
+| `AGENTS.md` | 新建 / 已存在（跳过） | 项目宪法 |
+| `README.md` | 新建 / 已存在（跳过） | 项目全景图 |
+| `docs/architecture.md` | 新建 | 基于代码扫描自动生成（⚠️ 需人工审阅） |
+| `docs/anti-patterns.md` | 新建 | 空表头 |
+| `docs/pitfalls.md` | 新建 | 空表头 |
+| `docs/history/v0-init.md` | 新建 | 零号里程碑 |
+| `docs/spec/` | 创建目录 | — |
+| `docs/memory/` | 创建目录 | — |
+
+### 技术栈识别
+
+| 项目 | 值 | 来源 |
+| :--- | :--- | :--- |
+| 语言 | [...] | 用户提供 / 代码扫描推断 |
+| 框架 | [...] | 用户提供 / 代码扫描推断 |
+| ... | ... | ... |
+
+⚠️ 以上技术栈已填入 `AGENTS.md` 的"专业领域"字段，请确认是否准确，如需调整请直接修改该字段。
+
+### 规则合并情况
+
+[若执行了 Step 3b]
+- 检测到工具规则文件：[列出检测到的文件路径及所属工具]
+- 已提取 X 条项目特定规则，追加至 `AGENTS.md` 第 6 章节
+- ⚠️ 请审阅合并后的规则是否准确，原始规则文件未做任何修改
+
+[若未检测到任何工具规则文件]
+- 未检测到工具特定规则文件，跳过合并
+
+### 技能就绪检查
+
+| Skill 名称 | 状态 |
+| :--- | :--- |
+| `...` | 已就绪 / 未安装 |
+
+[若存在未安装的 skill，列出缺失项并建议安装后再开始正式开发]
+
+---
+⚠️ **请审阅以下自动生成的内容**，确认无误后即可开始开发：
+1. `AGENTS.md` — 角色定义、专业领域、编码原则是否符合项目实际
+2. `docs/architecture.md` — 模块划分和技术选型是否准确
+3. 规则合并章节（若有）— 提取的规则是否完整、是否需要补充
+```
 
 ## Examples
 
 **Example:** 初始化项目
 User says: "调用 project_init，技术栈是 Spring Boot + React"
-Result:
+Actions:
 1. 扫描项目目录，识别已有代码的技术栈（若为空项目则以用户提供信息为准）。
 2. 创建 `docs/spec/`, `docs/memory/`, `docs/history/` 目录。
 3. 生成 `AGENTS.md`，专业领域填写为 `Java, Spring Boot, React, TypeScript`。
-4. 检测到 `.cursor/rules/coding-style.mdc`，提取项目特定规则追加到 AGENTS.md 第 6 章节（无已有规则则跳过）。
+4. 扫描工具规则路径映射表，检测到 `.cursor/rules/coding-style.mdc`（Cursor 规则），提取 2 条项目特定规则追加到 AGENTS.md 第 6 章节并标注来源。
 5. 生成或保留 `README.md`。
 6. 生成 `docs/architecture.md`（初版架构说明）、`docs/anti-patterns.md`（空表头）、`docs/pitfalls.md`（空表头）和 `docs/history/v0-init.md`。
-7. 输出树状结构，验证 AGENTS.md 完整性，输出技能就绪检查表。
+7. 验证 AGENTS.md 完整性，输出初始化报告（含生成文件清单、技术栈识别来源、规则合并情况、技能就绪检查），提醒用户审阅自动生成的内容。
