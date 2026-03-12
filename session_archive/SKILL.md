@@ -55,10 +55,22 @@ Related_Specs: [关联的 spec 文件列表]
 [其他值得记录的信息、风险提醒、技术债务等]
 ```
 
-### Step 3: Update Related Specs
+### Step 3: Knowledge Review (会话级知识审核)
+回顾本次会话，草拟拟新增的知识条目并**呈现给用户审核**：
+
+**3a. 草拟 Pitfalls（技术坑 + 协作坑）：**
+- **技术坑**：平台限制、库的隐藏行为、环境差异等。
+- **协作坑**：用户驳回或修正了 AI 方案的场景——这些暴露了项目特定的约定、用户偏好或 AI 的认知盲区，应固化为可复用的认知校准（如"设计列表接口前必须确认分页策略"）。
+
+**3b. 草拟 Anti-Patterns（若本次会话中有被明确否决的设计方案）：**
+- 从 Key_Decisions 中识别设计层面的否决决策，草拟拟新增的条目。
+
+**3c. 呈现审核清单，用户确认后写入对应文件。** 若用户认为某条不值得记录或需要修正措辞，就地调整。若本次会话无新增知识则跳过。
+
+### Step 4: Update Related Specs
 - 检查当前 `Status: Implementing` 的 spec 文件，在其 `Related_Memory` 字段中添加本次存档文件名。
 
-### Step 4: Validate
+### Step 5: Validate
 - 确认存档文件已成功写入 `docs/memory/`。
 - 向用户输出存档摘要：
 
@@ -68,6 +80,7 @@ Related_Specs: [关联的 spec 文件列表]
 **文件**：docs/memory/session_YYYYMMDD-HHMM_<topic>.md
 **关键决策**：X 条
 **待办任务**：Y 条
+**知识审核**：新增 Pitfalls X 条，Anti-Patterns Y 条（用户已确认）
 
 下次开启新对话时，调用 `session_resume` 即可恢复上下文。
 ```
@@ -78,5 +91,6 @@ User says: "今天先到这里"
 Actions:
 1. 回顾会话：完成了 JWT 签发逻辑，修改了 3 个文件，决定用 RS256 而非 HS256。
 2. 生成 `docs/memory/session_20260309-1730_jwt-auth.md`。
-3. 更新 `docs/spec/jwt-auth.md` 的 `Related_Memory` 字段。
-4. 输出存档摘要。
+3. 草拟知识审核：Pitfalls 1 条（RS256 需额外配置公钥路径），Anti-Patterns 1 条（否决 HS256）。用户确认后写入。
+4. 更新 `docs/spec/jwt-auth.md` 的 `Related_Memory` 字段。
+5. 输出存档摘要。

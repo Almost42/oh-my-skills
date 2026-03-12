@@ -53,26 +53,23 @@ docs/
 | 目录/文件 | 维护规范 | 核心要素 |
 | :--- | :--- | :--- |
 | `README.md` | 项目全景图。仅在重大功能上线或环境变更时更新。 | 架构图、技术栈、快速启动。 |
-| `AGENTS.md` | 本文件。当发现协作流程漏洞或新增全局编码规约时更新。 | 身份定义、文档准则、工作流协议。 |
+| `AGENTS.md` | 本文件。当发现协作流程漏洞或新增全局编码规约时更新。 | 身份定义、文档准则、编码原则。 |
 | `docs/spec/` | 需求详述。状态驱动。**禁止在 Draft 状态下编写生产代码。** | 头部必须包含 YAML：`Status` (Draft/Implementing/Archived), `Version`, `Related_Memory`, `Scope` (Feature/Patch)。 |
 | `docs/memory/` | 会话记忆。采用"散档 → 合并 → 归档"机制：`session_archive` 生成带时间戳的散档，`session_resume` 将散档合并入 `memory_active.md`，已合并的散档移入 `.archive/`，`project_release` 时清理过期归档。 | 包含：`Context_Hash` (代码快照说明), `Key_Decisions` (决策原因), `Backlog` (待办任务栈)。 |
-| `docs/history/` | 演进日志。记录项目成长的每一步。 | **必须包含 [Anti-Patterns] (反面模式)**：记录被否决的方案及原因，防止重复踩坑。 |
+| `docs/architecture.md` | 架构说明。描述系统模块划分、技术选型依据、数据流与关键设计决策。功能锁定（`feature_confirm`）涉及架构变更时更新。 | 模块边界、技术栈选型理由、数据流、基础设施。 |
+| `docs/anti-patterns.md` | 反模式汇总。跨版本累积，每次版本发布时追加新条目，**不做删除**。 | 包含：方案、否决原因、替代方案、发现版本。 |
+| `docs/pitfalls.md` | 踩坑记录。**发现时立即追加**。覆盖两类场景：①技术坑——平台限制、库的隐藏行为、环境差异；②协作坑——用户驳回或修正了 AI 的方案时暴露的项目约定、用户偏好、AI 认知盲区。`project_release` 时清理已过期条目。 | 包含：问题描述、根因、解决方案/规避方式、关联模块。 |
+| `docs/history/` | 演进日志。记录项目成长的每一步。 | 功能清单、归档 spec、技术债务。 |
 
-## 3. 工作流协议 (Workflow Protocol)
+## 3. 工作流管线 (Workflow Pipeline)
 
-本项目遵循以下阶段化工作流。AI 助手应根据当前场景主动执行对应阶段的动作。
-若当前环境提供了对应的 Skill / 插件，应优先使用；否则按照描述的目标自行完成。
+本项目遵循严格的阶段化工作流，禁止跳过前置阶段：
 
-| 场景 | 动作标识 | 执行目标 |
-| :--- | :--- | :--- |
-| **项目冷启动** | `project_init` | 建立目录树与项目规约文件。 |
-| **开启新对话 / 恢复中断** | `session_resume` | 读取 `memory` 和 `spec`，重构当前任务上下文。 |
-| **收到新需求 / 变更** | `feature_plan` | 分析需求，在 `spec/` 下生成草案并评估影响。 |
-| **方案达成一致** | `feature_confirm` | 锁定草案为 `Implementing`，衔接编码阶段。 |
-| **准备编写代码** | `code_implement_plan` | 输出变更计划与 Diff 预览，标注 Breaking Changes。 |
-| **执行代码变更** | `code_implement_confirm` | 执行文件写入，按 `spec` 验证结果。 |
-| **会话接近上限 / 阶段完成** | `session_archive` | 压缩上下文，生成带时间戳的 `memory` 散档。 |
-| **版本定版发布** | `project_release` | 归档 spec，更新版本号，清理过期 memory 归档，记录演进历史与反面模式。 |
+需求规划(`feature_plan`) → 方案锁定(`feature_confirm`) → 变更计划(`code_implement_plan`) → 代码执行(`code_implement_confirm`)
+
+辅助流程：`project_init`(冷启动) | `session_resume`/`session_archive`(跨会话连续性) | `project_release`(版本归档)
+
+若当前环境提供了对应的 Skill / 插件，应优先使用；否则按照目标自行完成。
 
 ## 4. 质量门禁 (Quality Gates)
 - **变更审计**：任何代码变更前，必须通过 `code_implement_plan` 确认，禁止直接在大文件中进行未声明的全局替换。
@@ -82,7 +79,7 @@ docs/
 ## 5. 编码与架构原则
 - **模块化优先**：优先考虑模块化设计，避免深层嵌套与上帝对象（God Object）。
 - **注释纪律**：注释应解释"为什么"（设计决策、业务约束、被否决的替代方案），而非"做了什么"。禁止叙述性注释。
-- **防踩坑机制**：在 `docs/history/` 中记录所有被否决的方案及原因，防止未来重复尝试。
+- **防踩坑机制**：设计层面的否决方案记录到 `docs/anti-patterns.md`，实操层面的坑记录到 `docs/pitfalls.md`。
 ````
 
 **模版变量说明：**
@@ -101,9 +98,49 @@ docs/
 - 若 `README.md` 不存在，生成包含项目名称、技术栈、快速启动说明的初始版本。
 - 若已存在，保持不变。
 
-### Step 5: Generate Baseline History
+### Step 5: Generate Baseline Documents
 
-基于 Step 1 的扫描结果，生成项目的零号里程碑 `docs/history/v0-init.md`：
+基于 Step 1 的扫描结果，生成以下基线文档：
+
+1. **`docs/architecture.md`**（架构说明，基于代码扫描生成初版）：
+
+```markdown
+# Architecture
+
+## 模块划分
+[从代码结构中识别的模块边界，若为空项目则标注"待规划"]
+
+## 技术选型
+| 层级 | 技术 | 选型理由 |
+| :--- | :--- | :--- |
+| [语言/框架/数据库/...] | [...] | [...] |
+
+## 数据流
+[核心数据流转路径，若为空项目则标注"待设计"]
+
+## 关键设计决策
+[从现有代码中识别到的架构模式与约定，若为空项目则标注"全新项目，尚无既有决策"]
+```
+
+2. **`docs/anti-patterns.md`**（反模式汇总，初始为空表头）：
+
+```markdown
+# Anti-Patterns
+
+| 方案 | 否决原因 | 替代方案 | 发现版本 |
+| :--- | :--- | :--- | :--- |
+```
+
+3. **`docs/pitfalls.md`**（踩坑记录，初始为空表头）：
+
+```markdown
+# Pitfalls
+
+| 问题描述 | 根因 | 解决方案 / 规避方式 | 关联模块 |
+| :--- | :--- | :--- | :--- |
+```
+
+4. **`docs/history/v0-init.md`**（零号里程碑）：
 
 ```markdown
 ---
@@ -119,20 +156,14 @@ Type: Init
 
 ## 目录结构快照
 [项目当前的树状结构]
-
-## 已识别的架构模式
-[从代码中识别到的设计模式与约定，若为空项目则标注"全新项目，尚无既有架构"]
-
-## [Anti-Patterns]
-（初始化时为空，后续版本迭代填入）
 ```
 
-将技术栈分析结果同步填入 `AGENTS.md` 的"专业领域"字段。
+5. 将技术栈分析结果同步填入 `AGENTS.md` 的"专业领域"字段。
 
 ### Step 6: Validate
 - 输出项目树状结构 (Tree Structure)。
-- 逐条检查 `AGENTS.md` 是否包含模版要求的全部 5 个章节：角色定义、核心维护协议、工作流协议、质量门禁、编码与架构原则。
-- **技能就绪检查**：对照 `AGENTS.md` 中"工作流协议"表格声明的所有动作标识，逐一检测当前环境中是否已安装对应的 Skill。检测方式为查看当前可用的 skill 列表（扫描 skills 目录或检查环境中的可用 skill 声明）。以表格形式输出检查结果（格式仅作参考）：
+- 逐条检查 `AGENTS.md` 是否包含模版要求的全部 5 个章节：角色定义、核心维护协议、工作流管线、质量门禁、编码与架构原则。
+- **技能就绪检查**：检测以下 Skill 是否在当前环境中可用：`project_init`, `session_resume`, `feature_plan`, `feature_confirm`, `code_implement_plan`, `code_implement_confirm`, `session_archive`, `project_release`。以表格形式输出检查结果（格式仅作参考）：
 
   | Skill 名称 | 状态 |
   | :--- | :--- |
@@ -151,5 +182,5 @@ Result:
 3. 生成 `AGENTS.md`，专业领域填写为 `Java, Spring Boot, React, TypeScript`。
 4. 检测到 `.cursor/rules/coding-style.mdc`，提取项目特定规则追加到 AGENTS.md 第 6 章节（无已有规则则跳过）。
 5. 生成或保留 `README.md`。
-6. 生成 `docs/history/v0-init.md` 基线历史。
+6. 生成 `docs/architecture.md`（初版架构说明）、`docs/anti-patterns.md`（空表头）、`docs/pitfalls.md`（空表头）和 `docs/history/v0-init.md`。
 7. 输出树状结构，验证 AGENTS.md 完整性，输出技能就绪检查表。

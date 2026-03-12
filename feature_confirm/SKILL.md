@@ -27,6 +27,7 @@ description: >-
 ### Step 3: Sync Project Artifacts
 - 检查 `README.md` 是否需要添加该功能的占位说明（如"[WIP] 用户认证"），有需要则更新。
 - 若当前存在活跃的 memory 文件，在其 `Backlog` 中添加该功能的实施条目。
+- **若本次 spec 涉及架构变更**（新增模块、引入新中间件、数据模型重构、基础设施变更等），同步更新 `docs/architecture.md` 中对应的章节。
 
 ### Step 4: Validate
 - 向用户确认状态变更完成，输出如下摘要：

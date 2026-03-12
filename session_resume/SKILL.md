@@ -21,7 +21,10 @@ description: >-
 1. **`AGENTS.md`** — 重新加载角色定义与全局规约，确认自身身份。
 2. **`docs/memory/`** — 读取目录下的所有 memory 文件（包括 `memory_active.md` 和任何 `session_*.md` 散档）。
 3. **`docs/spec/`** — 扫描所有 spec 文件的 YAML 头部，识别 `Status: Implementing` 的活跃任务。
-4. **`docs/history/`** — 快速浏览最近一次演进日志，了解项目已完成的里程碑及反面模式。
+4. **`docs/architecture.md`** — 理解当前系统的模块划分与关键设计决策。
+5. **`docs/anti-patterns.md`** — 加载完整的反模式汇总，了解项目历史上被否决的方案。
+6. **`docs/pitfalls.md`** — 加载实操踩坑记录，了解已知的技术陷阱。
+7. **`docs/history/`** — 快速浏览最近一次演进日志，了解项目已完成的里程碑。
 
 ### Step 2: Consolidate Memory
 将所有 memory 文件合并为唯一一份活跃文件 `docs/memory/memory_active.md`：
@@ -68,7 +71,7 @@ description: >-
 - **项目概况**：一句话描述项目当前阶段。
 - **活跃任务**：列出所有 `Status: Implementing` 的 spec 及其核心目标。
 - **待办清单**：从 `memory_active.md` 中提取的 Backlog。
-- **关键约束**：Key_Decisions 中的重要约束或被否决方案（Anti-Patterns）。
+- **关键约束**：来自 `docs/anti-patterns.md` 的反模式、`docs/pitfalls.md` 中与活跃任务相关的坑，以及 Key_Decisions 中的重要约束。
 
 ### Step 4: Report to User
 向用户复述恢复的上下文，格式如下：
@@ -97,7 +100,7 @@ description: >-
 ```
 
 ### Step 5: Skill Availability Check
-快速检测 `AGENTS.md` 中"工作流协议"声明的所有动作标识对应的 Skill 是否在当前环境中可用。以简要的行内列表输出（无需完整表格），附加在上下文恢复报告末尾：
+快速检测以下 Skill 是否在当前环境中可用：`project_init`, `session_resume`, `feature_plan`, `feature_confirm`, `code_implement_plan`, `code_implement_confirm`, `session_archive`, `project_release`。以简要的行内列表输出（无需完整表格），附加在上下文恢复报告末尾：
 
 ```
 **可用 Skills**：project_init ✓ | session_resume ✓ | feature_plan ✓ | feature_confirm ✓ | code_implement_plan ✓ | code_implement_confirm ✓ | session_archive ✓ | project_release ✓

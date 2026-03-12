@@ -20,8 +20,9 @@ description: >-
 - 判断需求的 **Scope（范围）**：
   - `Feature`：新功能或重大修改，走完整流程。
   - `Patch`：小版本修复（bug 修复、文案修正、小幅调整），可简化 spec 内容（接口协议和影响分析中的非相关项可省略），但仍需走 spec → confirm → plan → implement 流程，确保变更可追溯。
-- 分析需求对现有架构的影响范围（新增模块 / 修改已有模块 / 跨模块联动）。
-- **查找 `docs/history/` 中的反面模式 (Anti-Patterns)**，确保新方案不重蹈覆辙。
+- **读取 `docs/architecture.md`**，理解当前系统的模块划分与技术选型，分析需求对现有架构的影响范围（新增模块 / 修改已有模块 / 跨模块联动）。
+- **查找 `docs/anti-patterns.md` 中的反模式**，确保新方案不重蹈覆辙。
+- **查找 `docs/pitfalls.md` 中的踩坑记录**，检查相关技术领域是否有已知的坑需要规避。
 - **Spec 冲突检测**：检查 `docs/spec/` 中所有 `Status: Implementing` 的活跃 spec，对比其影响分析中的"修改文件"列表与当前需求的影响范围。若发现同文件修改冲突，必须：
   1. 列出冲突的文件和涉及的 spec。
   2. 评估冲突性质：是互斥修改（需串行处理）还是可兼容的并行修改。
@@ -68,7 +69,8 @@ Created: YYYY-MM-DD
 
 ### Step 3: Architecture Review
 对自己生成的方案进行自审：
-- 是否与 `docs/history/` 中记录的 Anti-Patterns 冲突？
+- 是否与 `docs/anti-patterns.md` 中记录的反模式冲突？
+- 是否与 `docs/architecture.md` 中描述的现有架构一致？若需突破现有架构，须明确说明理由。
 - 模块化程度是否达标（避免深层嵌套、单一职责）？
 - 是否存在遗漏的边界条件或异常情况？
 - **冲突复查**：若影响分析中标注了与活跃 spec 的冲突，确认已向用户说明处理策略。
@@ -80,13 +82,14 @@ Created: YYYY-MM-DD
 - 明确告知："此 spec 当前为 **Draft** 状态，确认后我将调用 `feature_confirm` 将其转为 Implementing 状态，随后才会开始编码。"
 - 若为 `Scope: Patch`，可提示用户："本次为小版本修复，spec 已简化，流程不变但内容更精简。"
 - 等待用户反馈，若有修改意见则就地迭代，不创建新文件。
+- **若用户驳回或修正了方案中的某个决策**，评估是否暴露了 AI 未掌握的项目约定或用户偏好。若是，立即追加到 `docs/pitfalls.md`，以便后续对话中主动规避同类问题。
 
 ## Examples
 **Example 1:** 规划用户认证功能 (Feature)
 User says: "我需要加一个 JWT 认证"
 Actions:
 1. Scope 判断为 `Feature`。
-2. 检查 `docs/history/` — 发现曾否决 Session 方案，原因是无状态需求。
+2. 检查 `docs/anti-patterns.md` — 发现曾否决 Session 方案，原因是无状态需求。
 3. 检查活跃 spec — 无冲突。
 4. 生成 `docs/spec/jwt-auth.md`，`Status: Draft`, `Scope: Feature`。
 5. 向用户展示摘要，等待确认。

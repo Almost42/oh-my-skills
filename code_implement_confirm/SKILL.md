@@ -38,7 +38,10 @@ description: >-
 - 若无测试框架，按验收标准逐条进行逻辑自检，说明每条标准的通过情况。
 - 记录在实施过程中发现的任何偏离计划的地方。
 
-### Step 5: Validate & Rollback Path
+### Step 5: Record Pitfalls
+回顾本次代码执行过程中是否遇到了需要 workaround 的问题（平台限制、库的隐藏行为、环境差异、非预期的 API 行为等）。若有，**立即追加**到 `docs/pitfalls.md` 表格末尾。若无则跳过。
+
+### Step 6: Validate & Rollback Path
 向用户输出实施报告：
 
 ```

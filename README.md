@@ -11,7 +11,7 @@
 - **失据**：决策没有记录，同一个错误方案被反复尝试。
 - **失联**：多会话之间无法接力，任务断裂。
 
-Oh My Skills 通过 `AGENTS.md`（项目宪法）+ `docs/` 三目录（制度）+ 8 个 Skill（SOP）构成一套治理体系，让 AI 像一个**有记忆、有规矩、有流程**的资深工程师一样工作。
+Oh My Skills 通过 `AGENTS.md`（项目宪法）+ `docs/` 知识库（制度）+ 8 个 Skill（SOP）构成一套治理体系，让 AI 像一个**有记忆、有规矩、有流程**的资深工程师一样工作。
 
 ## 核心架构
 
@@ -27,14 +27,14 @@ project_init → session_resume → feature_plan → feature_confirm → code_im
 
 | Skill | 职责 | 触发场景 |
 | :--- | :--- | :--- |
-| `project_init` | 建立项目骨架，生成 `AGENTS.md` 和 `docs/` 目录结构 | 新项目冷启动 |
-| `session_resume` | 读取并合并所有 memory 为唯一活跃快照，恢复跨会话上下文 | 开启新对话或恢复中断任务 |
-| `feature_plan` | 将需求转化为结构化 spec 草案，含冲突检测和 Anti-Pattern 回溯 | 收到新功能或需求变更 |
-| `feature_confirm` | 锁定 spec 状态为 Implementing，衔接编码阶段 | 用户确认方案 |
-| `code_implement_plan` | 输出变更树、Diff 预览、跨 spec 冲突检测、风险评估 | 准备编写代码 |
-| `code_implement_confirm` | 执行代码变更、自测、输出实施报告，含回滚机制 | 用户确认变更计划 |
-| `session_archive` | 将会话记忆固化为结构化存档快照 | 对话接近上限或阶段性完成 |
-| `project_release` | 归档 spec、清理 memory 归档、记录演进历程与反面模式 | 版本定版发布 |
+| `project_init` | 建立项目骨架，生成 `AGENTS.md` 和 `docs/` 知识库结构 | 新项目冷启动 |
+| `session_resume` | 读取并合并所有 memory 为唯一活跃快照，加载架构说明与踩坑记录，恢复跨会话上下文 | 开启新对话或恢复中断任务 |
+| `feature_plan` | 将需求转化为结构化 spec 草案，含冲突检测、Anti-Pattern 回溯和 Pitfalls 检查 | 收到新功能或需求变更 |
+| `feature_confirm` | 锁定 spec 状态为 Implementing，涉及架构变更时同步更新 `architecture.md` | 用户确认方案 |
+| `code_implement_plan` | 输出变更树、Diff 预览、跨 spec 冲突检测、已知 Pitfalls 提醒、风险评估 | 准备编写代码 |
+| `code_implement_confirm` | 执行代码变更、自测、记录实操踩坑、输出实施报告，含回滚机制 | 用户确认变更计划 |
+| `session_archive` | 将会话记忆固化为结构化存档快照，含知识审核（用户确认后写入 pitfalls/anti-patterns） | 对话接近上限或阶段性完成 |
+| `project_release` | 归档 spec、知识审核门禁（用户审核 anti-patterns + pitfalls）、清理过期知识、校验架构一致性 | 版本定版发布 |
 
 ## 项目目录结构
 
@@ -42,12 +42,15 @@ project_init → session_resume → feature_plan → feature_confirm → code_im
 
 ```
 <your-project>/
-├── AGENTS.md              # 项目宪法：角色定义、维护协议、技能触发规约、质量门禁
+├── AGENTS.md              # 项目宪法：角色定义、维护协议、工作流管线、质量门禁、编码原则
 ├── README.md              # 项目全景图
 └── docs/
     ├── spec/              # 需求详述（状态驱动：Draft → Implementing → Archived）
     ├── memory/            # 会话记忆（活跃快照模型：散档 → 合并为唯一 memory_active.md → 旧档归入 .archive/）
-    └── history/           # 演进日志（含 Anti-Patterns 反面模式记录）
+    ├── architecture.md    # 架构说明（模块划分、技术选型、数据流、关键设计决策）
+    ├── anti-patterns.md   # 反模式汇总（跨版本累积，设计层面的否决方案）
+    ├── pitfalls.md        # 踩坑记录（即时追加，技术陷阱 + 协作认知校准）
+    └── history/           # 演进日志（版本功能清单、技术债务）
 ```
 
 ## 关键设计理念
@@ -96,6 +99,27 @@ project_release  ──→  清理 .archive/ 中已归档的散档
 
 1. **规划时检测**（`feature_plan`）：新 spec 生成前，交叉比对所有活跃 spec 的影响分析。
 2. **执行前确认**（`code_implement_plan`）：输出变更树前，再次校验文件级冲突。
+
+### 项目知识库（三层知识体系）
+
+项目知识按性质分为三类文档，各有不同的写入节奏和生命周期：
+
+| 文档 | 性质 | 写入节奏 | 清理策略 |
+| :--- | :--- | :--- | :--- |
+| `docs/architecture.md` | 系统"是什么样的" | 功能锁定时更新（`feature_confirm`） | 就地更新（覆盖旧描述） |
+| `docs/anti-patterns.md` | 设计层面"不做什么" | 版本发布时追加（`project_release`） | 永不删除 |
+| `docs/pitfalls.md` | 实操+协作层面"注意什么" | 随时追加（开发过程中即时记录） | 版本发布时清理过期条目 |
+
+Pitfalls 覆盖两类场景：
+- **技术坑**：平台限制、库的隐藏行为、环境差异。
+- **协作坑**：用户驳回或修正 AI 方案时暴露的项目约定、用户偏好、AI 认知盲区——固化为可复用的认知校准。
+
+### 知识审核门禁
+
+知识从"临时状态"变为"持久状态"前，必须经过人工审核：
+
+- **会话级审核**（`session_archive`）：AI 草拟本次会话拟新增的 pitfalls 和 anti-patterns，呈现给用户确认后才写入。
+- **版本级审核**（`project_release`）：AI 综合 memory 和当前对话上下文，草拟完整的知识审核清单，用户确认后才固化。即使 `session_archive` 未被调用，`project_release` 仍能从对话上下文中回溯提取。
 
 ### 回滚机制
 

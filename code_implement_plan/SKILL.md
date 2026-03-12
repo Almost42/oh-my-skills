@@ -18,6 +18,7 @@ description: >-
 ### Step 1: Gather Context
 - 读取当前 `Status: Implementing` 的 spec 文件，理解要实现的功能和验收标准。
 - 分析代码库中将被影响的文件和模块。
+- **读取 `docs/pitfalls.md`**，检查即将修改的模块/文件是否有已知的坑需要注意。若有，在变更计划中标注提醒。
 
 ### Step 2: Cross-Spec Conflict Detection
 若当前存在多个 `Status: Implementing` 的 spec，执行冲突检测：
