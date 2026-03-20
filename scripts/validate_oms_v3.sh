@@ -189,6 +189,9 @@ for dir in workflow_guard workflow_repair verification_gate knowledge_review; do
   test -f "$dir/SKILL.md" || fail "$dir/SKILL.md missing"
 done
 
+rg -q "README 是项目整体的最新说明书" README.md || fail "README must declare itself as the latest project manual"
+! rg -n "^description: Use when |^  Use when " */SKILL.md || fail "OMS skill descriptions must be Chinese"
+
 rg -q "capability_bootstrap" workflow_guard/SKILL.md || fail "workflow_guard must route capability growth to capability_bootstrap"
 rg -q "capability signal" workflow_guard/SKILL.md || fail "workflow_guard must check for capability signals"
 

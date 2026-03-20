@@ -1,9 +1,9 @@
 ---
 name: feature_confirm
-description: Use when a DesignDraft spec needs execution-package review or final lock before entering ReadyForImplementation.
+description: 在 DesignDraft spec 需要评审实施包或在进入 ReadyForImplementation 前做最终锁定时使用。
 ---
 
-# Feature_confirm
+# 方案确认与锁定
 
 OMS v3 中，设计确认和实施方案确认在这里合并处理。它不是单向闸门，而是一个可重复进入的节点操作器。
 

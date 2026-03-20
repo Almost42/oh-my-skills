@@ -1,9 +1,9 @@
 ---
 name: feature_plan
-description: Use when a request is ready for design drafting and the agent must create or revise a DesignDraft spec before implementation.
+description: 在需求已准备进入方案设计、且需要在实施前创建或修订 DesignDraft spec 时使用。
 ---
 
-# Feature_plan
+# 设计草案生成
 
 OMS v3 的设计草案器。它把已经足够清晰的需求写成 `DesignDraft` spec，并只加载与当前设计相关的知识与文档。
 

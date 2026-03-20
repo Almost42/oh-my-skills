@@ -1,10 +1,10 @@
 ---
 name: session_archive
 description: >-
-  在需要跨会话或跨工具交接时调用，生成可选 handoff 快照；它不是 OMS v3 的默认工作状态维护机制。
+  在需要跨会话或跨工具交接时使用，生成可选 handoff 快照；它不是 OMS v3 的默认工作状态维护机制。
 ---
 
-# Session_archive
+# 会话归档
 
 OMS v3 的会话交接器。它只在确有 handoff 价值时创建 memory 快照，不承担默认 active-state 维护职责。
 

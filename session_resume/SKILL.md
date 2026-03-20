@@ -1,10 +1,10 @@
 ---
 name: session_resume
 description: >-
-  仅在 baseline 文档不足以恢复上下文时调用，作为 OMS v3 的 escalation 路径读取和利用可选 memory 存档。
+  仅在 baseline 文档不足以恢复上下文时使用，作为 OMS v3 的 escalation 路径读取和利用可选 memory 存档。
 ---
 
-# Session_resume
+# 会话恢复
 
 这是 OMS v3 的 escalation 路径，不是默认恢复入口。只有 `context_sync` 判断 baseline 不足，或用户明确要求深度恢复时，才应该进入这里。
 

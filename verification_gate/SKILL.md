@@ -1,9 +1,9 @@
 ---
 name: verification_gate
-description: Use when the agent is about to claim work is done, fixed, or passing and must verify fresh evidence while deciding whether Verifying can advance.
+description: 在 agent 准备声称工作已完成、已修复或已通过时使用，以核验新鲜证据并判断 Verifying 是否可以推进。
 ---
 
-# Verification_gate
+# 验证门禁
 
 OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完成。
 

@@ -1,10 +1,10 @@
 ---
 name: context_sync
 description: >-
-  在新会话开始或怀疑文档漂移时调用，读取最小 baseline 文档恢复上下文，并在必要时升级到更重的恢复路径。
+  在新会话开始或怀疑文档漂移时使用，读取最小 baseline 文档恢复上下文，并在必要时升级到更重的恢复路径。
 ---
 
-# Context_sync
+# 上下文同步
 
 OMS v3 的默认恢复入口。它优先依赖 baseline 文档，而不是直接进入 memory 重建。
 

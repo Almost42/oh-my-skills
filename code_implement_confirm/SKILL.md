@@ -1,9 +1,9 @@
 ---
 name: code_implement_confirm
-description: Use when an approved spec is ready for code work and the agent must execute changes from ReadyForImplementation into Implementing or Verifying.
+description: 在已批准的 spec 准备进入代码实现时使用，从 ReadyForImplementation 推进到 Implementing 或 Verifying。
 ---
 
-# Code_implement_confirm
+# 代码实施确认
 
 OMS v3 的执行器。它只处理已经获批的 execution package，不负责替代设计确认。
 

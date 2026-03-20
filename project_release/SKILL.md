@@ -1,9 +1,9 @@
 ---
 name: project_release
-description: Use when completed active specs need version-level archival, reviewed knowledge promotion, and final documentation consistency checks.
+description: 在已完成的 active specs 需要版本级归档、知识审核和最终文档一致性检查时使用。
 ---
 
-# Project_release
+# 项目发布归档
 
 OMS v3 的版本封板器。release 是唯一的版本级 archival gate。
 

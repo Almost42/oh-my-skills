@@ -1,9 +1,9 @@
 ---
 name: knowledge_review
-description: Use when lesson or session candidates may deserve durable knowledge promotion and the agent must prepare a reviewable promotion proposal for user approval.
+description: 在 lessons 或会话候选可能需要升格为长期知识时使用，整理可供用户审核的升格提案。
 ---
 
-# Knowledge_review
+# 知识升格审核
 
 OMS v3 的知识 promotion 审核器。它负责整理候选、草拟 promotion 提案，并在用户批准前停止。
 

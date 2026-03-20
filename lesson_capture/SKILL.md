@@ -1,9 +1,9 @@
 ---
 name: lesson_capture
-description: Use when a correction should be captured as an active rule in docs/lessons.md before any durable knowledge promotion is considered.
+description: 在修正信息需要先记录到 docs/lessons.md、且暂时不应直接升格为长期知识时使用。
 ---
 
-# Lesson_capture
+# 纠错经验记录
 
 OMS v3 的纠错落点。它只写 `docs/lessons.md`，不直接把临时修正升格为长期知识。
 

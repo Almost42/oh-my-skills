@@ -1,27 +1,140 @@
 # Oh My Skills
 
-Oh My Skills 是一套面向 AI 编程协作的仓库内治理框架。v3 的核心目标不是“让 agent 记住更多”，而是让工作流状态、设计确认、修复回退和知识沉淀都有稳定的落点。
+Oh My Skills（OMS）是一套面向 AI 编程协作的仓库内治理框架。它提供的不是一组零散提示词，而是一整套可分发的 skills、模板资产和工作流规则，用来约束 agent 在项目中如何澄清需求、产出设计、确认方案、执行代码、验证结果、处理回退，以及沉淀长期知识。
 
-## v3 核心变化
+README 是项目整体的最新说明书。若 README 与零散文档存在表述差异，应以 README 描述的当前运行模型为准，再回查对应 skill 与模板资产。
 
-- `docs/spec/*.md` 持有 workflow node 状态，`docs/progress.md` 只做 summary。
-- `feature_confirm` 吸收了实施方案评审，分为 `review` 和 `lock` 两个 mode。
-- `workflow_repair` 成为显式修复入口，任何需求/设计/实现/验证错位都先提 repair proposal，再等用户确认。
-- `docs/memory/` 是可选支持层，不是默认 active-state 存储。
-- `code_implement_plan` 已被移除，旧引用应迁移到 `feature_confirm`。
+## 这个项目现在能为你带来什么
 
-## Canonical Nodes
+如果你希望 AI 助手不只是“能写代码”，而是能在项目里稳定协作，OMS 主要提供这些能力：
+
+- 让 agent 按阶段工作，而不是接到需求就直接动手写代码。
+- 把需求、设计、实现、验证、知识沉淀放到固定文档落点中，减少上下文漂移。
+- 在用户中途反悔、补充需求、发现前置设计错误时，支持显式修复和节点回退，而不是偷偷改状态。
+- 把长期知识和会话记忆拆开管理，默认轻量恢复，需要时再升级。
+- 让一整套技能可直接分发给其他开发者安装，而不是依赖仓库里某个统一模板目录。
+
+## 核心特性
+
+### 1. 节点化研发工作流
+
+OMS 把一次需求或补丁的推进过程拆成明确节点：
 
 | Node | 含义 | 可写代码 |
 | :--- | :--- | :--- |
-| `RequirementDraft` | 需求意图、边界和成功标准仍在澄清 | No |
-| `DesignDraft` | 需求基本明确，但方案/影响/约束仍在设计 | No |
-| `ReadyForImplementation` | 设计和 execution package 都已获批 | No |
+| `RequirementDraft` | 需求目标、边界、成功标准仍在澄清 | No |
+| `DesignDraft` | 需求已基本明确，但方案和影响还在设计 | No |
+| `ReadyForImplementation` | 设计与 execution package 已获批 | No |
 | `Implementing` | 已批准工作正在落地为代码 | Yes |
 | `Verifying` | 代码已存在，正在验证验收与回归 | No |
-| `Archived` | 工作已完成，且版本级归档已完成 | No |
+| `Archived` | 工作完成且已做版本级归档 | No |
 
-## Primary Flow
+核心价值不是多了几个状态名，而是让 agent 在每一步都知道：
+
+- 当前处在哪个阶段。
+- 下一步应该调用哪个 skill。
+- 哪些动作现在能做，哪些动作现在不能做。
+
+### 2. 需求、设计、实施分阶段确认
+
+OMS 把“先想清楚，再动手”做成了运行时规则，而不是写在 README 里的口号。
+
+- `requirement_probe` 负责判断需求是否足够清晰，决定继续停留在 `RequirementDraft`，还是可以进入 `DesignDraft`。
+- `feature_plan` 负责生成或修订设计草案，把影响范围、技术方案、验收标准写入 spec。
+- `feature_confirm (review / lock)` 负责评审 execution package，并在用户明确批准后推进到 `ReadyForImplementation`。
+- `code_implement_confirm` 只处理已经批准的方案，不再替代设计确认。
+
+这意味着 agent 默认不会把“想法”“设计稿”“可实施方案”“代码执行”混成一步。
+
+### 3. 显式修复与节点回退
+
+大多数项目里的真实情况不是“每一步都一次做对”，而是：
+
+- 用户看完方案后发现需求没想清楚。
+- 代码写完后才意识到最开始设计有缺口。
+- 验证阶段暴露出更早节点的问题。
+
+OMS 用 `workflow_repair` 处理这类情况。它要求 agent：
+
+1. 说明当前节点。
+2. 说明问题类型。
+3. 给出建议回退节点。
+4. 列出需要更新的文档或方案内容。
+5. 等待用户确认后再应用回退或修复决策。
+
+也就是说，OMS 允许技能被多次执行，并且把“回退”和“补修”当成正式流程的一部分。
+
+### 4. 默认轻量的上下文恢复
+
+OMS 默认不靠大而全的长期记忆来恢复项目状态，而是优先读取最小 baseline 文档：
+
+- `AGENTS.md`
+- `docs/progress.md`
+- 活跃 `docs/spec/*.md`
+- `docs/architecture.md`
+- `docs/knowledge/index.md`
+
+`context_sync` 是默认恢复入口。只有 baseline 文档不足以恢复当前任务时，才升级到 `session_resume`。
+
+默认不创建 `docs/memory/`。默认恢复路径是 `context_sync`，不是 `session_resume`。
+
+### 5. 长期知识沉淀闭环
+
+OMS 不把“经验”直接塞进杂乱的附加说明，而是拆成两层：
+
+- `lesson_capture`：先把本轮纠错记进 `docs/lessons.md`
+- `knowledge_review`：当经验足够稳定时，再整理为可审核的长期知识升格提案
+
+这样做的好处是：
+
+- 活跃纠错可以快速记录。
+- 长期知识不会被低质量噪声污染。
+- 发布前还能做版本级知识审查。
+
+### 6. 新能力出现时自动补治理文档
+
+很多项目不是一开始就有完整结构，而是在演进中逐渐长出前端、接口、数据、运维或领域规则能力。
+
+OMS 用 `capability_bootstrap` 处理这类“能力扩展”场景。它会在检测到 capability growth 后：
+
+- 补建缺失的 capability docs
+- 同步 `AGENTS.md`
+- 同步 `docs/architecture.md`
+- 同步 `docs/knowledge/index.md`
+
+这让治理层能跟着项目结构一起长，而不是永远停留在初始化那一刻。
+
+### 7. 模板与 skill 一起分发
+
+这个仓库不是一个已经接入 OMS 的业务项目，而是一个 skill 分发仓库。
+
+运行时模板和其 owner skill 一起分发：
+
+- `project_init/templates/`
+- `feature_plan/templates/`
+- `capability_bootstrap/templates/`
+
+这意味着：
+
+- 别人安装整套 skill 文件夹后就能运行。
+
+## 怎么用
+
+对于第一次接触 OMS 的使用者，最小流程如下：
+
+1. 将整套 OMS skill 文件夹安装到 AI 助手可识别的 skills 目录中。
+2. 在目标项目里执行 `project_init`，生成最小治理骨架和能力文档槽位。
+3. 新会话或继续工作时执行 `context_sync`，恢复 baseline 上下文。
+4. 根据当前意图进入需求澄清、设计、确认、实现、验证或发布链路。
+
+如果你是在维护一个要分发给他人的 OMS 包，还需要注意：
+
+- 分发时要保留完整 skill 文件夹，不要只拷贝 `SKILL.md`。
+- `project_init/templates/`、`feature_plan/templates/`、`capability_bootstrap/templates/` 属于运行时资产。
+
+## 基础使用流程
+
+OMS 当前的主流程如下：
 
 ```text
 project_init
@@ -33,50 +146,30 @@ project_init
   -> verification_gate
   -> project_release
 
-workflow_repair can be entered from any active workflow step when the node or plan is wrong.
 ```
 
-主流程中的关键约束：
+这条流程的作用可以简化理解为：
 
-- `feature_confirm (review)` 只审 execution package，不推进节点。
-- `feature_confirm (lock)` 只在用户明确批准后把节点推进到 `ReadyForImplementation`。
-- `code_implement_confirm` 只接受 `ReadyForImplementation` 或已在 `Implementing` 的 spec。
-- 完成、通过、修复等结论必须先经过 `verification_gate`。
+- `project_init`：把项目纳入 OMS。
+- `context_sync`：恢复当前状态。
+- `requirement_probe`：确认问题到底是什么。
+- `feature_plan`：把需求写成可讨论的设计草案。
+- `feature_confirm (review / lock)`：确认实施包，拿到用户批准。
+- `code_implement_confirm`：按批准方案执行代码。
+- `verification_gate`：基于新鲜证据判断是否真的完成。
+- `project_release`：做发布、归档和知识收口。
 
-## Skill List
+辅助闭环包括：
 
-| Skill | 作用 | 触发场景 |
-| :--- | :--- | :--- |
-| `project_init` | 初始化 always-on docs 与 capability docs | 新项目接入或现有项目纳入 OMS |
-| `context_sync` | 默认恢复入口，读取 baseline docs | 新会话、继续工作、怀疑文档漂移 |
-| `requirement_probe` | 澄清需求并判断 `Feature` / `Patch` 与节点去向 | 新需求、补需求、模糊请求 |
-| `feature_plan` | 创建或修订 `DesignDraft` spec | 需求已足够进入方案设计 |
-| `feature_confirm` | 审 execution package 并在批准后锁定实现入口 | 设计确认、实施方案确认 |
-| `code_implement_confirm` | 从 `ReadyForImplementation` 进入 `Implementing` 并执行代码改动 | 用户批准执行包后开始写代码 |
-| `verification_gate` | 基于 fresh evidence 判断 `stay` / `advance` / `repair_required` | 声称完成、修复或通过之前 |
-| `workflow_repair` | 显式提出 repair / rollback proposal 并等待用户确认 | 发现节点错位、方案缺口、验证反证 |
-| `progress_sync` | 用 active spec 刷新 `docs/progress.md` summary | 节点变化、状态同步 |
-| `lesson_capture` | 把纠错先落到 `docs/lessons.md` | 用户纠正 agent、重复错误、项目偏好暴露 |
-| `knowledge_review` | 草拟 durable knowledge promotion proposal | lessons 稳定、session 候选积累、版本审核 |
-| `session_archive` | 只在确有 handoff 价值时写会话快照 | 跨会话、跨模型、跨工具交接 |
-| `session_resume` | 仅在 baseline docs 不足时进入 escalation 恢复 | `context_sync` 不够用时 |
-| `project_release` | 版本级归档、知识审查、文档一致性收口 | 发布、定版、里程碑归档 |
-| `capability_bootstrap` | 项目长出新能力后补建文档并同步治理层 | 新增前端/API/数据/运维/领域能力 |
+- `workflow_guard`：在重要动作前判断当前节点、缺失门禁和下一步路由。
+- `workflow_repair`：需求、设计、实现、验证不闭环时，负责提出修复或回退方案。
+- `progress_sync`：把当前 spec 状态同步为摘要。
+- `lesson_capture` 与 `knowledge_review`：把短期教训升级为长期知识。
+- `capability_bootstrap`：项目结构变复杂时补文档、补治理。
 
-## Packaging Model
+## 接入后会生成什么文档
 
-运行时模板不再依赖仓库下的 `docs/templates/`。为保证“安装 skill 文件夹即可使用”，模板资产与其 owner skill 一起分发：
-
-- `project_init/templates/`
-  - always-on docs 模板：`AGENTS.v3.md`、`project_brief.v3.md`、`architecture.v3.md`、`progress.v3.md`、`knowledge-index.v3.md`、`history-entry.v3.md`
-- `feature_plan/templates/`
-  - `spec.v3.md`
-- `capability_bootstrap/templates/`
-  - capability docs 模板，如前端、流程、接口、数据、运维、领域规则
-
-因此，`docs/` 可以作为维护者本地资料目录存在，甚至被 `.gitignore` 忽略；安装和运行不应依赖它承载模板资产。
-
-## Repository Shape
+执行 `project_init` 后，目标项目里会按能力生成最小治理骨架。基础结构如下：
 
 ```text
 AGENTS.md
@@ -91,51 +184,33 @@ docs/
 └── memory/                # optional, only when archive/resume is enabled
 ```
 
-说明：
+这些文档的职责分别是：
 
-- `AGENTS.md` 负责治理边界、加载策略和 trigger routing。
-- `docs/spec/*.md` 是 change-scoped agreement，也是 node 状态的 source of truth。
-- `docs/progress.md` 只保留当前 summary，不承担节点所有权。
-- `docs/knowledge/index.md` 通过 tag 路由知识加载。
-- `docs/lessons.md` 先承接活跃纠错，后续再由 `knowledge_review` 决定 promotion。
+- `AGENTS.md`：治理边界、加载策略、技能路由和更新政策。
+- `docs/context/project_brief.md`：项目目标、范围、非目标和成功标准。
+- `docs/architecture.md`：系统结构、模块边界、扩展点和约束。
+- `docs/spec/*.md`：单个需求或补丁的工作协议，也是 workflow node 的 source of truth。
+- `docs/progress.md`：当前阶段摘要，不持有节点真相。
+- `docs/knowledge/index.md`：知识入口和按 tag 的加载路由。
+- `docs/lessons.md`：活跃纠错记录。
+- `docs/history/`：版本级归档和阶段总结。
+- `docs/memory/`：可选支持层，只在 handoff 或历史重建确有需要时启用。
 
-## Memory Policy
+## 与 v2 的主要差异
 
-- 默认恢复路径是 `context_sync`，不是 `session_resume`。
-- 默认不创建 `docs/memory/`。
-- 只有在 handoff 或历史重建确有必要时，才启用 `session_archive` / `session_resume`。
-- 迁移期仍允许读取 `docs/pitfalls.md` 和 `docs/anti-patterns.md`，但新的 durable knowledge 应进入 `docs/knowledge/...`。
+如果你之前用过 v2，这一版最重要的变化只有几项：
 
-## Repair Policy
+- `docs/spec/*.md` 现在持有 workflow node 的真实状态，`docs/progress.md` 只做 summary。
+- `feature_confirm` 吸收了原本分散的实施方案确认动作，旧的独立 `code_implement_plan` 已被移除。
+- `workflow_repair` 成为显式修复入口，节点回退和设计补修不再靠隐式处理。
+- `docs/memory/` 变成可选支持层，不再是默认活跃状态存储。
+- 模板资产改为 skill-local 分发，运行时不再依赖统一模板目录。
 
-当任一步骤发现“当前节点不对”或“前置设计不成立”时，系统不应静默继续。应当：
-
-1. 说明当前节点与问题类型。
-2. 给出建议回退节点。
-3. 列出需要更新的文档/方案内容。
-4. 进入 `workflow_repair`。
-5. 等待用户确认后再应用 rollback 或 stay 决策。
-
-这使节点可以重复进入，也让非专家用户始终知道当前处于哪个阶段。
-
-## Quick Use
-
-- “继续之前的工作” -> `context_sync`
-- “我需要加一个需求” -> `requirement_probe`
-- “先把方案写出来” -> `feature_plan`
-- “我想看实施方案” -> `feature_confirm (review)`
-- “方案可以，开始做” -> `feature_confirm (lock)` 然后 `code_implement_confirm`
-- “现在能说完成了吗” -> `verification_gate`
-- “这里得回到设计重来” -> `workflow_repair`
-- “记录这次教训” -> `lesson_capture`
-- “把 lessons 升格为知识” -> `knowledge_review`
-- “发布这一轮改动” -> `project_release`
-
-## Compatibility
+兼容说明：
 
 - old prompts that still mention `code_implement_plan` should be migrated to `feature_confirm`.
-- legacy durable knowledge (`docs/pitfalls.md`, `docs/anti-patterns.md`) 在迁移期仍可读取。
-- tool-specific rules 可以扩展 OMS，但不应替代 OMS 的 source-of-truth 边界。
+- `code_implement_plan` 不再是 active runtime skill。
+- legacy durable knowledge（`docs/pitfalls.md`、`docs/anti-patterns.md`）在迁移期仍可作为兼容输入，但新的长期知识应进入 `docs/knowledge/...`。
 
 ## License
 

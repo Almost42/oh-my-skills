@@ -1,9 +1,9 @@
 ---
 name: requirement_probe
-description: Use when a new request is still unclear and the agent must decide whether work remains in RequirementDraft or can enter DesignDraft.
+description: 在新请求仍不清楚、且 agent 需要判断工作应继续停留在 RequirementDraft 还是进入 DesignDraft 时使用。
 ---
 
-# Requirement_probe
+# 需求澄清探查
 
 OMS v3 的需求澄清入口。它负责先把需求边界问清楚，再决定当前工作是留在 `RequirementDraft`，还是足够进入 `DesignDraft`。
 

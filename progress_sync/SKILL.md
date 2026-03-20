@@ -1,9 +1,9 @@
 ---
 name: progress_sync
-description: Use when active spec state has changed and docs/progress.md must be refreshed as a lightweight summary without becoming the node authority.
+description: 在活跃 spec 状态变化、且需要刷新 docs/progress.md 作为轻量摘要时使用，但它不能变成节点权威。
 ---
 
-# Progress_sync
+# 进度同步
 
 OMS v3 的轻量状态汇总器。`docs/progress.md` 只总结当前状态，spec 才是节点权威。
 
