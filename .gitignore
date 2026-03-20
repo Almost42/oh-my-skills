@@ -2,3 +2,5 @@
 ./skillshare/
 *.yaml
 *.json
+docs/
+scripts/

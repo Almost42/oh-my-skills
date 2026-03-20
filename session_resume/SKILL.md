@@ -1,123 +1,65 @@
 ---
 name: session_resume
 description: >-
-  在新对话开始时调用，通过读取历史记忆恢复 AI 的工作状态。
+  仅在 baseline 文档不足以恢复上下文时调用，作为 OMS v3 的 escalation 路径读取和利用可选 memory 存档。
 ---
 
 # Session_resume
 
-解决 AI 长对话"失忆"问题，确保跨会话的逻辑链条完整继承。
+这是 OMS v3 的 escalation 路径，不是默认恢复入口。只有 `context_sync` 判断 baseline 不足，或用户明确要求深度恢复时，才应该进入这里。
 
 ## When to Use
-- 开启新的对话窗口时。
-- 开发者明确说"继续之前的进度"、"项目重启"或类似意图。
-- AI 感知到自身对项目上下文的了解不足时，应主动建议执行此 skill。
+
+- `context_sync` 明确判断 baseline 文档不足。
+- 用户明确要求恢复长会话交接信息。
+- 项目已经启用了 `docs/memory/`，且当前问题确实依赖历史推理链。
 
 ## Instructions
 
-### Step 1: Scan Project State
-按以下优先级依次读取项目文档，构建上下文：
+### Step 1: Confirm Escalation Need
+先确认：
 
-1. **`AGENTS.md`** — 重新加载角色定义与全局规约，确认自身身份。
-2. **`docs/memory/`** — 读取目录下的所有 memory 文件（包括 `memory_active.md` 和任何 `session_*.md` 散档）。
-3. **`docs/spec/`** — 扫描所有 spec 文件的 YAML 头部，识别 `Status: Implementing` 的活跃任务。
-4. **`docs/architecture.md`** — 理解当前系统的模块划分与关键设计决策。
-5. **`docs/anti-patterns.md`** — 加载完整的反模式汇总，了解项目历史上被否决的方案。
-6. **`docs/pitfalls.md`** — 加载实操踩坑记录，了解已知的技术陷阱。
-7. **`docs/history/`** — 快速浏览最近一次演进日志，了解项目已完成的里程碑。
+- 为什么 baseline 不足
+- 需要恢复的是哪些缺失信息
+- 是否真的需要读取 `docs/memory/`
 
-### Step 2: Consolidate Memory
-将所有 memory 文件合并为唯一一份活跃文件 `docs/memory/memory_active.md`：
+### Step 2: Read Optional Archive Layer
+若 `docs/memory/` 存在，则读取：
 
-1. **合并规则**：
-   - **Context_Hash**：仅保留最新的项目状态描述，丢弃已过时的快照。
-   - **Key_Decisions**：按决策主题去重，同一主题保留最新结论；不同主题全部保留。
-   - **Backlog**：合并所有待办项，去除已完成的任务，按优先级重新排列。
-   - **Notes**：保留仍有参考价值的条目，丢弃已失效的临时信息。
-   - **Related_Specs**：取所有文件的并集。
+- `memory_active.md`（若存在）
+- 相关 `session_*.md` 散档
 
-2. **写入 `memory_active.md`**：使用以下固定结构：
+若 `docs/memory/` 不存在，则明确告知：当前项目未启用 memory，改用 baseline 文档继续工作。
 
-   ```markdown
-   ---
-   Last_Consolidated: YYYY-MM-DD HH:MM
-   Source_Sessions: [被合并的 session 文件名列表]
-   Related_Specs: [关联的 spec 文件列表（并集）]
-   ---
+### Step 3: Reconstruct Missing Context
+补齐：
 
-   # Active Memory
+- 缺失的决策背景
+- 长交接中的待办
+- 与当前 active spec 相关的历史说明
 
-   ## Context_Hash
-   [合并后的项目当前状态]
+### Step 4: Optional Consolidation
+仅当项目已经启用 `docs/memory/` 且确有必要时，才整理或更新 `memory_active.md`。不要把 memory 重新变成默认 active-state 来源。
 
-   ## Key_Decisions
-   | 决策 | 选择方案 | 否决方案 | 原因 |
-   | :--- | :--- | :--- | :--- |
-   | ... | ... | ... | ... |
+### Step 5: Report
+明确说明：
 
-   ## Backlog
-   1. [P0] ...
-   2. [P1] ...
+- 这次为什么需要 escalation
+- 从 memory 中补回了什么
+- 现在应回到哪个 skill
 
-   ## Notes
-   [仍有价值的备注]
-   ```
+## Output
 
-3. **归档旧散档**：将已合并的 `session_*.md` 文件移入 `docs/memory/.archive/`（自动创建该目录）。若项目使用 Git，归档前先确保这些文件已被 Git 追踪。
+```markdown
+## Session Resume
 
-### Step 3: Reconstruct Context
-将合并后的 `memory_active.md` 及 spec/history 信息整合为结构化的上下文摘要，包含：
+**Escalation Reason**: ...
+**Memory Enabled**: yes | no
+**Recovered Context**:
+- ...
 
-- **项目概况**：一句话描述项目当前阶段。
-- **活跃任务**：列出所有 `Status: Implementing` 的 spec 及其核心目标。
-- **待办清单**：从 `memory_active.md` 中提取的 Backlog。
-- **关键约束**：来自 `docs/anti-patterns.md` 的反模式、`docs/pitfalls.md` 中与活跃任务相关的坑，以及 Key_Decisions 中的重要约束。
+**Active Specs**:
+- ...
 
-### Step 4: Report to User
-向用户复述恢复的上下文，格式如下：
-
+**Next Action**: ...
 ```
-## 上下文恢复报告
-
-**项目阶段**：[概要描述]
-
-**活跃任务**：
-- [ ] [spec 文件名] — [任务目标摘要]
-
-**待办清单** (来自 memory_active.md)：
-1. [任务项]
-2. [任务项]
-
-**需注意的决策/约束**：
-- [关键决策或 Anti-Pattern]
-
-**Memory 合并情况**：
-- 合并散档：X 个 → memory_active.md
-- 归档至 .archive/：X 个文件
-
----
-请确认以上信息是否准确，或补充我遗漏的上下文。
-```
-
-### Step 5: Skill Availability Check
-快速检测以下 Skill 是否在当前环境中可用：`project_init`, `session_resume`, `feature_plan`, `feature_confirm`, `code_implement_plan`, `code_implement_confirm`, `session_archive`, `project_release`。以简要的行内列表输出（无需完整表格），附加在上下文恢复报告末尾：
-
-```
-**可用 Skills**：project_init ✓ | session_resume ✓ | feature_plan ✓ | feature_confirm ✓ | code_implement_plan ✓ | code_implement_confirm ✓ | session_archive ✓ | project_release ✓
-**缺失 Skills**：无 （或列出缺失项）
-```
-
-### Step 6: Validate
-- 若 `docs/memory/` 为空（无任何 memory 文件），告知用户"未找到历史存档，将从零开始，建议先描述当前进度"。
-- 若存在 `Status: Implementing` 的 spec 但 memory 中无对应记录，标记为潜在的信息断层并提醒用户。
-- 若 `docs/memory/.archive/` 中文件数量超过 10 个，建议用户在合适时机调用 `project_release` 进行历史清理。
-
-## Examples
-**Example:** 新对话恢复进度
-User says: "继续昨天的工作"
-Actions:
-1. 读取 `docs/memory/memory_active.md` 和 `docs/memory/session_20260310-1430_api-auth.md`（新产生的散档）。
-2. 将散档内容合并入 `memory_active.md`，识别到"JWT 签名"功能正在实施。
-3. 将 `session_20260310-1430_api-auth.md` 移入 `docs/memory/.archive/`。
-4. 读取 `docs/spec/api-auth.md`，确认 `Status: Implementing`。
-5. 向用户输出上下文恢复报告，列出待办和关键决策。

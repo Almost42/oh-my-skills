@@ -1,51 +1,124 @@
 ---
 name: feature_confirm
-description: >-
-  将需求草案转为可实施状态，锁定技术协议，衔接编码阶段。
+description: Use when a DesignDraft spec needs execution-package review or final lock before entering ReadyForImplementation.
 ---
 
 # Feature_confirm
 
-将 Draft 状态的 spec 正式"定稿"，标志着从设计阶段进入实施阶段的门禁。
+OMS v3 中，设计确认和实施方案确认在这里合并处理。它不是单向闸门，而是一个可重复进入的节点操作器。
 
 ## When to Use
-- 用户对 `feature_plan` 产出的 spec 草案表示认可（如"可以"、"没问题"、"就这样吧"）。
-- 用户在 Draft spec 上完成了所有修改，准备开始编码。
+
+- 用户要审阅某个 `DesignDraft` 的实施方案。
+- 用户已经看过方案，准备锁定执行包。
+- 旧的独立实施方案评审场景。
+
+## Modes
+
+### `review`
+
+- 验证 spec 是否足够支撑实施
+- 生成 execution package
+- 保持节点在 `DesignDraft`
+- 不开始代码实现
+
+### `lock`
+
+- 仅在用户明确批准 execution package 后执行
+- 将节点推进到 `ReadyForImplementation`
+- 记录最近一次确认节点
+- 标记 execution package 已获批准
 
 ## Instructions
 
-### Step 1: Gather Context
-- 确认用户指定的 spec 文件路径（若当前上下文中只有一个 Draft spec，则自动选定）。
-- 再次快速检查 spec 中的影响分析和验收标准是否完整，不完整则先补全。
+### Step 1: Read The Active Design Context
+读取：
 
-### Step 2: Lock Spec
-- 将目标 `docs/spec/<feature>.md` 的 YAML 头部修改：
-  - `Status: Draft` → `Status: Implementing`
-  - `Version` 递增至下一小版本（如 `0.1` → `0.2`）。
-- 更新 `Related_Memory` 字段，关联最新的 memory 文件（如有）。
+1. 目标 `docs/spec/*.md`
+2. `docs/architecture.md`
+3. 与该 spec 相关的 capability docs
+4. `docs/knowledge/index.md` 路由到的相关知识
+5. 相关活跃 specs
 
-### Step 3: Sync Project Artifacts
-- 检查 `README.md` 是否需要添加该功能的占位说明（如"[WIP] 用户认证"），有需要则更新。
-- 若当前存在活跃的 memory 文件，在其 `Backlog` 中添加该功能的实施条目。
-- **若本次 spec 涉及架构变更**（新增模块、引入新中间件、数据模型重构、基础设施变更等），同步更新 `docs/architecture.md` 中对应的章节。
+若当前 spec 不是 `DesignDraft`，不要硬套当前流程，改为说明当前节点并路由到正确 skill。
 
-### Step 4: Validate
-- 向用户确认状态变更完成，输出如下摘要：
+### Step 2: Run `review` Mode
+在 `review` mode 中必须产出：
 
+- change tree
+- impact view
+- risk view
+- rollback planning
+- required doc updates
+- active-spec conflict notes
+
+如果 `Scope: Patch`，额外明确：
+
+- patch path
+- 改动边界
+- 为什么这是 patch 而不是 feature
+
+`review` mode 的结果只能是：
+
+- `stay`
+  - spec 继续停留在 `DesignDraft`
+- `repair_required`
+  - 发现需求或设计本身不成立，转到 `workflow_repair`
+
+### Step 3: Run `lock` Mode
+只有在用户明确批准后，`lock` mode 才能执行：
+
+- `Status: Draft` -> `Status: Active`
+- `Current_Node: DesignDraft` -> `Current_Node: ReadyForImplementation`
+- `Last_Confirmed_Node` 记录为 `DesignDraft`
+- 必要时同步 `docs/architecture.md` 和相关 capability docs
+
+`lock` mode 的结果只能是：
+
+- `advance`
+  - 进入 `ReadyForImplementation`
+- `repair_required`
+  - 若用户在锁定前指出设计缺口，转到 `workflow_repair`
+
+### Step 4: Handle Re-Entry And Rollback Correctly
+这个 skill 可以多次执行。
+
+若发生以下情况：
+
+- 用户看完实施方案后不满意
+- 用户在 `code_implement_confirm` 后对结果不满意，并追溯到最初设计缺口
+- 当前上下文其实是在补齐设计方案，而不是继续前进
+
+则不要静默“重新确认”或偷偷改 spec。必须：
+
+1. 明确说明当前节点
+2. 明确说明建议回退到 `DesignDraft` 或 `RequirementDraft`
+3. 列出需要更新的文档/方案内容
+4. 转到 `workflow_repair`
+5. 等待用户确认
+
+### Step 5: Report State Explicitly
+所有用户可见输出都要明确当前节点与下一步。
+
+## Output
+
+```markdown
+## Feature Confirm
+
+**Mode**: review | lock
+**Current Spec**: `docs/spec/...`
+**Scope**: Feature | Patch
+**Current Node**: DesignDraft | ReadyForImplementation
+**Decision**: stay | advance | repair_required
+
+**Execution Package**:
+- ...
+
+**Patch Semantics**:
+- ...
+
+**Docs To Update**:
+- ...
+
+**Next Action**: `feature_confirm (lock)` | `code_implement_confirm` | `workflow_repair`
 ```
-## Spec 已锁定
-
-**文件**：docs/spec/<feature>.md
-**状态**：Draft → Implementing
-**版本**：<旧版本> → <新版本>
-
-下一步建议：调用 `code_implement_plan` 输出变更计划。
-```
-
-## Examples
-**Example:** 确认 JWT 认证方案
-User says: "方案没问题，开始做吧"
-Actions:
-1. 将 `docs/spec/jwt-auth.md` 状态改为 `Implementing`，版本 `0.1` → `0.2`。
-2. 在 `README.md` 添加 `[WIP] JWT 认证` 占位。
-3. 输出确认摘要，建议执行 `code_implement_plan`。
