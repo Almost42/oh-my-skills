@@ -1,192 +1,142 @@
 # Oh My Skills
 
-一套可复用的 AI 编程协作规则框架，通过 8 个 Skill 定义 AI 辅助软件开发的完整生命周期协议。
+Oh My Skills 是一套面向 AI 编程协作的仓库内治理框架。v3 的核心目标不是“让 agent 记住更多”，而是让工作流状态、设计确认、修复回退和知识沉淀都有稳定的落点。
 
-## 它解决什么问题？
+## v3 核心变化
 
-当你用 AI 编程工具（Cursor、Claude、Windsurf 等）开发真实项目时，你会遇到这些痛点：
+- `docs/spec/*.md` 持有 workflow node 状态，`docs/progress.md` 只做 summary。
+- `feature_confirm` 吸收了实施方案评审，分为 `review` 和 `lock` 两个 mode。
+- `workflow_repair` 成为显式修复入口，任何需求/设计/实现/验证错位都先提 repair proposal，再等用户确认。
+- `docs/memory/` 是可选支持层，不是默认 active-state 存储。
+- `code_implement_plan` 已被移除，旧引用应迁移到 `feature_confirm`。
 
-- **失忆**：每次新对话，AI 都忘了之前做过什么。
-- **失控**：AI 想到哪写到哪，没有先规划后执行的流程约束。
-- **失据**：决策没有记录，同一个错误方案被反复尝试。
-- **失联**：多会话之间无法接力，任务断裂。
+## Canonical Nodes
 
-Oh My Skills 通过 `AGENTS.md`（项目宪法）+ `docs/` 知识库（制度）+ 8 个 Skill（SOP）构成一套治理体系，让 AI 像一个**有记忆、有规矩、有流程**的资深工程师一样工作。
-
-## 核心架构
-
-```
-项目冷启动 ──→ 恢复上下文 ──→ 需求规划 ──→ 方案锁定 ──→ 变更计划 ──→ 代码执行 ──→ 进度存档 ──→ 版本发布
-project_init → session_resume → feature_plan → feature_confirm → code_implement_plan → code_implement_confirm → session_archive → project_release
-                    ↑                                                                                                    │
-                    └────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-                                                          （循环）
-```
-
-## Skill 清单
-
-| Skill | 职责 | 触发场景 |
+| Node | 含义 | 可写代码 |
 | :--- | :--- | :--- |
-| `project_init` | 建立项目骨架，生成 `AGENTS.md` 和 `docs/` 知识库结构 | 新项目冷启动 |
-| `session_resume` | 读取并合并所有 memory 为唯一活跃快照，加载架构说明与踩坑记录，恢复跨会话上下文 | 开启新对话或恢复中断任务 |
-| `feature_plan` | 将需求转化为结构化 spec 草案，含冲突检测、Anti-Pattern 回溯和 Pitfalls 检查 | 收到新功能或需求变更 |
-| `feature_confirm` | 锁定 spec 状态为 Implementing，涉及架构变更时同步更新 `architecture.md` | 用户确认方案 |
-| `code_implement_plan` | 输出变更树、Diff 预览、跨 spec 冲突检测、已知 Pitfalls 提醒、风险评估 | 准备编写代码 |
-| `code_implement_confirm` | 执行代码变更、自测、记录实操踩坑、输出实施报告，含回滚机制 | 用户确认变更计划 |
-| `session_archive` | 将会话记忆固化为结构化存档快照，含知识审核（用户确认后写入 pitfalls/anti-patterns） | 对话接近上限或阶段性完成 |
-| `project_release` | 归档 spec、知识审核门禁（用户审核 anti-patterns + pitfalls）、清理过期知识、校验架构一致性 | 版本定版发布 |
+| `RequirementDraft` | 需求意图、边界和成功标准仍在澄清 | No |
+| `DesignDraft` | 需求基本明确，但方案/影响/约束仍在设计 | No |
+| `ReadyForImplementation` | 设计和 execution package 都已获批 | No |
+| `Implementing` | 已批准工作正在落地为代码 | Yes |
+| `Verifying` | 代码已存在，正在验证验收与回归 | No |
+| `Archived` | 工作已完成，且版本级归档已完成 | No |
 
-## 项目目录结构
+## Primary Flow
 
-执行 `project_init` 后，目标项目中将生成以下结构：
+```text
+project_init
+  -> context_sync
+  -> requirement_probe
+  -> feature_plan
+  -> feature_confirm (review / lock)
+  -> code_implement_confirm
+  -> verification_gate
+  -> project_release
 
-```
-<your-project>/
-├── AGENTS.md              # 项目宪法：角色定义、维护协议、工作流管线、质量门禁、编码原则
-├── README.md              # 项目全景图
-└── docs/
-    ├── spec/              # 需求详述（状态驱动：Draft → Implementing → Archived）
-    ├── memory/            # 会话记忆（活跃快照模型：散档 → 合并为唯一 memory_active.md → 旧档归入 .archive/）
-    ├── architecture.md    # 架构说明（模块划分、技术选型、数据流、关键设计决策）
-    ├── anti-patterns.md   # 反模式汇总（跨版本累积，设计层面的否决方案）
-    ├── pitfalls.md        # 踩坑记录（即时追加，技术陷阱 + 协作认知校准）
-    └── history/           # 演进日志（版本功能清单、技术债务）
+workflow_repair can be entered from any active workflow step when the node or plan is wrong.
 ```
 
-## 关键设计理念
+主流程中的关键约束：
 
-### Spec 状态机
+- `feature_confirm (review)` 只审 execution package，不推进节点。
+- `feature_confirm (lock)` 只在用户明确批准后把节点推进到 `ReadyForImplementation`。
+- `code_implement_confirm` 只接受 `ReadyForImplementation` 或已在 `Implementing` 的 spec。
+- 完成、通过、修复等结论必须先经过 `verification_gate`。
 
-每个需求通过 `docs/spec/` 中的 Markdown 文件管理，遵循严格的状态流转：
+## Skill List
 
-```
-Draft ──→ Implementing ──→ Archived
-  ↑            │
-  └────────────┘  (回滚时回退至 Draft)
-```
+| Skill | 作用 | 触发场景 |
+| :--- | :--- | :--- |
+| `project_init` | 初始化 always-on docs 与 capability docs | 新项目接入或现有项目纳入 OMS |
+| `context_sync` | 默认恢复入口，读取 baseline docs | 新会话、继续工作、怀疑文档漂移 |
+| `requirement_probe` | 澄清需求并判断 `Feature` / `Patch` 与节点去向 | 新需求、补需求、模糊请求 |
+| `feature_plan` | 创建或修订 `DesignDraft` spec | 需求已足够进入方案设计 |
+| `feature_confirm` | 审 execution package 并在批准后锁定实现入口 | 设计确认、实施方案确认 |
+| `code_implement_confirm` | 从 `ReadyForImplementation` 进入 `Implementing` 并执行代码改动 | 用户批准执行包后开始写代码 |
+| `verification_gate` | 基于 fresh evidence 判断 `stay` / `advance` / `repair_required` | 声称完成、修复或通过之前 |
+| `workflow_repair` | 显式提出 repair / rollback proposal 并等待用户确认 | 发现节点错位、方案缺口、验证反证 |
+| `progress_sync` | 用 active spec 刷新 `docs/progress.md` summary | 节点变化、状态同步 |
+| `lesson_capture` | 把纠错先落到 `docs/lessons.md` | 用户纠正 agent、重复错误、项目偏好暴露 |
+| `knowledge_review` | 草拟 durable knowledge promotion proposal | lessons 稳定、session 候选积累、版本审核 |
+| `session_archive` | 只在确有 handoff 价值时写会话快照 | 跨会话、跨模型、跨工具交接 |
+| `session_resume` | 仅在 baseline docs 不足时进入 escalation 恢复 | `context_sync` 不够用时 |
+| `project_release` | 版本级归档、知识审查、文档一致性收口 | 发布、定版、里程碑归档 |
+| `capability_bootstrap` | 项目长出新能力后补建文档并同步治理层 | 新增前端/API/数据/运维/领域能力 |
 
-- **Draft**：草案阶段，禁止编写生产代码。
-- **Implementing**：已锁定，可进入编码。
-- **Archived**：版本发布时归档。
+## Packaging Model
 
-Spec 支持两种 Scope：
-- **Feature**：完整功能，走全套流程。
-- **Patch**：小版本修复（bug 修复、文案修正），流程不变但 spec 内容可简化。
+运行时模板不再依赖仓库下的 `docs/templates/`。为保证“安装 skill 文件夹即可使用”，模板资产与其 owner skill 一起分发：
 
-### Memory 活跃快照
+- `project_init/templates/`
+  - always-on docs 模板：`AGENTS.v3.md`、`project_brief.v3.md`、`architecture.v3.md`、`progress.v3.md`、`knowledge-index.v3.md`、`history-entry.v3.md`
+- `feature_plan/templates/`
+  - `spec.v3.md`
+- `capability_bootstrap/templates/`
+  - capability docs 模板，如前端、流程、接口、数据、运维、领域规则
 
-Memory 的本质是"运行时内存的固化"，而非历史日志。`docs/memory/` 始终只保留一份活跃文件：
+因此，`docs/` 可以作为维护者本地资料目录存在，甚至被 `.gitignore` 忽略；安装和运行不应依赖它承载模板资产。
 
-```
-session_archive  ──→  生成 session_*.md 散档（快照）
-                              │
-session_resume   ──→  读取所有散档 + memory_active.md
-                      ──→  去重合并为唯一的 memory_active.md
-                      ──→  旧散档移入 .archive/
-                              │
-project_release  ──→  清理 .archive/ 中已归档的散档
-```
+## Repository Shape
 
-- **存档时**：`session_archive` 将当前会话的工作记忆写入一份新的散档。
-- **恢复时**：`session_resume` 读取所有 memory 文件，按主题去重、合并为唯一的 `memory_active.md`，旧散档移入 `.archive/`。
-- **发布时**：`project_release` 清理 `.archive/` 中与已归档 spec 关联的散档，精简 `memory_active.md`。
-
-这确保了 AI 恢复上下文时只需读取一份文件，token 效率最优。
-
-### 冲突检测（双重防线）
-
-当多个 spec 同时处于 Implementing 状态时：
-
-1. **规划时检测**（`feature_plan`）：新 spec 生成前，交叉比对所有活跃 spec 的影响分析。
-2. **执行前确认**（`code_implement_plan`）：输出变更树前，再次校验文件级冲突。
-
-### 项目知识库（三层知识体系）
-
-项目知识按性质分为三类文档，各有不同的写入节奏和生命周期：
-
-| 文档 | 性质 | 写入节奏 | 清理策略 |
-| :--- | :--- | :--- | :--- |
-| `docs/architecture.md` | 系统"是什么样的" | 功能锁定时更新（`feature_confirm`） | 就地更新（覆盖旧描述） |
-| `docs/anti-patterns.md` | 设计层面"不做什么" | 版本发布时追加（`project_release`） | 永不删除 |
-| `docs/pitfalls.md` | 实操+协作层面"注意什么" | 随时追加（开发过程中即时记录） | 版本发布时清理过期条目 |
-
-Pitfalls 覆盖两类场景：
-- **技术坑**：平台限制、库的隐藏行为、环境差异。
-- **协作坑**：用户驳回或修正 AI 方案时暴露的项目约定、用户偏好、AI 认知盲区——固化为可复用的认知校准。
-
-### 知识审核门禁
-
-知识从"临时状态"变为"持久状态"前，必须经过人工审核：
-
-- **会话级审核**（`session_archive`）：AI 草拟本次会话拟新增的 pitfalls 和 anti-patterns，呈现给用户确认后才写入。
-- **版本级审核**（`project_release`）：AI 综合 memory 和当前对话上下文，草拟完整的知识审核清单，用户确认后才固化。即使 `session_archive` 未被调用，`project_release` 仍能从对话上下文中回溯提取。
-
-### 回滚机制
-
-`code_implement_confirm` 在执行前记录回滚基线（Git commit hash），验收失败时支持：
-- Git 项目：`git reset --hard` 一键回滚。
-- 非 Git 项目：按变更计划手动还原。
-- Spec 状态回退至 Draft，回滚事件记入 memory 供后续参考。
-
-## 快速开始
-
-### 1. 安装
-
-通过 [skillshare](https://github.com/runkids/skillshare) CLI 安装（推荐）：
-
-```bash
-skillshare install https://github.com/Almost42/oh-my-skills.git
+```text
+AGENTS.md
+docs/
+├── context/project_brief.md
+├── architecture.md
+├── spec/
+├── progress.md
+├── knowledge/index.md
+├── history/
+├── lessons.md
+└── memory/                # optional, only when archive/resume is enabled
 ```
 
-或手动将 `skills/` 目录下的各 Skill 文件夹复制到你的 AI 工具的 skills 目录中。
+说明：
 
-### 2. 初始化项目
+- `AGENTS.md` 负责治理边界、加载策略和 trigger routing。
+- `docs/spec/*.md` 是 change-scoped agreement，也是 node 状态的 source of truth。
+- `docs/progress.md` 只保留当前 summary，不承担节点所有权。
+- `docs/knowledge/index.md` 通过 tag 路由知识加载。
+- `docs/lessons.md` 先承接活跃纠错，后续再由 `knowledge_review` 决定 promotion。
 
-在 AI 对话中说：
+## Memory Policy
 
-> "调用 project_init 开启新项目 MyProject，技术栈是 Spring Boot + React"
+- 默认恢复路径是 `context_sync`，不是 `session_resume`。
+- 默认不创建 `docs/memory/`。
+- 只有在 handoff 或历史重建确有必要时，才启用 `session_archive` / `session_resume`。
+- 迁移期仍允许读取 `docs/pitfalls.md` 和 `docs/anti-patterns.md`，但新的 durable knowledge 应进入 `docs/knowledge/...`。
 
-AI 将自动创建 `AGENTS.md`、`docs/` 目录结构和 `README.md`。
+## Repair Policy
 
-### 3. 日常使用
+当任一步骤发现“当前节点不对”或“前置设计不成立”时，系统不应静默继续。应当：
 
-- **开始新对话**："继续之前的进度" → 触发 `session_resume`
-- **提出需求**："我需要加一个用户认证功能" → 触发 `feature_plan`
-- **确认方案**："方案没问题，开始做吧" → 触发 `feature_confirm` → `code_implement_plan`
-- **执行编码**："确认，开始写代码" → 触发 `code_implement_confirm`
-- **保存进度**："今天先到这里" → 触发 `session_archive`
-- **版本发布**："功能做完了，定版吧" → 触发 `project_release`
+1. 说明当前节点与问题类型。
+2. 给出建议回退节点。
+3. 列出需要更新的文档/方案内容。
+4. 进入 `workflow_repair`。
+5. 等待用户确认后再应用 rollback 或 stay 决策。
 
-### 4. 跨模型 / 跨工具切换
+这使节点可以重复进入，也让非专家用户始终知道当前处于哪个阶段。
 
-借助 `session_archive` + `session_resume` 的存档-恢复机制，你可以在不同 AI 模型或工具之间无缝接力，同一份 memory 文件就是它们之间的"共享内存"：
+## Quick Use
 
-```
-Cursor (Claude)                          Cursor (Gemini)
-  │                                        │
-  ├─ 处理后端 API 逻辑                      ├─ 处理前端 UI 组件
-  ├─ session_archive → 存档进度             ├─ session_resume → 恢复上下文
-  │                                        ├─ 继续前端开发...
-  │       ┌────────────────────┐           │
-  │       │  docs/memory/      │           │
-  │       │  memory_active.md  │ ←─────────┤
-  │       └────────────────────┘           │
-```
+- “继续之前的工作” -> `context_sync`
+- “我需要加一个需求” -> `requirement_probe`
+- “先把方案写出来” -> `feature_plan`
+- “我想看实施方案” -> `feature_confirm (review)`
+- “方案可以，开始做” -> `feature_confirm (lock)` 然后 `code_implement_confirm`
+- “现在能说完成了吗” -> `verification_gate`
+- “这里得回到设计重来” -> `workflow_repair`
+- “记录这次教训” -> `lesson_capture`
+- “把 lessons 升格为知识” -> `knowledge_review`
+- “发布这一轮改动” -> `project_release`
 
-典型场景：
-- **按擅长领域分工**：用 Claude 处理后端逻辑，用 Gemini 处理前端样式，通过存档-恢复共享上下文。
-- **切换 IDE**：在 Cursor 中完成一半工作，存档后在 Claude Code CLI 中继续，不丢失任何决策和进度。
-- **团队协作**：不同成员使用各自偏好的工具，通过 `docs/memory/` 目录实现上下文共享。
+## Compatibility
 
-## 兼容性
-
-这套规则框架是**工具无关**的，适用于任何支持自定义 Skill / Agent 指令的 AI 编程工具：
-
-- Cursor（通过 Skills 目录）
-- Claude Code（通过 AGENTS.md）
-- Windsurf（通过 Rules）
-- 其他支持 Markdown 指令的 AI 工具
+- old prompts that still mention `code_implement_plan` should be migrated to `feature_confirm`.
+- legacy durable knowledge (`docs/pitfalls.md`, `docs/anti-patterns.md`) 在迁移期仍可读取。
+- tool-specific rules 可以扩展 OMS，但不应替代 OMS 的 source-of-truth 边界。
 
 ## License
 
-[The Unlicense](LICENSE) — 公共领域，自由使用。
+[The Unlicense](LICENSE)
