@@ -1,6 +1,7 @@
 # Progress
 
 > Source of truth for node state remains `docs/spec/*.md`. This file is summary-only.
+> Think of this file as the current-state pointer, not the full state machine and not a session snapshot.
 
 ## Current Focus
 

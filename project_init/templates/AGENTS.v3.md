@@ -11,9 +11,10 @@
 - `docs/context/project_brief.md` owns project intent and scope.
 - `docs/architecture.md` owns system shape and structural constraints.
 - `docs/spec/*.md` own change-scoped agreements and workflow node state.
-- `docs/progress.md` summarizes current active state.
+- `docs/progress.md` summarizes current active state and acts as the current-state pointer.
 - `docs/knowledge/index.md` routes knowledge loading.
 - `docs/lessons.md` stores active corrections.
+- `docs/memory/` is an optional runtime snapshot for handoff or reconstruction only.
 
 ## Loading Policy
 
@@ -26,6 +27,7 @@
 - Capability docs load only when the current task touches that capability.
 - Module docs load only when the spec explicitly depends on them.
 - `docs/memory/` is optional and only for handoff or reconstruction.
+- Treat `docs/spec/*.md` as the state machine, `docs/progress.md` as the pointer, and `docs/memory/` as support-only snapshot data.
 
 ## Trigger Routing Summary
 
