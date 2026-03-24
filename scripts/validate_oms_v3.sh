@@ -87,6 +87,10 @@ for mode in "bootstrap" "migrate" "reconcile"; do
   rg -q "$mode" project_init/SKILL.md || fail "project_init must define $mode mode"
 done
 
+rg -q "超过 50 行" project_init/SKILL.md || fail "project_init must normalize oversized AGENTS.md"
+rg -q "重写为最新 OMS v3 结构" project_init/SKILL.md || fail "project_init must rewrite nonconforming always-on docs to latest v3 shape"
+rg -q "Normalized Docs" project_init/SKILL.md || fail "project_init output must report normalized docs"
+
 rg -q "旧文档体系迁移到 OMS v3" workflow_guard/SKILL.md || fail "workflow_guard must route OMS migration intent to project_init"
 rg -q "重新扫描对账" workflow_guard/SKILL.md || fail "workflow_guard must route reconcile intent to project_init"
 
