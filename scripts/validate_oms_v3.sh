@@ -67,6 +67,9 @@ do
   test -f "$path" || fail "$path missing"
 done
 
+agents_lines=$(wc -l < "$AGENTS_TEMPLATE" | tr -d ' ')
+[[ "$agents_lines" -le 50 ]] || fail "AGENTS.v3.md must stay within 50 lines"
+
 rg -q "^# AGENTS.md" "$AGENTS_TEMPLATE" || fail "AGENTS.v3.md must keep AGENTS.md title"
 rg -q "^# 项目简介" "$PROJECT_BRIEF_TEMPLATE" || fail "project_brief.v3.md must use Chinese title"
 rg -q "^# 架构" "$ARCHITECTURE_TEMPLATE" || fail "architecture.v3.md must use Chinese title"
@@ -79,6 +82,13 @@ rg -q "^# 接口" "$CAPABILITY_TEMPLATE_DIR/interfaces.v3.md" || fail "interface
 rg -q "^# 数据模型" "$CAPABILITY_TEMPLATE_DIR/data-model.v3.md" || fail "data-model.v3.md must use Chinese title"
 rg -q "^# 运维" "$CAPABILITY_TEMPLATE_DIR/operations.v3.md" || fail "operations.v3.md must use Chinese title"
 rg -q "^# 领域规则" "$CAPABILITY_TEMPLATE_DIR/domain-rules.v3.md" || fail "domain-rules.v3.md must use Chinese title"
+
+for mode in "bootstrap" "migrate" "reconcile"; do
+  rg -q "$mode" project_init/SKILL.md || fail "project_init must define $mode mode"
+done
+
+rg -q "旧文档体系迁移到 OMS v3" workflow_guard/SKILL.md || fail "workflow_guard must route OMS migration intent to project_init"
+rg -q "重新扫描对账" workflow_guard/SKILL.md || fail "workflow_guard must route reconcile intent to project_init"
 
 for field in \
   "Status: Draft | Active | Archived" \
@@ -150,11 +160,6 @@ for path in \
   "docs/knowledge/index.md"
 do
   rg -F -q "$path" "$AGENTS_TEMPLATE" || fail "AGENTS.v3.md missing $path reference"
-done
-
-for rule_id in "\`R1\`" "\`R4\`" "\`R13\`" "\`R14\`" "\`R20\`" "\`R22\`"
-do
-  rg -q "$rule_id" "$AGENTS_TEMPLATE" || fail "AGENTS.v3.md missing explicit rule reference $rule_id"
 done
 
 for section in \
