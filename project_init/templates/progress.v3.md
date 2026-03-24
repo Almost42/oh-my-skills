@@ -1,22 +1,22 @@
-# Progress
+# 进度
 
-> Source of truth for node state remains `docs/spec/*.md`. This file is summary-only.
-> Think of this file as the current-state pointer, not the full state machine and not a session snapshot.
+> 节点状态的 source of truth 仍是 `docs/spec/*.md`。本文件只做摘要。
+> 可将本文件理解为当前状态指针，而不是完整状态机，也不是会话快照。
 
-## Current Focus
+## 当前焦点
 
-- <Current focus>
+- <当前焦点>
 
-## Active Specs
+## 活跃 Specs
 
-| Spec | Scope | Current Node | Last Confirmed | Blocker | Next Action |
+| Spec | 范围 | 当前节点 | 最后确认节点 | 阻塞项 | 下一动作 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `docs/spec/example.md` | Feature | DesignDraft | DesignDraft | Waiting for review | `feature_confirm (review)` |
+| `docs/spec/example.md` | Feature | DesignDraft | DesignDraft | 等待评审 | `feature_confirm (review)` |
 
-## Current Risks
+## 当前风险
 
-- <Risk or blocker>
+- <风险或阻塞项>
 
-## Next Steps
+## 下一步
 
-1. <Next action>
+1. <下一动作>

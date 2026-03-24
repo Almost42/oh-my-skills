@@ -67,6 +67,19 @@ do
   test -f "$path" || fail "$path missing"
 done
 
+rg -q "^# AGENTS.md" "$AGENTS_TEMPLATE" || fail "AGENTS.v3.md must keep AGENTS.md title"
+rg -q "^# 项目简介" "$PROJECT_BRIEF_TEMPLATE" || fail "project_brief.v3.md must use Chinese title"
+rg -q "^# 架构" "$ARCHITECTURE_TEMPLATE" || fail "architecture.v3.md must use Chinese title"
+rg -q "^# 知识索引" "$KNOWLEDGE_INDEX_TEMPLATE" || fail "knowledge-index.v3.md must use Chinese title"
+rg -q "^# 进度" "$PROGRESS_TEMPLATE" || fail "progress.v3.md must use Chinese title"
+rg -q "^Type: 发布 | 里程碑 | 初始化$" "$HISTORY_ENTRY_TEMPLATE" || fail "history-entry.v3.md must use Chinese type values"
+rg -q "^# 前端指南" "$CAPABILITY_TEMPLATE_DIR/frontend-guidelines.v3.md" || fail "frontend-guidelines.v3.md must use Chinese title"
+rg -q "^# 流程" "$CAPABILITY_TEMPLATE_DIR/flows.v3.md" || fail "flows.v3.md must use Chinese title"
+rg -q "^# 接口" "$CAPABILITY_TEMPLATE_DIR/interfaces.v3.md" || fail "interfaces.v3.md must use Chinese title"
+rg -q "^# 数据模型" "$CAPABILITY_TEMPLATE_DIR/data-model.v3.md" || fail "data-model.v3.md must use Chinese title"
+rg -q "^# 运维" "$CAPABILITY_TEMPLATE_DIR/operations.v3.md" || fail "operations.v3.md must use Chinese title"
+rg -q "^# 领域规则" "$CAPABILITY_TEMPLATE_DIR/domain-rules.v3.md" || fail "domain-rules.v3.md must use Chinese title"
+
 for field in \
   "Status: Draft | Active | Archived" \
   "Scope:" \
@@ -109,22 +122,22 @@ do
 done
 
 for section in \
-  "## Current Focus" \
-  "## Active Specs" \
-  "Current Node" \
-  "Last Confirmed" \
-  "Next Action"
+  "## 当前焦点" \
+  "## 活跃 Specs" \
+  "当前节点" \
+  "最后确认节点" \
+  "下一动作"
 do
   rg -q "$section" "$PROGRESS_TEMPLATE" || fail "progress.v3.md missing $section"
 done
 
 for section in \
-  "## Governance Positioning" \
-  "## Source-Of-Truth Boundaries" \
-  "## Loading Policy" \
-  "## Trigger Routing Summary" \
-  "## Update Policy" \
-  "## Tool Adapter Policy"
+  "## 治理定位" \
+  "## 事实边界" \
+  "## 加载策略" \
+  "## 触发路由摘要" \
+  "## 更新策略" \
+  "## 工具适配策略"
 do
   rg -q "^$section" "$AGENTS_TEMPLATE" || fail "AGENTS.v3.md missing $section"
 done
@@ -145,30 +158,30 @@ do
 done
 
 for section in \
-  "## Purpose" \
-  "## Users Or Consumers" \
-  "## Scope" \
-  "## Non-Goals" \
-  "## Success Criteria" \
-  "## Glossary"
+  "## 项目目的" \
+  "## 用户或使用方" \
+  "## 范围" \
+  "## 非目标" \
+  "## 成功标准" \
+  "## 术语表"
 do
   rg -q "^$section" "$PROJECT_BRIEF_TEMPLATE" || fail "project_brief.v3.md missing $section"
 done
 
 for section in \
-  "## System Shape" \
-  "## Module Boundaries" \
-  "## Cross-Module Dependencies" \
-  "## Extension Points" \
-  "## Structural Constraints"
+  "## 系统形态" \
+  "## 模块边界" \
+  "## 跨模块依赖" \
+  "## 扩展点" \
+  "## 结构约束"
 do
   rg -q "^$section" "$ARCHITECTURE_TEMPLATE" || fail "architecture.v3.md missing $section"
 done
 
 for term in \
-  "## Loading Rules" \
-  "## Knowledge Map" \
-  "## Transitional Compatibility" \
+  "## 加载规则" \
+  "## 知识映射" \
+  "## 迁移兼容" \
   "docs/pitfalls.md" \
   "docs/anti-patterns.md"
 do
@@ -236,7 +249,7 @@ rg -q "Verifying" verification_gate/SKILL.md || fail "verification_gate must sta
 rg -q "Current Node" progress_sync/SKILL.md || fail "progress_sync must report Current Node"
 rg -q "Next Action" progress_sync/SKILL.md || fail "progress_sync must report Next Action"
 rg -q "spec" progress_sync/SKILL.md || fail "progress_sync must summarize from spec state"
-rg -q "Current Node" "$PROGRESS_TEMPLATE" || fail "progress template must show node state"
+rg -q "当前节点" "$PROGRESS_TEMPLATE" || fail "progress template must show node state"
 
 rg -q "docs/lessons.md" lesson_capture/SKILL.md || fail "lesson_capture must target docs/lessons.md"
 rg -q "promotion" knowledge_review/SKILL.md || fail "knowledge_review must describe promotion"

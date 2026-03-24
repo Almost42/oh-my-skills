@@ -1,23 +1,23 @@
 ---
 Version: X.Y.Z
 Date: YYYY-MM-DD
-Type: Release | Milestone | Init
+Type: 发布 | 里程碑 | 初始化
 ---
 
-# <History Entry Title>
+# <历史条目标题>
 
-## Summary
+## 摘要
 
-- What happened
+- 本次发生了什么
 
-## Archived Specs
+## 已归档 Specs
 
 - `docs/spec/example.md`
 
-## Knowledge Updates
+## 知识更新
 
-- Durable knowledge promoted or reviewed
+- 已升格或已复核的长期知识
 
-## Open Follow-Ups
+## 未完成后续事项
 
-- Remaining debt or deferred work
+- 尚未处理的债务或延后项

@@ -1,21 +1,21 @@
-# Architecture
+# 架构
 
-## System Shape
+## 系统形态
 
-- High-level structure
+- 高层结构概览
 
-## Module Boundaries
+## 模块边界
 
-- Major modules and responsibilities
+- 主要模块及其职责
 
-## Cross-Module Dependencies
+## 跨模块依赖
 
-- Important interactions and constraints
+- 关键交互关系与约束
 
-## Extension Points
+## 扩展点
 
-- Where new capabilities or modules fit
+- 新能力或新模块应如何接入
 
-## Structural Constraints
+## 结构约束
 
-- Architectural rules that must remain true
+- 必须长期保持成立的架构规则

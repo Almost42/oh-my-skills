@@ -1,63 +1,63 @@
 # AGENTS.md
 
-## Governance Positioning
+## 治理定位
 
-- This repository uses OMS v3 as a repo-native governance kernel.
-- Project facts live in repository docs, not in transient prompts.
-- Workflow stage is owned by spec state, not by session narration.
+- 本仓库使用 OMS v3 作为仓库原生治理内核。
+- 项目事实应保存在仓库文档中，而不是瞬时提示词里。
+- 工作流阶段由 spec 状态持有，而不是由会话叙述持有。
 
-## Source-Of-Truth Boundaries
+## 事实边界
 
-- `docs/context/project_brief.md` owns project intent and scope.
-- `docs/architecture.md` owns system shape and structural constraints.
-- `docs/spec/*.md` own change-scoped agreements and workflow node state.
-- `docs/progress.md` summarizes current active state and acts as the current-state pointer.
-- `docs/knowledge/index.md` routes knowledge loading.
-- `docs/lessons.md` stores active corrections.
-- `docs/memory/` is an optional runtime snapshot for handoff or reconstruction only.
+- `docs/context/project_brief.md` 持有项目意图和范围。
+- `docs/architecture.md` 持有系统形态和结构约束。
+- `docs/spec/*.md` 持有变更范围协议和工作流节点状态。
+- `docs/progress.md` 汇总当前活跃状态，并充当当前状态指针。
+- `docs/knowledge/index.md` 负责知识加载路由。
+- `docs/lessons.md` 存放活跃纠错。
+- `docs/memory/` 仅作为交接或重建时的可选运行时快照。
 
-## Loading Policy
+## 加载策略
 
-- Baseline read set:
+- baseline 读取集合：
   - `AGENTS.md`
   - `docs/progress.md`
-  - active `docs/spec/*.md`
+  - 活跃 `docs/spec/*.md`
   - `docs/architecture.md`
   - `docs/knowledge/index.md`
-- Capability docs load only when the current task touches that capability.
-- Module docs load only when the spec explicitly depends on them.
-- `docs/memory/` is optional and only for handoff or reconstruction.
-- Treat `docs/spec/*.md` as the state machine, `docs/progress.md` as the pointer, and `docs/memory/` as support-only snapshot data.
+- capability docs 仅在当前任务涉及该能力时加载。
+- module docs 仅在 spec 明确依赖时加载。
+- `docs/memory/` 为可选项，只用于交接或重建。
+- 将 `docs/spec/*.md` 视为状态机，将 `docs/progress.md` 视为状态指针，将 `docs/memory/` 视为支持性快照数据。
 
-## Trigger Routing Summary
+## 触发路由摘要
 
-- New project -> `project_init`
-- Resume work -> `context_sync`
-- New requirement -> `requirement_probe`
-- Draft design review -> `feature_confirm (review)`
-- Execution approval -> `feature_confirm (lock)`
-- Code execution -> `code_implement_confirm`
-- Repair or rollback proposal -> `workflow_repair`
-- Completion claim -> `verification_gate`
-- Release -> `project_release`
+- 新项目 -> `project_init`
+- 恢复工作 -> `context_sync`
+- 新需求 -> `requirement_probe`
+- 设计草案评审 -> `feature_confirm (review)`
+- 执行批准 -> `feature_confirm (lock)`
+- 代码执行 -> `code_implement_confirm`
+- 修复或回退提案 -> `workflow_repair`
+- 完成声明 -> `verification_gate`
+- 发布 -> `project_release`
 
-## Update Policy
+## 更新策略
 
-- Keep project facts in their owning documents.
-- Update `docs/progress.md` as the lightweight active-state summary.
-- Promote repeated lessons only through reviewed durable knowledge.
-- Do not create `docs/memory/` by default.
+- 将项目事实更新到各自负责的文档中。
+- 将 `docs/progress.md` 维护为轻量的活跃状态摘要。
+- 重复出现的 lessons 只通过审核后升格为长期知识。
+- 默认不创建 `docs/memory/`。
 
-## Rule References
+## 规则引用
 
-- `R1`: rule files do not own project facts.
-- `R4`: `docs/memory/` is optional and support-only.
-- `R13`: `context_sync` is the default recovery path.
-- `R14`: `session_resume` is escalation, not default.
-- `R20`: spec owns node state and `docs/progress.md` only summarizes it.
-- `R22`: key workflow responses must show current node and next step.
+- `R1`: 规则文件不持有项目事实。
+- `R4`: `docs/memory/` 是可选且仅作支持。
+- `R13`: `context_sync` 是默认恢复路径。
+- `R14`: `session_resume` 是升级路径而不是默认路径。
+- `R20`: spec 持有节点状态，`docs/progress.md` 只做摘要。
+- `R22`: 关键工作流输出必须展示当前节点和下一步。
 
-## Tool Adapter Policy
+## 工具适配策略
 
-- Tool-specific rule files may extend OMS but must not redefine source-of-truth ownership.
-- Compatibility paths remain explicit and documented.
+- 工具特定规则文件可以扩展 OMS，但不得重定义 source-of-truth 的归属边界。
+- 兼容路径必须保持显式且可文档化。

@@ -1,25 +1,25 @@
-# Project Brief
+# 项目简介
 
-## Purpose
+## 项目目的
 
-- What the project is for
+- 项目是做什么的
 
-## Users Or Consumers
+## 用户或使用方
 
-- Who depends on the project
+- 谁依赖这个项目
 
-## Scope
+## 范围
 
-- High-level in-scope responsibilities
+- 高层级的职责范围
 
-## Non-Goals
+## 非目标
 
-- High-level out-of-scope responsibilities
+- 明确不在当前范围内的事项
 
-## Success Criteria
+## 成功标准
 
-- What success looks like
+- 什么结果代表成功
 
-## Glossary
+## 术语表
 
-- Domain terms and definitions
+- 领域术语及定义

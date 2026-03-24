@@ -1,21 +1,21 @@
-# Flows
+# 流程
 
-## Flow Inventory
+## 流程清单
 
-- Key user or system flows
+- 关键用户流程或系统流程
 
-## Entry Points
+## 入口点
 
-- Where each flow begins
+- 每条流程从哪里开始
 
-## Success Paths
+## 成功路径
 
-- Expected happy-path transitions
+- 预期的正常路径流转
 
-## Failure Paths
+## 失败路径
 
-- Error, retry, and fallback behavior
+- 错误、重试与回退行为
 
-## Observability Notes
+## 可观测性说明
 
-- Signals or logs useful for flow debugging
+- 对流程排障有帮助的信号或日志

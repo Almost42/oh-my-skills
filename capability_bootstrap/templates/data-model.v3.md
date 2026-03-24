@@ -1,21 +1,21 @@
-# Data Model
+# 数据模型
 
-## Core Entities
+## 核心实体
 
-- Main records and their purpose
+- 主要记录对象及其用途
 
-## Relationships
+## 关系
 
-- How entities connect
+- 实体之间如何关联
 
-## Invariants
+## 不变量
 
-- Data rules that must always remain true
+- 必须始终成立的数据规则
 
-## Migration Notes
+## 迁移说明
 
-- Schema or data evolution concerns
+- 结构或数据演进时需要关注的事项
 
-## Ownership
+## 所有权
 
-- Which modules own which data responsibilities
+- 哪些模块负责哪些数据职责

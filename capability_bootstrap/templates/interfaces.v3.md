@@ -1,21 +1,21 @@
-# Interfaces
+# 接口
 
-## Public Interfaces
+## 对外接口
 
-- APIs, commands, events, or integration surfaces
+- API、命令、事件或集成暴露面
 
-## Input Contracts
+## 输入契约
 
-- Expected inputs and validation rules
+- 预期输入及校验规则
 
-## Output Contracts
+## 输出契约
 
-- Response shape and behavior guarantees
+- 输出结构与行为保证
 
-## Compatibility Notes
+## 兼容性说明
 
-- Versioning and backward-compatibility concerns
+- 版本演进与向后兼容注意事项
 
-## Change Control
+## 变更控制
 
-- How interface changes should be reviewed
+- 接口变更应如何评审

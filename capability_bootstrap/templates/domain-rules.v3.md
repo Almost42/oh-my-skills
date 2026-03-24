@@ -1,21 +1,21 @@
-# Domain Rules
+# 领域规则
 
-## Domain Glossary
+## 领域术语
 
-- Shared business vocabulary
+- 共享业务词汇表
 
-## Business Rules
+## 业务规则
 
-- Rules that drive system behavior
+- 驱动系统行为的规则
 
-## Guardrails
+## 守卫规则
 
-- Prohibited or restricted actions
+- 被禁止或受限制的动作
 
-## Exceptions
+## 例外情况
 
-- Known edge cases and exception handling
+- 已知边界情况与异常处理
 
-## Audit Notes
+## 审计说明
 
-- Traceability or compliance requirements
+- 可追溯性或合规要求

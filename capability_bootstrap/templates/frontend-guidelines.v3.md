@@ -1,21 +1,21 @@
-# Frontend Guidelines
+# 前端指南
 
-## Experience Principles
+## 体验原则
 
-- Core UI and interaction expectations
+- 核心 UI 与交互预期
 
-## Component Boundaries
+## 组件边界
 
-- Where UI responsibilities start and stop
+- UI 职责从哪里开始、到哪里结束
 
-## State And Data Flow
+## 状态与数据流
 
-- How UI state and server data should interact
+- UI 状态与服务端数据应如何协作
 
-## Accessibility And Responsiveness
+## 可访问性与响应式
 
-- Baseline accessibility and layout rules
+- 基础可访问性与布局规则
 
-## Verification Notes
+## 验证说明
 
-- How frontend changes should be checked
+- 前端改动应如何验证

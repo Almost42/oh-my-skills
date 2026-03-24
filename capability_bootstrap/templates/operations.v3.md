@@ -1,21 +1,21 @@
-# Operations
+# 运维
 
-## Runtime Environments
+## 运行环境
 
-- Where the system runs
+- 系统运行在哪些环境中
 
-## Deploy And Release
+## 部署与发布
 
-- How changes are shipped
+- 变更如何发布上线
 
-## Secrets And Config
+## 密钥与配置
 
-- Operational configuration boundaries
+- 运维配置边界与管理方式
 
-## Monitoring And Recovery
+## 监控与恢复
 
-- Health, alerting, and rollback expectations
+- 健康检查、告警与回滚预期
 
-## Operational Constraints
+## 运维约束
 
-- Environment-specific restrictions
+- 环境特定限制
