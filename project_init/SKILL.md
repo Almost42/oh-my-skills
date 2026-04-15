@@ -6,188 +6,91 @@ description: >-
 
 # 项目初始化
 
-OMS v3 的仓库接入与基线对账入口。它既能做冷启动，也能处理旧文档体系迁移和已有 OMS 档案与代码现状的重新对账。
+OMS v3 的仓库接入与基线对账入口。支持冷启动、旧文档体系迁移和已有档案重新对账。
+
+**执行时宣告**："[project_init] 初始化/迁移/对账项目文档..."
 
 ## When to Use
 
-- 用户明确要求初始化项目。
 - 仓库缺失 `AGENTS.md` 或 OMS v3 baseline 文档。
-- 需要把现有项目纳入 OMS v3。
-- 需要把已有文档体系迁移进 OMS v3。
-- 已存在 OMS v3 文档，但负责人需要重新扫描代码并补齐结构性事实或进度摘要。
+- 需要把现有项目或旧文档体系纳入 OMS v3。
+- 已存在 OMS v3 文档，但需要重新扫描代码补齐结构性事实或进度摘要。
 
 ## Modes
 
-### `bootstrap`
-
-- 适用于新项目或缺失 OMS v3 baseline 的仓库。
-- 目标是创建最小治理骨架与能力文档槽位。
-
-### `migrate`
-
-- 适用于已有 docs 体系、v2 文档体系或团队自定义文档体系迁入 OMS v3。
-- 目标是建立旧文档到 OMS v3 文档的映射，迁入可确认的结构性事实，同时保留原文档。
-
-### `reconcile`
-
-- 适用于仓库已存在 OMS v3 baseline，但代码和文档发生漂移。
-- 目标是重新扫描当前代码，补齐 `architecture`、capability docs 与 `progress` 摘要，而不是重跑一次冷启动。
+- `bootstrap`：新项目或缺失 OMS v3 baseline 的仓库，创建最小治理骨架。
+- `migrate`：已有 docs 体系迁入 OMS v3，建立映射，保留原文档。
+- `reconcile`：已存在 OMS v3 baseline，重新扫描代码补齐漂移，不重跑冷启动。
 
 ## Instructions
 
-### Step 1: Detect Mode And Scan The Repository
-先判断当前应进入哪种 mode：
+### Step 1: Detect Mode And Scan
 
-- 缺失 `AGENTS.md` 或缺失 OMS v3 baseline -> `bootstrap`
-- 已有 docs 体系但缺失完整 OMS v3 baseline，或明显存在 v2 / 自定义文档结构 -> `migrate`
-- 已有 OMS v3 baseline，且用户意图是“重新扫描代码并刷新档案” -> `reconcile`
-
-随后统一扫描：
-
-识别：
-
-- 项目名称
-- 技术栈
-- 目录结构
-- 依赖与构建工具
-- 框架约定
-- 是否存在前端、接口、数据、运维、领域规则等能力信号
-- 现有 docs 目录与命名方式
-- 是否存在 v2 文档或自定义文档结构
-- 是否已存在 OMS v3 baseline
-- 代码结构与现有文档之间是否存在明显漂移
-- 现有 always-on docs 是否符合最新 v3 规范
-- `AGENTS.md` 是否过长、混入项目事实或已经偏离精简治理模板
+判断 mode（缺 baseline → `bootstrap`；有旧 docs 结构 → `migrate`；已有 OMS v3 但漂移 → `reconcile`），扫描识别：技术栈、目录结构、能力信号（前端/接口/数据/运维/领域规则）、现有 docs 与 OMS v3 的差距、`AGENTS.md` 是否过长。
 
 ### Step 2: Create Always-On Structure
-默认建立以下最小结构：
 
-```text
-docs/
-├── context/
-├── spec/
-├── knowledge/
-└── history/
-```
-
-默认不创建 `docs/memory/`。只有后续确有交接或重建需要时，才由 `session_archive` / `session_resume` 启用。
+默认建立：`docs/context/`、`docs/spec/`、`docs/knowledge/`、`docs/history/`。不创建 `docs/memory/`（可选，按需启用）。
 
 ### Step 3: Bootstrap Or Fill Missing Always-On Documents
+
 使用本 skill 自带模板生成或补齐：
 
-- `AGENTS.md` <- `project_init/templates/AGENTS.v3.md`
-- `docs/context/project_brief.md` <- `project_init/templates/project_brief.v3.md`
-- `docs/architecture.md` <- `project_init/templates/architecture.v3.md`
-- `docs/progress.md` <- `project_init/templates/progress.v3.md`
-- `docs/knowledge/index.md` <- `project_init/templates/knowledge-index.v3.md`
-- `docs/history/v0-init.md` <- `project_init/templates/history-entry.v3.md`
+| 目标文件 | 模板 |
+| :--- | :--- |
+| `AGENTS.md` | `project_init/templates/AGENTS.v3.md` |
+| `docs/context/project_brief.md` | `project_init/templates/project_brief.v3.md` |
+| `docs/architecture.md` | `project_init/templates/architecture.v3.md` |
+| `docs/progress.md` | `project_init/templates/progress.v3.md` |
+| `docs/knowledge/index.md` | `project_init/templates/knowledge-index.v3.md` |
+| `docs/history/v0-init.md` | `project_init/templates/history-entry.v3.md` |
 
-规则：
+`bootstrap`：缺失则创建，已存在则不覆盖。`migrate`：缺失则创建，已存在则重写为最新 v3 结构（保留原文档事实）。`reconcile`：不重建骨架，只做规范收敛和内容更新。
 
-- `bootstrap`
-  - 缺失则创建
-  - 已存在则不覆盖，提示人工审阅
-- `migrate`
-  - 缺失则创建
-  - 已存在则在保留原文档事实的前提下，重写为最新 OMS v3 结构
-- `reconcile`
-  - 不重建骨架
-  - 对已有文档先做规范收敛，再更新可稳定确认的结构性事实与摘要性内容
+不得因代码扫描结果而静默改写需求意图、验收标准或 spec 节点确认。
 
-不要因为代码扫描结果而静默改写需求意图、验收标准或 spec 节点确认。
+### Step 4: Normalize Existing Always-On Docs
 
-### Step 4: Normalize Existing Always-On Docs To Latest V3 Shape
-若 mode 为 `migrate` 或 `reconcile`，先检查基础文档是否符合当前 v3 规范。
+`migrate` 或 `reconcile` 时，先检查基础文档是否符合 v3 规范。详细规范要求见 `project_init/references/normalize-docs.md`。
 
-规范收敛要求：
+核心要求：`AGENTS.md` 超过 50 行时压缩重写；`docs/progress.md` 保持 summary-only；各文档不混入非职责内容。
 
-- `AGENTS.md`
-  - 必须收敛为当前精简治理模板
-  - 目标是治理边界、加载策略、触发路由、更新策略
-  - 不应保留历史说明、长示例、项目事实堆叠
-  - 若超过 50 行，应主动压缩并重写，而不是继续沿用旧结构
-- `docs/progress.md`
-  - 必须保持 summary-only
-  - 不应承载节点真相、长篇分析或历史记录
-- `docs/architecture.md`
-  - 保留系统结构、边界与约束
-  - 不应混入任务流水账
-- `docs/knowledge/index.md`
-  - 保留知识路由与加载规则
-  - 不应混入会话级记录
+### Step 5: Migrate Or Reconcile Existing Docs
 
-对不符合规范的已有文档：
+`migrate` 或 `reconcile` 时：识别旧文档到 OMS v3 的映射，提取可稳定迁移的结构事实，记录无法自动确认的内容，保留原文档。
 
-- 可以重写其结构与表达方式
-- 需要尽量保留其中仍然有效的治理事实
-- 不需要保留旧的版式、冗余段落和超长说明
+可迁移：项目简介、架构边界、capability 稳定规则、progress 当前状态、AGENTS 有效治理规则。
+不得推断：原始需求意图、已批准设计结论、验收标准确认状态、spec 节点状态。
 
-### Step 5: Migrate Or Reconcile Existing Docs Carefully
-若 mode 为 `migrate` 或 `reconcile`，需要额外执行：
+### Step 5.5: Migrate Legacy Lessons And Normalize Spec Structure
 
-- 识别旧文档到 OMS v3 文档的映射关系
-- 提取可稳定迁移的项目事实、结构事实和能力边界
-- 记录无法自动确认、需要人工确认的内容
-- 保留原文档，不删除、不静默覆盖
+无论哪种 mode 都执行。详细操作见 `project_init/references/lessons-migration.md`。
 
-可以迁移或更新的内容：
-
-- 项目简介类信息
-- 架构与模块边界
-- capability 文档中的稳定规则
-- `docs/progress.md` 的摘要性当前状态
-- 现有 `AGENTS.md` 中仍然有效的治理规则
-
-不得仅凭代码自动推断的内容：
-
-- 原始需求意图
-- 已批准的设计结论
-- 验收标准是否被确认
-- spec 是否应推进到新的 workflow node
+**Lessons**：若 `docs/lessons.md` 存在且 `docs/knowledge/lessons/` 为空，按分类迁移后删除原文件。
+**Spec**：扫描 `docs/spec/`，标记超过 150 行的单文件 spec 为"建议拆分"。
 
 ### Step 6: Instantiate Capability Documents
-根据扫描结果补建相关文档。能力模板由 `capability_bootstrap/templates/` 提供：
 
-- UI / Client -> `docs/frontend/guidelines.md` <- `capability_bootstrap/templates/frontend-guidelines.v3.md`
-- Flow-heavy -> `docs/flows.md` <- `capability_bootstrap/templates/flows.v3.md`
-- Interfaces -> `docs/interfaces.md` <- `capability_bootstrap/templates/interfaces.v3.md`
-- Data -> `docs/data_model.md` <- `capability_bootstrap/templates/data-model.v3.md`
-- Operations -> `docs/operations.md` <- `capability_bootstrap/templates/operations.v3.md`
-- Domain Rules -> `docs/domain_rules.md` <- `capability_bootstrap/templates/domain-rules.v3.md`
+按扫描结果补建（模板来自 `capability_bootstrap/templates/`）：
 
-未检测到的能力不创建文档，只在 `AGENTS.md` 中登记 dormant slots 和触发条件。
+| 能力信号 | 目标文件 |
+| :--- | :--- |
+| UI / Client | `docs/frontend/guidelines.md` |
+| Flow-heavy | `docs/flows.md` |
+| Interfaces | `docs/interfaces.md` |
+| Data | `docs/data_model.md` |
+| Operations | `docs/operations.md` |
+| Domain Rules | `docs/domain_rules.md` |
 
-若 mode 为 `reconcile` 且发现 capability drift：
+未检测到的能力只在 `AGENTS.md` 中登记 dormant slots，不创建文档。`reconcile` 发现 capability drift 时路由到 `capability_bootstrap`。
 
-- 优先补齐缺失 capability docs
-- 必要时把后续动作路由到 `capability_bootstrap`
+### Step 7: Merge Tool-Specific Rules
 
-### Step 7: Merge Tool-Specific Rules Carefully
-若仓库存在工具特定规则文件：
+若存在工具特定规则文件：识别项目约定，与 OMS v3 source-of-truth 边界对齐，保留原文件不静默覆盖。
 
-- 识别项目约定
-- 与 OMS v3 的 source-of-truth 边界对齐
-- 保留原文件，不静默覆盖
+### Step 8: Decide Next Action And Report
 
-### Step 8: Decide Next Action
-根据结果路由：
-
-- `bootstrap` / `migrate` 完成后默认进入 `context_sync`
-- 仅摘要状态过期 -> `progress_sync`
-- 发现 capability docs 缺口 -> `capability_bootstrap`
-- 发现 spec 与代码现状不闭环 -> `workflow_repair`
-
-### Step 9: Report
-输出：
-
-- 当前 `Mode`
-- 已创建的 always-on docs
-- 已按最新 v3 规范重写的文档
-- 已补齐或迁移的 OMS 文档
-- 已实例化的 capability docs
-- 已登记的 dormant slots
-- 检测到的旧文档体系或漂移点
-- 是否检测到 tool-specific rules
+路由：`bootstrap`/`migrate` 完成 → `context_sync`；摘要过期 → `progress_sync`；capability 缺口 → `capability_bootstrap`；spec 不闭环 → `workflow_repair`。
 
 ## Output
 
@@ -196,26 +99,17 @@ docs/
 
 **Mode**: bootstrap | migrate | reconcile
 **Project**: ...
-**Detected Stack**:
-- ...
+**Detected Stack**: ...
 
-**Created Always-On Docs**:
-- ...
+**Created Always-On Docs**: ...
+**Normalized Docs**: ...
+**Migrated Or Reconciled Docs**: ...
+**Created Capability Docs**: ...
+**Dormant Slots**: ...
+**Drift Findings**: ...
 
-**Normalized Docs**:
-- ...
-
-**Migrated Or Reconciled Docs**:
-- ...
-
-**Created Capability Docs**:
-- ...
-
-**Dormant Slots**:
-- ...
-
-**Drift Findings**:
-- ...
+**Lessons Migration**: completed | already classified | no legacy file
+**Spec Structure**: all single-file | mixed | all multi-file | needs split recommendation
 
 **Memory Mode**: not enabled by default
 **Next Action**: `context_sync` | `progress_sync` | `capability_bootstrap` | `workflow_repair`
