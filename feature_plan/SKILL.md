@@ -35,7 +35,7 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 
 必读（每次）：
 
-1. 目标 spec 状态锚点（`docs/spec/{name}.md` 或 `docs/spec/{name}/index.md`）
+1. 目标 spec 状态锚点（`docs/spec/YYYY-MM-DD-{slug}.md` 或 `docs/spec/YYYY-MM-DD-{slug}/index.md`）
 2. `docs/knowledge/index.md`
 3. 与当前 capability / module tags 匹配的知识文件
 4. `docs/knowledge/lessons/design.md`（若存在）
@@ -56,20 +56,25 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 
 根据 `Scope` 确定 spec 类型：
 
+- spec 文件或目录名必须包含创建日期（精确到日），统一格式为 `YYYY-MM-DD-{slug}`；日期一旦创建不随后续更新改变。
+- `slug` 使用短横线小写英文或项目既有命名，表达需求主题；不得创建无日期前缀的 `docs/spec/create-task.md` 或 `docs/spec/create-task/`。
+- `docs/spec/index.md` 是 spec 根索引，简要记录每个需求关注的模块、处理方向、日期和状态锚点；创建或修订 spec 时同步更新该索引，但节点真相仍在 spec 状态锚点。
+- OMS 文档正文默认使用中文；路径、代码标识符、API 名称、frontmatter 枚举值和既有英文术语可保留英文。
+
 - `Scope: Patch` → **Single-file mode**
-  - 文件：`docs/spec/{name}.md`
+  - 文件：`docs/spec/YYYY-MM-DD-{slug}.md`
   - 模板：`feature_plan/templates/spec.v3.md`
   - 内容完整写入单文件
 
 - `Scope: Feature` → **Multi-file mode**
-  - 目录：`docs/spec/{name}/`
+  - 目录：`docs/spec/YYYY-MM-DD-{slug}/`
   - 状态锚点：`index.md`（持有所有 frontmatter，状态变更只写这里）
-  - 需求内容：`req.md`（Business Context、Requirement Scope、Acceptance Criteria）
-  - 设计内容：`design.md`（Technical Approach、Interface Impact、Impact Analysis）
+  - 需求内容：`req.md`（业务背景、需求范围、验收标准）
+  - 设计内容：`design.md`（技术方案、接口影响、影响分析）
   - 实施包：`impl.md`（ReadyForImplementation 后由 feature_confirm 填充）
   - 模板：`feature_plan/templates/spec-index.v3.md` / `spec-req.v3.md` / `spec-design.v3.md` / `spec-impl.v3.md`
 
-✅ Feature 类需求 → 创建 `docs/spec/create-task/index.md` + `req.md` + `design.md` + `impl.md`（空）
+✅ Feature 类需求 → 创建 `docs/spec/2026-04-20-create-task/index.md` + `req.md` + `design.md` + `impl.md`（空），并更新 `docs/spec/index.md`
 ❌ Feature 类需求 → 把所有内容堆进一个 `create-task.md`
 
 ### Step 3: Decide Whether To Create Or Revise
@@ -80,7 +85,7 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 
 ### Step 4: Write Or Update The DesignDraft Spec
 
-状态锚点（single: `spec/{name}.md` / multi: `spec/{name}/index.md`）必须保留并明确：
+状态锚点（single: `spec/YYYY-MM-DD-{slug}.md` / multi: `spec/YYYY-MM-DD-{slug}/index.md`）必须保留并明确：
 
 - `Status: Draft`
 - `Scope: Feature | Patch`
@@ -94,11 +99,13 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 
 对 multi-file spec，设计内容写入 `design.md`，需求内容写入或更新 `req.md`，`index.md` 只持有 frontmatter 和摘要，不重复详细内容。
 
+同步 `docs/spec/index.md` 时只写简略检索信息：spec 路径、创建日期、Scope、Current_Node、Module_Tags、处理方向、最近更新日期；不得把详细需求、设计或实施包复制进去。
+
 ### Step 5: Run YAGNI Complexity Check
 
 写完设计草案后，必须自查：
 
-- [ ] 方案中每一项是否都能在 `req.md`（或 Requirement Scope）中找到对应来源？
+- [ ] 方案中每一项是否都能在 `req.md`（或"需求范围"）中找到对应来源？
 - [ ] 是否存在"以防万一"的抽象或接口设计？
 - [ ] 如果去掉最复杂的那部分，需求还能满足吗？
 
@@ -124,7 +131,7 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 ```markdown
 ## Feature Plan
 
-**Spec**: `docs/spec/...`
+**Spec**: `docs/spec/YYYY-MM-DD-...`
 **Scope**: Feature | Patch
 **Spec Mode**: single | multi
 **Current Node**: DesignDraft

@@ -28,8 +28,8 @@ OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完
 
 先读取：
 
-1. spec 状态锚点（`docs/spec/{name}.md` 或 `docs/spec/{name}/index.md`）
-2. 若 multi-file spec：读取 `req.md`（验收标准）和 `impl.md`（Test Plan、Verification Steps）
+1. spec 状态锚点（`docs/spec/YYYY-MM-DD-{slug}.md` 或 `docs/spec/YYYY-MM-DD-{slug}/index.md`）
+2. 若 multi-file spec：读取 `req.md`（验收标准）和 `impl.md`（测试计划、验证步骤）
 3. `docs/knowledge/lessons/testing.md`（若存在）
 4. 确认 `Current_Node: Verifying`
 
@@ -49,7 +49,7 @@ OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完
 
 ### Step 3: Verify Acceptance Criteria Line By Line
 
-逐条核对 `req.md`（或 Acceptance Criteria）中的每一项：
+逐条核对 `req.md`（或"验收标准"）中的每一项：
 
 - [ ] 每条验收标准是否有对应的证据？
 - [ ] 是否存在验收标准没有对应测试/检查的情况？
@@ -90,7 +90,7 @@ OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完
 ```markdown
 ## Verification Gate
 
-**Current Spec**: `docs/spec/...`
+**Current Spec**: `docs/spec/YYYY-MM-DD-...`
 **Spec Mode**: single | multi
 **Current Node**: Verifying
 **Result**: stay | advance | repair_required
@@ -101,8 +101,8 @@ OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完
 - 通过/失败: ...
 
 **Acceptance Criteria Check**:
-- [ ] Criterion 1: ...
-- [ ] Criterion 2: ...
+- [ ] 标准 1: ...
+- [ ] 标准 2: ...
 
 **Next Action**: `code_implement_confirm` | `workflow_repair` | `project_release`
 ```

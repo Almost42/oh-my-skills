@@ -32,6 +32,8 @@
 
 | 发现 | 处置 |
 | :--- | :--- |
-| `docs/spec/{name}.md` 超过 150 行 | 在 Report 中标记"建议拆分为 multi-file spec"，不自动执行 |
-| `docs/spec/{name}/index.md`（multi-file）| 格式正确，无需处理 |
+| 缺少 `docs/spec/index.md` | 用模板补建，并按现有 spec 填入简略索引 |
+| `docs/spec/create-task.md` 或 `docs/spec/create-task/` 这类旧路径缺少 `YYYY-MM-DD-` 日期前缀 | 优先用 `Created` frontmatter 或可确认历史日期补齐；无法确认时报告并等待用户确认 |
+| `docs/spec/YYYY-MM-DD-{slug}.md` 超过 150 行 | 在 Report 中标记"建议拆分为 multi-file spec"，不自动执行 |
+| `docs/spec/YYYY-MM-DD-{slug}/index.md`（multi-file）| 格式正确，确保根索引存在对应条目 |
 | 旧格式 spec 缺少 `Split_Mode` 字段 | 在 Report 中标记需补充该字段 |

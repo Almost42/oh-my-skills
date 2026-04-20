@@ -1,20 +1,21 @@
-# <Spec Title> — Requirements
+# <Spec 标题> — 需求
 
 > 状态锚点：[index.md](./index.md)（所有节点状态变更只写 index.md）
+> OMS 文档正文默认使用中文；路径、代码标识符、API 名称、frontmatter 枚举值和既有英文术语可保留英文。
 
-## Business Context
+## 业务背景
 
-- Why this change exists
-- Who is affected
-- What success looks like
+- 变更原因
+- 影响对象
+- 成功标准
 
-## Requirement Scope
+## 需求范围
 
-- In scope
-- Out of scope
-- Explicitly not in scope
+- 范围内
+- 范围外
+- 明确不在范围内
 
-## Acceptance Criteria
+## 验收标准
 
-- [ ] Criterion 1
-- [ ] Criterion 2
+- [ ] 标准 1
+- [ ] 标准 2

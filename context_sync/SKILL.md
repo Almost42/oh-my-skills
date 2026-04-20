@@ -24,14 +24,15 @@ OMS v3 的默认恢复入口。优先依赖 baseline 文档，不主动加载非
 
 1. `AGENTS.md`
 2. `docs/progress.md`
-3. `docs/knowledge/index.md`
+3. `docs/spec/index.md`（若存在，用于理解历史模块关注点）
+4. `docs/knowledge/index.md`
 
 **第二步：按 progress.md 结果定位 spec**
 
 从 `docs/progress.md` 识别当前活跃 spec 列表：
 
 **情况 A：只有一个活跃 spec**
-→ 读取该 spec 的状态锚点（`docs/spec/{name}.md` 或 `docs/spec/{name}/index.md`）
+→ 读取该 spec 的状态锚点（`docs/spec/YYYY-MM-DD-{slug}.md` 或 `docs/spec/YYYY-MM-DD-{slug}/index.md`）
 
 **情况 B：有多个活跃 spec**
 → 不加载任何 spec，向用户说明并请求确认：

@@ -34,10 +34,11 @@ Lessons 文件路径：`docs/knowledge/lessons/{design|code|testing|workflow|dom
 
 ## Spec 引用规范
 
-- Single-file spec：直接引用 `docs/spec/{name}.md`
-- Multi-file spec：引用状态锚点 `docs/spec/{name}/index.md`；按需引用子文档 `docs/spec/{name}/req.md`、`design.md`、`impl.md`
+- 先用 `docs/spec/index.md` 按模块和处理方向定位历史 spec，再按需加载具体状态锚点。
+- Single-file spec：直接引用 `docs/spec/YYYY-MM-DD-{slug}.md`
+- Multi-file spec：引用状态锚点 `docs/spec/YYYY-MM-DD-{slug}/index.md`；按需引用子文档 `docs/spec/YYYY-MM-DD-{slug}/req.md`、`design.md`、`impl.md`
 - 禁止使用段落描述替代文件路径（如"docs/offerwall-refactor 相关内容"）
-- 大文件内部有明确段落时，可使用锚点：`docs/spec/{name}/design.md#api-contracts`
+- 大文件内部有明确段落时，可使用锚点：`docs/spec/YYYY-MM-DD-{slug}/design.md#api-contracts`
 
 ## 迁移兼容
 

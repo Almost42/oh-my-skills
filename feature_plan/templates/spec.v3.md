@@ -14,63 +14,65 @@ Created: YYYY-MM-DD
 Updated: YYYY-MM-DD
 ---
 
-# <Spec Title>
+# <Spec 标题>
 
-## Business Context
+> OMS 文档正文默认使用中文；路径、代码标识符、API 名称、frontmatter 枚举值和既有英文术语可保留英文。
 
-- Why this change exists
-- Who is affected
-- What success looks like
+## 业务背景
 
-## Requirement Scope
+- 变更原因
+- 影响对象
+- 成功标准
 
-- In scope
-- Out of scope
-- Scope notes (Patch: patch path 和改动边界)
+## 需求范围
 
-## Technical Approach
+- 范围内
+- 范围外
+- 范围说明（Patch：patch path 和改动边界）
 
-- Primary design approach
-- Constraints and tradeoffs
-- Capability and module tags
+## 技术方案
 
-## Interface And Contract Impact
+- 主要设计方案
+- 约束与取舍
+- capability / module tags
 
-- Interface changes
-- Data or workflow implications
-- Compatibility notes
+## 接口与契约影响
 
-## Impact Analysis
+- 接口变化
+- 数据或流程影响
+- 兼容性说明
 
-- Files likely to change
-- Capability docs that must stay aligned
-- Known conflicts with active specs
-- Rollback sensitivity
+## 影响分析
 
-## Acceptance Criteria
+- 预计改动文件
+- 需要同步的 capability docs
+- 与活跃 spec 的已知冲突
+- 回滚敏感点
 
-- [ ] Criterion 1
-- [ ] Criterion 2
+## 验收标准
 
-## Execution Package
+- [ ] 标准 1
+- [ ] 标准 2
+
+## 执行包
 
 _(由 feature_confirm lock 时填充)_
 
-### Files To Change
+### 改动文件
 
 -
 
-### Rollback Plan
+### 回滚计划
 
 -
 
-### Test Plan
+### 测试计划
 
 -
 
-## Workflow Notes
+## 工作流记录
 
-### Repair Proposal
+### 修复提案
 
 - Trigger:
 - Reason:

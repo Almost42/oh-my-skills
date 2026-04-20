@@ -12,7 +12,7 @@ Type: 发布 | 里程碑 | 初始化
 
 ## 已归档 Specs
 
-- `docs/spec/example.md`
+- `docs/spec/YYYY-MM-DD-example.md`
 
 ## 知识更新
 

@@ -1,7 +1,8 @@
 # 进度
 
-> 节点状态的 source of truth 仍是 `docs/spec/*.md`。本文件只做摘要。
+> 节点状态的 source of truth 仍是 `docs/spec/YYYY-MM-DD-*.md` 或 `docs/spec/YYYY-MM-DD-*/index.md`。本文件只做摘要。
 > 可将本文件理解为当前状态指针，而不是完整状态机，也不是会话快照。
+> 历史需求的模块与处理方向索引见 `docs/spec/index.md`。
 
 ## 当前焦点
 
@@ -11,7 +12,7 @@
 
 | Spec | 范围 | 当前节点 | 最后确认节点 | 阻塞项 | 下一动作 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `docs/spec/example.md` | Feature | DesignDraft | DesignDraft | 等待评审 | `feature_confirm (review)` |
+| `docs/spec/YYYY-MM-DD-example.md` | Patch | DesignDraft | DesignDraft | 等待评审 | `feature_confirm (review)` |
 
 ## 当前风险
 

@@ -19,7 +19,7 @@ OMS v3 的需求澄清入口。先把需求边界问清楚，再决定是留在 
 ## When to Use
 
 - 用户提出新功能、修改请求、需求补充或模糊问题。
-- 当前还不能稳定写出 `docs/spec/*.md` 的设计草案。
+- 当前还不能稳定写出 `docs/spec/YYYY-MM-DD-*.md` 或 `docs/spec/YYYY-MM-DD-*/index.md` 的设计草案。
 - 需要先判断这是 `Scope: Feature` 还是 `Scope: Patch`。
 
 ## Never
@@ -37,9 +37,10 @@ OMS v3 的需求澄清入口。先把需求边界问清楚，再决定是留在 
 
 1. `AGENTS.md`
 2. `docs/progress.md`
-3. 相关活跃 spec 状态锚点（`docs/spec/*.md` 或 `docs/spec/*/index.md`）
-4. 当前问题直接涉及的 capability docs
-5. `docs/knowledge/lessons/design.md`（若存在）
+3. `docs/spec/index.md`（按模块和处理方向定位历史 spec，若存在）
+4. 相关活跃 spec 状态锚点（`docs/spec/YYYY-MM-DD-*.md` 或 `docs/spec/YYYY-MM-DD-*/index.md`）
+5. 当前问题直接涉及的 capability docs
+6. `docs/knowledge/lessons/design.md`（若存在）
 
 不要因为"先看看再说"而整库扫描文档。
 
@@ -65,11 +66,11 @@ OMS v3 的需求澄清入口。先把需求边界问清楚，再决定是留在 
   - 引入新能力
   - 跨模块或跨文档影响明显
   - 涉及接口、数据、流程、架构或长期约束变化
-  - 将使用 multi-file spec（`docs/spec/{name}/`）
+  - 将使用 multi-file spec（`docs/spec/YYYY-MM-DD-{slug}/`）
 - `Patch`
   - 局部修复、纠偏、兼容修正、文案/行为小改
   - 影响面可明确圈定
-  - 将使用 single-file spec（`docs/spec/{name}.md`）
+  - 将使用 single-file spec（`docs/spec/YYYY-MM-DD-{slug}.md`）
 
 ### Step 4: Decide The Node
 
@@ -90,6 +91,8 @@ OMS v3 的需求澄清入口。先把需求边界问清楚，再决定是留在 
 - 涉及的 capability tags
 - 涉及的 module tags
 - 是否需要先调用 `capability_bootstrap`
+- 若进入 spec 写作，提醒后续 `feature_plan` 使用 `YYYY-MM-DD-{slug}` 命名并更新 `docs/spec/index.md`
+- OMS 文档正文默认使用中文；路径、代码标识符、API 名称、frontmatter 枚举值和既有英文术语可保留英文。
 
 ### Step 6: Route Explicitly
 

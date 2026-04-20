@@ -1,33 +1,34 @@
-# <Spec Title> — Implementation Package
+# <Spec 标题> — 实施包
 
 > 状态锚点：[index.md](./index.md)（所有节点状态变更只写 index.md）
 > 本文件由 `feature_confirm lock` 时填充，`ReadyForImplementation` 前为空或草稿。
+> OMS 文档正文默认使用中文；路径、代码标识符、API 名称、frontmatter 枚举值和既有英文术语可保留英文。
 
-## Execution Package
+## 执行包
 
-### Files To Change
+### 改动文件
 
 | 文件路径 | 改动类型 | 说明 |
 | :--- | :--- | :--- |
 | | | |
 
-### Change Summary
+### 改动摘要
 
 -
 
-### Rollback Plan
+### 回滚计划
 
-- Rollback target commit/branch:
-- Files to revert:
-- Steps:
+- 回滚目标 commit/branch：
+- 需要回退的文件：
+- 步骤：
 
-## Test Plan
+## 测试计划
 
 - 单元测试：
 - 集成测试：
 - 手动验证步骤：
 
-## Verification Steps
+## 验证步骤
 
 - [ ] 所有测试通过
 - [ ] 构建无报错
