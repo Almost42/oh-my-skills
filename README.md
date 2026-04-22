@@ -101,7 +101,7 @@ OMS 将上下文视为有限资源，通过以下机制减少不必要加载：
 请指定编号或名称。
 ```
 
-**architecture.md 条件加载**：只有 `Scope: Feature` 或涉及跨模块/接口/数据层改动时才加载，Patch 类需求直接跳过。
+**architecture.md 加载**：`docs/architecture.md` 若存在，则 `feature_plan` / `feature_confirm` 均必读（Patch 优先关注与范围、构建/测试/工具链相关的节）；`code_implement_confirm` 与 `verification_gate` 在跑构建/测试前**强制**阅读，与 `AGENTS.md` 中的 baseline 与工具约定对齐。`workflow_guard` 入口仍可不调 architecture，以免意图识别过荷。
 
 **Lessons 精准注入**：Lessons 按操作类型分类存储，各 skill 只加载当前阶段对应的分类文件。
 
@@ -164,7 +164,7 @@ docs/
 - `docs/spec/index.md`：历史需求根索引，用于按模块与处理方向回溯 spec。
 - `docs/spec/YYYY-MM-DD-*`：单个需求或补丁的协议，也是 workflow node 的 source of truth。
 - `docs/progress.md`：当前状态指针，summary-only，不承载节点真相。
-- `docs/architecture.md`：系统结构与边界（按需加载，非全量 baseline）。
+- `docs/architecture.md`：系统结构与边界；团队可补充构建/测试/环境约定；按各 skill 规则加载（设计/含 Patch 的确认阶段若存在则读，执行与验证前必读；与 `AGENTS.md` 一致时以 skill 中「跑命令前」规则为准）。
 - `docs/knowledge/index.md`：知识路由入口，含 lessons 加载规则。
 - `docs/knowledge/lessons/`：按操作类型分类的纠错经验，精准注入，不全量加载。
 - `docs/memory/`：可选快照层，只在 handoff 或历史重建需要时启用。
@@ -261,7 +261,7 @@ OMS skill 文件本身在被调用时会占用上下文。为避免 skill 自身
 - `docs/lessons.md` 废弃，改为 `docs/knowledge/lessons/` 分类体系，按操作类型精准注入。
 - 每个 skill 内置 Iron Law、Never、Red Flags，AI 行为约束从"软提示"变为"硬规则"。
 - `workflow_guard` 和 `context_sync` 改为两步定位，多个活跃 spec 时暂停并要求用户确认。
-- `architecture.md` 改为条件加载（仅 Feature 或跨模块场景），不再是默认 baseline 文档。
+- `architecture.md`：v2 曾作为「仅 Feature/跨模块才读」的轻量策略；v3 现已改为在设计与确认阶段**若文件存在则读**（含 Patch、优先相关节），并在 `code_implement_confirm` / `verification_gate` 执行验证前**强制**读取，以与 `AGENTS.md` baseline 及仓库内工具约定一致。`workflow_guard` 仅定位意图时可不读。
 - `feature_confirm` 吸收了实施方案确认动作，旧的独立 `code_implement_plan` 已被移除。
 - `workflow_repair` 成为显式修复入口。
 - `docs/memory/` 变成可选支持层，不再是默认活跃状态存储。

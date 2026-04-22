@@ -23,6 +23,7 @@
 ### `docs/architecture.md`
 
 - 保留系统结构、边界与约束
+- 建议保留 `## 构建与验证`、`## 开发环境与工具约定`（见 `project_init/templates/architecture.v3.md`）：短而可执行的命令与工具事实，便于 Patch/执行阶段按文档选命令
 - 不应混入任务流水账
 
 ### `docs/knowledge/index.md`

@@ -39,14 +39,9 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 2. `docs/knowledge/index.md`
 3. 与当前 capability / module tags 匹配的知识文件
 4. `docs/knowledge/lessons/design.md`（若存在）
-
-条件加载 `docs/architecture.md`（满足以下任一条件才读取）：
-
-- `Scope: Feature`（Feature 通常涉及架构边界）
-- 设计涉及跨模块、新接口、数据层或服务依赖变更
-- spec 的 `Capability_Tags` 或 `Module_Tags` 涉及多个模块
-
-`Scope: Patch` 且改动面已明确圈定 → 跳过 `docs/architecture.md`，节省上下文。
+5. `docs/architecture.md`（若存在则**必读**，与 `AGENTS.md` 中 baseline 叙述一致）：
+   - `Scope: Feature` 或设计涉及跨模块/接口/数据时：通读以校准边界与依赖。
+   - `Scope: Patch`：优先关注与 **patch path、模块边界、构建/测试/工具链** 相关的节（如 `## 构建与验证`、`## 开发环境与工具约定`）；**不必**在输出中复述与本次改动无关的大段。未分节时读全文，以免遗漏仅写在 architecture 中的命令/环境约定。
 
 其他活跃 spec 状态锚点：仅当检测到当前设计与其他 spec 存在潜在冲突时才按需加载，不默认全读。
 

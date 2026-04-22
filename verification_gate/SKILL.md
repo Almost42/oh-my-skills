@@ -31,11 +31,12 @@ OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完
 1. spec 状态锚点（`docs/spec/YYYY-MM-DD-{slug}.md` 或 `docs/spec/YYYY-MM-DD-{slug}/index.md`）
 2. 若 multi-file spec：读取 `req.md`（验收标准）和 `impl.md`（测试计划、验证步骤）
 3. `docs/knowledge/lessons/testing.md`（若存在）
-4. 确认 `Current_Node: Verifying`
+4. **读取 `docs/architecture.md`（若存在）**：与 `code_implement_confirm` 同样优先关注 `## 构建与验证`、`## 开发环境与工具约定` 等；未分节则读全文。验证阶段选用的构建/测试命令必须与文档及 `AGENTS.md` 中的明确约定一致，**禁止**凭记忆或通例执行。
+5. 确认 `Current_Node: Verifying`
 
 ### Step 2: Run Fresh Evidence
 
-必须基于当前工作区重新执行：
+必须基于当前工作区重新执行（命令选择遵循 Step 1 的 architecture/AGENTS 约定）：
 
 - 测试
 - 构建
