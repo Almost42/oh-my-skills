@@ -6,7 +6,7 @@ description: >-
 
 # 项目初始化
 
-OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，给出 drift 报告，并在需要时路由到 `project_docs_optimize`。
+OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，给出面向开发者的初始化结论，并在需要时路由到 `project_docs_optimize`。
 
 **执行时宣告**："[project_init] 扫描项目文档与规则资产..."
 
@@ -53,18 +53,26 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 - 外部 AI 规则尚未映射进 OMS owner
 - `.skillshare/skills/` 存在但尚未被盘点
 
-### Step 3: Build A Report, Do Not Mutate
+### Step 3: Build A Developer-Facing Report, Do Not Mutate
 
 输出：
 
-- `Drift Findings`
-- `Legacy Compatibility Findings`
-- `Imported AI Rule Sources`
-- `Current Team Skills (.skillshare)`
-- `Proposed Adjustments`
-- `Needs User Approval`
+- 初始化结论
+- 当前是否符合 OMS 规范
+- 当前是否可以直接继续工作 / 提出新需求
+- 发现的问题（按“阻塞项 / 建议优化 / 仅记录”分组）
+- 外部 AI 规则来源盘点
+- 当前团队 Skills（`.skillshare`）
+- 建议调整项
+- 是否需要用户确认
 
 不得在此阶段直接迁移、删除、重写或重组文档。
+
+报告必须明确写出：
+
+- 本次是否修改了文档；默认应为“未修改任何文档，仅完成扫描”
+- 当前项目是“已基本合规”“存在可选优化”还是“存在需要先确认的结构偏移”
+- 用户下一步最适合做什么，而不是只给内部 skill 名
 
 ### Step 4: Route Explicitly
 
@@ -72,6 +80,13 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 - 若 baseline 已符合规范且可继续工作 → `context_sync`
 - 若只缺 capability owner 文档且结构稳定 → `capability_bootstrap`
 - 若 spec / progress 状态不闭环 → `workflow_repair`
+
+对用户展示“下一步建议”时，优先使用自然语言，并在括号中保留 skill 标识：
+
+- 当前文档已基本合规，可以继续恢复项目上下文或直接开始新需求（`context_sync`）
+- 存在文档结构偏移，建议先查看整理方案，确认后再执行收敛（`project_docs_optimize analyze`）
+- 缺少某类能力文档，建议先补建对应 owner 文档（`capability_bootstrap`）
+- 当前 spec 或进度状态不闭环，建议先修复流程状态（`workflow_repair`）
 
 ## Output
 
@@ -81,12 +96,29 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 **项目**: ...
 **识别到的技术栈**: ...
 
-**漂移发现**: ...
-**兼容性发现**: ...
-**导入的 AI 规则来源**: ...
-**当前团队 Skills（.skillshare）**: ...
-**建议调整项**: ...
-**是否需要用户批准**: yes | no
+**初始化结论**: 当前文档已基本符合 OMS 规范 | 存在可选优化项 | 存在需要先确认的结构偏移
+**当前是否可继续工作**: 可以直接继续 | 建议先处理部分问题 | 不建议继续，需先确认调整
+**本次是否已修改文档**: 否，本次仅完成扫描与对账
 
-**下一步动作**: `project_docs_optimize (analyze)` | `context_sync` | `capability_bootstrap` | `workflow_repair`
+**阻塞项**:
+- ...
+
+**建议优化**:
+- ...
+
+**仅记录信息**:
+- ...
+
+**导入的 AI 规则来源**:
+- ...
+
+**当前团队 Skills（.skillshare）**:
+- ...
+
+**建议调整项**:
+- ...
+
+**是否需要用户确认**: 是 | 否
+
+**下一步建议**: 当前文档已基本合规，可先恢复项目上下文继续工作（`context_sync`）
 ```

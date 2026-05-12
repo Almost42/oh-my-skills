@@ -217,6 +217,7 @@ skillshare sync
 
 - 盘点当前项目的 docs、spec、外部 AI 规则来源和 `.skillshare/skills/`
 - 判断哪些结构符合当前 OMS 规范，哪些存在 drift
+- 给出面向开发者的初始化结论：当前是否合规、是否可以继续工作、是否需要先确认结构调整
 - 在需要时建议转到 `project_docs_optimize (analyze)` 输出调整报告
 
 ### 3. 新会话先执行 `context_sync`

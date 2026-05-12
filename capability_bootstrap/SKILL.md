@@ -58,5 +58,5 @@ description: >-
 - `docs/architecture.md`
 - `docs/knowledge/index.md`
 
-**下一步动作**: ...
+**下一步建议**: 已可继续当前主流程工作 | 如仍存在文档漂移，建议进一步整理（`project_docs_optimize`）
 ```

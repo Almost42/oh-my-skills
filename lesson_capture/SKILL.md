@@ -70,14 +70,14 @@ lesson 默认停留在缓冲层，不在当次对话中直接升格到长期 own
 ```markdown
 ## 经验记录结果
 
-**分类**: design | code | testing | workflow | domain
+**分类**: 设计（design） | 实现（code） | 验证（testing） | 流程（workflow） | 领域（domain）
 **写入位置**: `docs/knowledge/lessons/{category}.md`
-**Owner 层级**: temporary buffer
+**Owner 层级**: 短期缓冲层（temporary buffer）
 
 **场景**: ...
 **错误表现**: ...
 **正确做法**: ...
 **可执行规则**: ...
 
-**建议下一步动作**: `knowledge_review` | `project_docs_optimize` | none
+**建议下一步**: 后续收口时进入知识审核（`knowledge_review`） | 若 lessons 结构混乱，先整理文档（`project_docs_optimize`） | 当前无需额外动作
 ```

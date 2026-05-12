@@ -97,7 +97,7 @@ description: 独立分析项目文档、规则与重复流程，提炼适合沉�
 ```markdown
 ## 项目技能提取结果
 
-**模式**: analyze | scaffold
+**本轮模式**: 仅分析候选（analyze） | 已生成团队 Skill（scaffold）
 
 **候选技能**:
 - `skill-name`: 触发条件 / 先读哪些文档 / 为什么值得存在
@@ -113,5 +113,5 @@ description: 独立分析项目文档、规则与重复流程，提炼适合沉�
 **生成位置**:
 - `.skillshare/skills/...`
 
-**下一步动作**: confirm scaffold | `skillshare sync` | none
+**下一步建议**: 确认后生成团队 Skill（`project_skill_extract scaffold`） | 若已生成，请执行 `skillshare sync` 同步到使用环境 | 当前无需额外动作
 ```

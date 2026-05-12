@@ -132,10 +132,10 @@ Never 在没有任何变更的情况下对同一命令重试超过 2 次。
 ## 代码实施结果
 
 **当前 Spec**: `docs/spec/...`
-**Spec 模式**: single | multi
-**范围**: Feature | Patch
-**当前节点**: ReadyForImplementation | Implementing | Verifying
-**结果**: stay | advance | repair_required
+**Spec 模式**: 单文件（single） | 多文件（multi）
+**范围**: 新功能/跨模块能力（Feature） | 局部修复/小范围修改（Patch）
+**当前节点**: 待实施（ReadyForImplementation） | 实施中（Implementing） | 待验证（Verifying）
+**本轮结论**: 继续实施（stay） | 可以进入验证（advance） | 需先修复流程问题（repair_required）
 
 **执行摘要**:
 - ...
@@ -149,5 +149,5 @@ Never 在没有任何变更的情况下对同一命令重试超过 2 次。
 **回退基线**:
 - ...
 
-**下一步动作**: `code_implement_confirm` | `verification_gate` | `workflow_repair`
+**下一步建议**: 继续当前实施（`code_implement_confirm`） | 进入验证门禁（`verification_gate`） | 当前流程存在缺口，建议先修复（`workflow_repair`）
 ```

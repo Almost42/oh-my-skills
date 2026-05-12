@@ -68,7 +68,7 @@ release 必须统一完成：
 ```markdown
 ## 项目发布结果
 
-**当前节点**: Archived
+**当前节点**: 已归档（Archived）
 **已归档 Specs**:
 - ...
 
@@ -79,7 +79,7 @@ release 必须统一完成：
 - ...
 
 **技能提取建议**:
-- `project_skill_extract` | none
+- 建议后续提取团队 Skill（`project_skill_extract`） | 暂无技能提取建议
 
-**下一步动作**: complete release | `workflow_repair`
+**下一步建议**: 本次定版已完成，可继续下一轮需求工作 | 当前仍有问题，建议先修复流程（`workflow_repair`）
 ```

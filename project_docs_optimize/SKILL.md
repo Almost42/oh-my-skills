@@ -56,16 +56,18 @@ OMS v3.1 的文档治理器。它统一处理 legacy 结构、OMS 规范漂移�
 - spec/index/progress/AGENTS 是否符合当前 OMS 规范
 - 哪些外部规则应迁入 `AGENTS.md`、`architecture.md`、`domain_rules.md`、capability docs 或 lessons
 
-### Step 2: Build An Executable Adjustment Report
+### Step 2: Build A Developer-Facing Adjustment Report
 
 输出至少包含：
 
-- `Drift Findings`
-- `Legacy Inputs`
-- `Imported Rule Sources`
-- `Proposed Owner Mapping`
-- `Files To Create / Rewrite / Move`
-- `Files Safe To Archive Or Manually Delete Later`
+- 收敛结论
+- 当前是否建议立即执行整理
+- 本次是否已修改文档
+- 结构偏移与 legacy 输入
+- 导入的规则来源
+- 建议的 owner 映射
+- 涉及变更的文件
+- 后续可手动清理或归档的文件
 
 若是 `analyze` mode，到此停止并等待用户确认。
 
@@ -90,8 +92,12 @@ legacy 文件默认保留；只有用户明确同意时，才将其标记为可�
 ```markdown
 ## 项目文档收敛结果
 
-**模式**: analyze | apply
-**漂移发现**:
+**本轮模式**: 仅分析（analyze） | 已执行整理（apply）
+**收敛结论**: 当前存在结构偏移，建议先确认整理方案 | 已按确认结果完成收敛
+**当前是否建议立即执行整理**: 建议先确认后执行 | 已执行完成，无需再次整理
+**本次是否已修改文档**: 否，本次仅输出分析报告 | 是，已按确认结果完成调整
+
+**结构偏移与 legacy 输入**:
 - ...
 
 **导入的规则来源**:
@@ -106,6 +112,6 @@ legacy 文件默认保留；只有用户明确同意时，才将其标记为可�
 **手动清理建议**:
 - ...
 
-**是否需要用户批准**: yes | no
-**下一步动作**: confirm apply | `project_init` | `context_sync`
+**是否需要用户确认**: 是 | 否
+**下一步建议**: 请先确认是否按上述方案执行整理（`project_docs_optimize apply`） | 已完成收敛，可重新执行初始化扫描（`project_init`） | 已可继续恢复项目上下文（`context_sync`）
 ```

@@ -127,9 +127,9 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 ## 设计草案结果
 
 **Spec**: `docs/spec/YYYY-MM-DD-...`
-**范围**: Feature | Patch
-**Spec 模式**: single | multi
-**当前节点**: DesignDraft
+**范围**: 新功能/跨模块能力（Feature） | 局部修复/小范围修改（Patch）
+**Spec 模式**: 单文件（single） | 多文件（multi）
+**当前节点**: 方案设计中（DesignDraft）
 **最近确认节点**: ...
 
 **YAGNI 检查**:
@@ -146,5 +146,5 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 **后续需同步文档**:
 - ...
 
-**下一步动作**: `feature_confirm (review)` | `requirement_probe` | `workflow_repair`
+**下一步建议**: 进入方案评审（`feature_confirm review`） | 需求仍有缺口，回到需求澄清（`requirement_probe`） | 当前流程存在缺口，建议先修复工作流（`workflow_repair`）
 ```

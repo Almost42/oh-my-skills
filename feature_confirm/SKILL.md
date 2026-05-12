@@ -113,12 +113,12 @@ OMS 文档正文默认使用中文；路径、代码标识符、API 名称、fro
 ```markdown
 ## 方案确认结果
 
-**模式**: review | lock
+**本轮操作**: 方案评审（review） | 方案锁定（lock）
 **当前 Spec**: `docs/spec/YYYY-MM-DD-...`
-**Spec 模式**: single | multi
-**范围**: Feature | Patch
-**当前节点**: DesignDraft | ReadyForImplementation
-**决策**: stay | advance | repair_required
+**Spec 模式**: 单文件（single） | 多文件（multi）
+**范围**: 新功能/跨模块能力（Feature） | 局部修复/小范围修改（Patch）
+**当前节点**: 方案设计中（DesignDraft） | 已可进入实施（ReadyForImplementation）
+**本轮结论**: 保持继续完善方案（stay） | 可以进入代码实施（advance） | 需先修复流程问题（repair_required）
 
 **简洁性门禁**:
 - [ ] 改动范围未超出需求
@@ -134,5 +134,5 @@ OMS 文档正文默认使用中文；路径、代码标识符、API 名称、fro
 **需更新文档**:
 - ...
 
-**下一步动作**: `feature_confirm (lock)` | `code_implement_confirm` | `workflow_repair`
+**下一步建议**: 用户确认后锁定实施包（`feature_confirm lock`） | 可以开始代码实施（`code_implement_confirm`） | 当前流程存在缺口，建议先修复（`workflow_repair`）
 ```

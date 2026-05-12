@@ -49,10 +49,10 @@ OMS v3 的会话交接器。它只在确有 handoff 价值时创建 memory 快�
 ```markdown
 ## 会话归档结果
 
-**是否启用 Memory**: yes | no
+**是否启用 Memory**: 是 | 否
 **归档文件**: ...
 **关联 Specs**:
 - ...
 
-**下一步动作**: `context_sync` first, `session_resume` only if needed
+**下一步建议**: 下次继续工作时先恢复项目上下文（`context_sync`），只有不足时再使用会话恢复（`session_resume`）
 ```
