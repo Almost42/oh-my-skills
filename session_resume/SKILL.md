@@ -51,15 +51,15 @@ description: >-
 ## Output
 
 ```markdown
-## Session Resume
+## 会话恢复结果
 
-**Escalation Reason**: ...
-**Memory Enabled**: yes | no
-**Recovered Context**:
+**升级原因**: ...
+**是否启用 Memory**: yes | no
+**恢复到的上下文**:
 - ...
 
-**Active Specs**:
+**当前活跃 Specs**:
 - ...
 
-**Next Action**: ...
+**下一步动作**: ...
 ```

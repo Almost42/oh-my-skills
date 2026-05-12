@@ -89,21 +89,21 @@ OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完
 ## Output
 
 ```markdown
-## Verification Gate
+## 验证门禁结果
 
-**Current Spec**: `docs/spec/YYYY-MM-DD-...`
-**Spec Mode**: single | multi
-**Current Node**: Verifying
-**Result**: stay | advance | repair_required
+**当前 Spec**: `docs/spec/YYYY-MM-DD-...`
+**Spec 模式**: single | multi
+**当前节点**: Verifying
+**结果**: stay | advance | repair_required
 
-**Evidence Log** (本轮实际运行):
+**证据日志** (本轮实际运行):
 - 命令: ...
 - 输出摘要: ...
 - 通过/失败: ...
 
-**Acceptance Criteria Check**:
+**验收标准核对**:
 - [ ] 标准 1: ...
 - [ ] 标准 2: ...
 
-**Next Action**: `code_implement_confirm` | `workflow_repair` | `project_release`
+**下一步动作**: `code_implement_confirm` | `workflow_repair` | `project_release`
 ```

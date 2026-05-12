@@ -36,11 +36,12 @@ OMS v3 的需求澄清入口。先把需求边界问清楚，再决定是留在 
 优先读取：
 
 1. `AGENTS.md`
-2. `docs/progress.md`
-3. `docs/spec/index.md`（按模块和处理方向定位历史 spec，若存在）
-4. 相关活跃 spec 状态锚点（`docs/spec/YYYY-MM-DD-*.md` 或 `docs/spec/YYYY-MM-DD-*/index.md`）
-5. 当前问题直接涉及的 capability docs
-6. `docs/knowledge/lessons/design.md`（若存在）
+2. `docs/context/project_brief.md`（若存在，用于校准项目目的、范围和成功标准）
+3. `docs/progress.md`
+4. `docs/spec/index.md`（按模块和处理方向定位历史 spec，若存在）
+5. 相关活跃 spec 状态锚点（`docs/spec/YYYY-MM-DD-*.md` 或 `docs/spec/YYYY-MM-DD-*/index.md`）
+6. 当前问题直接涉及的 capability docs
+7. `docs/knowledge/lessons/design.md`（若存在）
 
 不要因为"先看看再说"而整库扫描文档。
 
@@ -118,23 +119,23 @@ OMS v3 的需求澄清入口。先把需求边界问清楚，再决定是留在 
 ## Output
 
 ```markdown
-## Requirement Probe
+## 需求澄清结果
 
-**Current Node**: RequirementDraft | DesignDraft
-**Suggested Scope**: Feature | Patch
-**Requirement Summary**: ...
+**当前节点**: RequirementDraft | DesignDraft
+**建议范围**: Feature | Patch
+**需求摘要**: ...
 
-**Open Questions**:
+**待确认问题**:
 - ...
 
-**Required Docs**:
+**需要读取的文档**:
 - ...
 
-**Capability Tags**:
+**Capability 标签**:
 - ...
 
-**Module Tags**:
+**Module 标签**:
 - ...
 
-**Next Action**: ...
+**下一步动作**: ...
 ```

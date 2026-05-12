@@ -45,7 +45,7 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 
 其他活跃 spec 状态锚点：仅当检测到当前设计与其他 spec 存在潜在冲突时才按需加载，不默认全读。
 
-迁移期允许补充读取 `docs/pitfalls.md`、`docs/anti-patterns.md`，但它们只是兼容输入。
+若发现 owner 文档结构混乱、knowledge 路由失真或 legacy 输入尚未收敛，应先建议 `project_docs_optimize`，不要在这里承担兼容读取。
 
 ### Step 2: Determine Spec Mode And File Structure
 
@@ -124,27 +124,27 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 ## Output
 
 ```markdown
-## Feature Plan
+## 设计草案结果
 
 **Spec**: `docs/spec/YYYY-MM-DD-...`
-**Scope**: Feature | Patch
-**Spec Mode**: single | multi
-**Current Node**: DesignDraft
-**Last Confirmed Node**: ...
+**范围**: Feature | Patch
+**Spec 模式**: single | multi
+**当前节点**: DesignDraft
+**最近确认节点**: ...
 
-**YAGNI Check**:
+**YAGNI 检查**:
 - [ ] 所有设计项均有需求来源
 - [ ] 无"以防万一"的抽象
 - [ ] 最简方案可满足需求
 
-**Knowledge Loaded**:
+**已加载知识**:
 - ...
 
-**Potential Conflicts**:
+**潜在冲突**:
 - ...
 
-**Docs To Sync Later**:
+**后续需同步文档**:
 - ...
 
-**Next Action**: `feature_confirm (review)` | `requirement_probe` | `workflow_repair`
+**下一步动作**: `feature_confirm (review)` | `requirement_probe` | `workflow_repair`
 ```

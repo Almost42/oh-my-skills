@@ -47,16 +47,16 @@ description: >-
 ## Output
 
 ```markdown
-## Capability Bootstrap
+## 能力补建结果
 
-**New Capability**: ...
-**Created Docs**:
+**新增能力**: ...
+**已创建文档**:
 - ...
 
-**Governance Sync**:
+**治理层同步**:
 - `AGENTS.md`
 - `docs/architecture.md`
 - `docs/knowledge/index.md`
 
-**Next Action**: ...
+**下一步动作**: ...
 ```

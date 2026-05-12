@@ -129,25 +129,25 @@ Never 在没有任何变更的情况下对同一命令重试超过 2 次。
 ## Output
 
 ```markdown
-## Code Implement Confirm
+## 代码实施结果
 
-**Current Spec**: `docs/spec/...`
-**Spec Mode**: single | multi
-**Scope**: Feature | Patch
-**Current Node**: ReadyForImplementation | Implementing | Verifying
-**Result**: stay | advance | repair_required
+**当前 Spec**: `docs/spec/...`
+**Spec 模式**: single | multi
+**范围**: Feature | Patch
+**当前节点**: ReadyForImplementation | Implementing | Verifying
+**结果**: stay | advance | repair_required
 
-**Execution Summary**:
+**执行摘要**:
 - ...
 
-**Observed But Not Fixed**:
+**观察到但未修复**:
 - ...
 
-**Verification Snapshot**:
+**验证快照**:
 - ...
 
-**Rollback Baseline**:
+**回退基线**:
 - ...
 
-**Next Action**: `code_implement_confirm` | `verification_gate` | `workflow_repair`
+**下一步动作**: `code_implement_confirm` | `verification_gate` | `workflow_repair`
 ```

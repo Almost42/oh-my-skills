@@ -86,18 +86,18 @@ OMS v3 的默认恢复入口。优先依赖 baseline 文档，不主动加载非
 ## Output
 
 ```markdown
-## Context Sync
+## 上下文同步
 
-**Active Spec**: ...（用户确认后 / 单一 spec 自动识别）
-**Current Node**: ...
-**Current Focus**: ...
+**当前活跃 Spec**: ...（用户确认后 / 单一 spec 自动识别）
+**当前节点**: ...
+**当前焦点**: ...
 
-**Potential Drift**:
+**潜在漂移**:
 - ...
 
-**Docs Loaded**: （列出实际加载的文件，不加载的不列）
+**已加载文档**: （列出实际加载的文件，不加载的不列）
 - ...
 
-**Baseline Enough**: yes | no
-**Next Action**: ...
+**Baseline 是否足够**: yes | no
+**下一步动作**: ...
 ```

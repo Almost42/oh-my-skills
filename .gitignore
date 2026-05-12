@@ -2,5 +2,7 @@
 ./skillshare/
 *.yaml
 *.json
+.idea/
+AGENTS.md
 docs/
 scripts/

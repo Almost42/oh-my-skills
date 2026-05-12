@@ -47,15 +47,15 @@ OMS v3 的轻量状态汇总器。`docs/progress.md` 只总结当前状态，spe
 ## Output
 
 ```markdown
-## Progress Sync
+## 进度同步结果
 
-**Current Focus**: ...
+**当前焦点**: ...
 
-**Active Spec Summary**:
+**活跃 Spec 摘要**:
 - Spec: `docs/spec/...`
   Current Node: ...
   Next Action: ...
 
-**Current Risks**:
+**当前风险**:
 - ...
 ```

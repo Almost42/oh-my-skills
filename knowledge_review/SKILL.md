@@ -1,11 +1,11 @@
 ---
 name: knowledge_review
-description: 在 lessons 或会话候选可能需要升格为长期知识时使用，整理可供用户审核的升格提案。
+description: 在 lessons 或会话候选需要分流到 owner-first 长期文档时使用，整理可供用户审核的收口提案。
 ---
 
 # 知识升格审核
 
-OMS v3 的知识 promotion 审核器。它负责整理候选、草拟 promotion 提案，并在用户批准前停止。
+OMS v3.1 的收口审核器。它负责把 lessons 和会话候选分流到长期 owner，或决定继续保留/淘汰。
 
 ## When to Use
 
@@ -15,36 +15,34 @@ OMS v3 的知识 promotion 审核器。它负责整理候选、草拟 promotion 
 
 ## Instructions
 
-### Step 1: Collect Promotion Candidates
+### Step 1: Collect Candidates
 候选来源可以包括：
 
-- `docs/lessons.md`
+- `docs/knowledge/lessons/*`
 - session candidates
 - 当前活跃 spec 与验证结果
-- 已有 `docs/knowledge/...`
+- 已有 owner 文档（`docs/domain_rules.md`、`docs/architecture.md`、capability docs）
 
-迁移期间允许补充读取：
+若发现旧知识层、legacy lessons 或职责混杂，先建议 `project_docs_optimize`，不要在此处承担重构。
 
-- `docs/pitfalls.md`
-- `docs/anti-patterns.md`
+### Step 2: Decide The Owner Outcome
+每条候选必须进入以下之一：
 
-它们是 compatibility inputs，用于避免遗漏历史知识。
+- `keep in lessons`
+- `merge with existing lesson`
+- `promote to docs/domain_rules.md`
+- `promote to docs/architecture.md`
+- `promote to capability doc`
+- `drop as one-off`
 
-### Step 2: Classify The Promotion Target
-把候选分为：
-
-- `pitfalls`
-- `anti-patterns`
-- 暂不 promotion，继续留在 `docs/lessons.md`
-
-### Step 3: Draft A Reviewable Promotion Proposal
-每个 promotion 提案至少写清楚：
+### Step 3: Draft A Reviewable Proposal
+每个提案至少写清楚：
 
 - 候选内容
 - 来源
 - 建议目标文件
-- promotion 理由
-- 若不 promotion 的原因
+- 收口理由
+- 若保持在 lessons 或淘汰的原因
 
 ### Step 4: Wait For User Approval
 
@@ -52,23 +50,23 @@ OMS v3 的知识 promotion 审核器。它负责整理候选、草拟 promotion 
 - 只输出可审阅提案
 
 ### Step 5: Apply Approved Promotion
-用户确认后，再把通过的条目写入：
+用户确认后，再把通过的条目写入明确 owner：
 
-- `docs/knowledge/pitfalls/...`
-- `docs/knowledge/anti-patterns/...`
+- `docs/domain_rules.md`
+- `docs/architecture.md`
+- 对应 capability doc
 
 ## Output
 
 ```markdown
-## Knowledge Review
+## 知识收口提案
 
-**Promotion Candidates**:
+**候选条目**:
 - ...
 
-**Proposed Targets**:
-- `docs/knowledge/pitfalls/...`
-- `docs/knowledge/anti-patterns/...`
+**Owner 决策**:
+- keep in lessons | merge with existing lesson | promote to `docs/domain_rules.md` | promote to `docs/architecture.md` | promote to capability doc | drop as one-off
 
-**Needs User Approval**: yes
-**Next Action**: approve promotion | revise proposal
+**是否需要用户批准**: yes
+**下一步动作**: approve promotion | revise proposal | `project_docs_optimize`
 ```

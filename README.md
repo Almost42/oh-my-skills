@@ -1,8 +1,9 @@
 # Oh My Skills
 
-Oh My Skills（OMS）是一套面向 AI 编程协作的仓库内治理框架。它不是零散提示词集合，而是一整套可分发的 skills、模板资产和工作流规则，用来约束 agent 如何澄清需求、产出设计、确认方案、执行代码、验证结果、处理回退，以及沉淀长期知识。
+Oh My Skills（OMS）是一套面向 AI 编程协作的仓库内治理框架。
 
-README 是项目整体的最新说明书。若 README 与零散文档存在表述差异，应以 README 描述的当前运行模型为准，再回查对应 skill 与模板资产。
+它不是零散提示词集合，而是一整套可分发的 skills、模板资产和工作流规则，用来约束 agent 如何澄清需求、产出设计、确认方案、执行代码、验证结果、处理回退，以及沉淀长期知识。
+
 
 ## 它能带来什么
 
@@ -41,14 +42,14 @@ OMS 使用这几个 canonical nodes：
 主流程如下：
 
 ```text
-project_init
-  -> context_sync
-  -> requirement_probe
-  -> feature_plan
-  -> feature_confirm (review / lock)
-  -> code_implement_confirm
-  -> verification_gate
-  -> project_release
+project_init                # 项目初始化扫描
+  -> context_sync           # 上下文同步
+  -> requirement_probe      # 需求澄清
+  -> feature_plan           # 设计草案
+  -> feature_confirm        # 方案确认（review / lock）
+  -> code_implement_confirm # 代码实施
+  -> verification_gate      # 验证门禁
+  -> project_release        # 项目发布 / 归档
 ```
 
 关键约束：
@@ -92,6 +93,8 @@ OMS 将上下文视为有限资源，通过以下机制减少不必要加载：
 
 **Spec 按需定位**：新对话开始时，先读 `docs/progress.md` 定位活跃 spec，而不是全量扫描 `docs/spec/`。
 
+**项目背景校准**：需求阶段先读 `docs/context/project_brief.md`（若存在），用项目目的、范围、成功标准和术语表校准需求判断。
+
 **多开发者场景**：若 `docs/progress.md` 中存在多个活跃 spec（多人并行开发），agent 会列出所有进行中的工作项并要求用户明确指定，而不是自行猜测：
 
 ```
@@ -125,7 +128,18 @@ OMS 将上下文视为有限资源，通过以下机制减少不必要加载：
 
 ## 知识与经验沉淀
 
-**Lessons 分类体系**：Lessons 不再是单一文件，而是按操作类型分类存储：
+OMS v3.1 采用 owner-first 的精简知识体系：
+
+- `AGENTS.md`：治理边界、加载策略、触发路由
+- `docs/context/project_brief.md`：项目目的、范围、成功标准、术语等稳定背景
+- `docs/architecture.md`：结构、模块边界、工具链与环境约定
+- `docs/domain_rules.md`：项目级硬约束、禁区、协议规则
+- capability docs：能力专属稳定事实与操作约束，仅在能力成体系时创建
+- `docs/knowledge/index.md`：路由器，只决定“该读哪些 owner 文件”
+- `docs/knowledge/lessons/*`：短期纠错缓冲层
+- `docs/history/*`：初始化、发布/归档、治理审计等事件摘要
+
+**Lessons 分类体系**：Lessons 只保存短期经验，不直接充当长期知识仓库：
 
 ```text
 docs/knowledge/lessons/
@@ -133,12 +147,10 @@ docs/knowledge/lessons/
 ├── code.md      ← 实现阶段的操作失误与禁止行为
 ├── testing.md   ← 验证/测试相关的遗漏
 ├── workflow.md  ← 节点推进与流程相关
-└── domain.md    ← 业务规则与领域特定约束（永久约束，建议升格）
+└── domain.md    ← 业务规则与领域特定约束（收口时再决定是否升格）
 ```
 
-`domain` 类 lesson 总是建议通过 `knowledge_review` 升格到 `docs/domain_rules.md`，成为永久约束，而不是停留在临时纠错层。
-
-**旧版 `docs/lessons.md` 迁移**：`project_init` 和 `lesson_capture` 都内置了迁移逻辑，发现旧版单文件时自动按分类迁移，迁移完成后删除原文件。
+对话中的纠正、问题和经验默认先写入 `lessons`。只有在收口节点经 `knowledge_review` 审核后，才允许分流到 `docs/domain_rules.md`、`docs/architecture.md` 或 capability docs，避免长期 owner 文档过拟合单次会话。
 
 ## 会生成哪些文档
 
@@ -149,40 +161,107 @@ AGENTS.md
 docs/
 ├── context/project_brief.md
 ├── architecture.md
+├── domain_rules.md               # optional, 仅在项目级硬约束成体系时创建
 ├── spec/                          # index.md + Patch: YYYY-MM-DD-{slug}.md / Feature: YYYY-MM-DD-{slug}/index.md + 子文档
 ├── progress.md
 ├── knowledge/
 │   ├── index.md                   # 知识路由与 lessons 加载规则
 │   └── lessons/                   # 按操作类型分类的纠错经验
-├── history/
+├── history/                       # 初始化 / 发布归档 / 治理审计等事件摘要
 └── memory/                        # optional, only when archive/resume is enabled
 ```
 
 这些文档的职责：
 
 - `AGENTS.md`：治理边界、加载策略、技能路由。
+- `docs/context/project_brief.md`：项目背景 owner；仅用于项目目的、范围、成功标准、术语等稳定背景。
 - `docs/spec/index.md`：历史需求根索引，用于按模块与处理方向回溯 spec。
 - `docs/spec/YYYY-MM-DD-*`：单个需求或补丁的协议，也是 workflow node 的 source of truth。
 - `docs/progress.md`：当前状态指针，summary-only，不承载节点真相。
 - `docs/architecture.md`：系统结构与边界；团队可补充构建/测试/环境约定；按各 skill 规则加载（设计/含 Patch 的确认阶段若存在则读，执行与验证前必读；与 `AGENTS.md` 一致时以 skill 中「跑命令前」规则为准）。
-- `docs/knowledge/index.md`：知识路由入口，含 lessons 加载规则。
-- `docs/knowledge/lessons/`：按操作类型分类的纠错经验，精准注入，不全量加载。
+- `docs/domain_rules.md`：项目级硬约束、禁区与协议规则；仅在相关任务确实依赖时加载。
+- capability docs：能力专属的稳定事实与操作约束；不是必建全套。
+- `docs/knowledge/index.md`：owner 路由入口，含 lessons 加载规则。
+- `docs/knowledge/lessons/`：按操作类型分类的短期纠错经验，精准注入，不全量加载。
+- `docs/history/`：只记录初始化、发布/归档、治理审计等事件摘要，不记录需求正文；spec 主档案始终保留在 `docs/spec/`。
 - `docs/memory/`：可选快照层，只在 handoff 或历史重建需要时启用。
 
-## 怎么使用
+写入约束：
 
-最小使用方式：
+- `docs/context/`：只允许 `project_init` 和 `project_docs_optimize` 写入或重组。
+- `docs/history/`：只允许 `project_init`、`project_release` 和 `project_docs_optimize` 写入。
 
-1. 将整套 OMS skill 文件夹安装到 AI 助手可识别的 skills 目录中。
-2. 在目标项目执行 `project_init`。
-3. 新会话或继续工作时执行 `context_sync`。
-4. 按当前意图进入需求、设计、确认、实施、验证或发布链路。
+## 快速开始
 
-`project_init` 支持三种模式：
+如果你是第一次把 OMS 接入到自己的开发环境，按下面这条最短路径走即可。
 
-- `bootstrap`：新项目或缺失 OMS baseline 的仓库。
-- `migrate`：把 v2 或团队自定义 docs 体系迁入 OMS v3（含旧版 lessons 迁移）。
-- `reconcile`：重新扫描代码，补齐已有 OMS v3 档案中的结构事实与进度摘要。
+### 1. 通过 skillshare 安装并同步 OMS
+> 安装skillshare： https://github.com/runkids/skillshare
+
+先把当前仓库作为 skill 源安装到本地，再执行同步：
+
+```bash
+skillshare install https://github.com/Almost42/oh-my-skills
+skillshare sync
+```
+
+安装完成后，OMS 中的 skills、templates 和 references 会一起进入你的 skill 运行环境。
+
+如果你还希望把项目里的常用流程沉淀成团队 skill，后续可使用独立的 `project_skill_extract`，它会把生成结果写入项目的 `.skillshare/skills/`。
+
+### 2. 在目标项目执行 `project_init`
+
+进入你要接入 OMS 的项目后，先执行：`project_init`
+
+`project_init` 是可重复执行的扫描入口，它会：
+
+- 盘点当前项目的 docs、spec、外部 AI 规则来源和 `.skillshare/skills/`
+- 判断哪些结构符合当前 OMS 规范，哪些存在 drift
+- 在需要时建议转到 `project_docs_optimize (analyze)` 输出调整报告
+
+### 3. 新会话先执行 `context_sync`
+
+项目接入完成后，新的对话或继续工作时，优先从`context_sync`（恢复/继续）开始。
+
+它会读取最小 baseline 文档，自动定位当前活跃 spec，并在需要时提示你补做 `capability_bootstrap`、`progress_sync` 或 `session_resume`。
+
+### 4. 按意图进入主工作流
+
+日常开发时，通常沿着这条链路推进：
+
+```text
+requirement_probe           #描述需求
+  -> feature_plan           #设计需求方案
+  -> feature_confirm        #确认需求方案
+  -> code_implement_confirm #确认实施方案
+  -> verification_gate      #验证
+  -> project_release        #定版
+```
+
+可选的操作：
+- 会话暂存`session_archive`：当前工作做了一半需要暂停（适用于切换模型、IDE）
+- 会话恢复`session_resume`：快速恢复手头正在执行的工作（适用于新开对话）
+- 恢复/恢复上下文/继续`context_sync`：让AI加载当前项目的背景和规则（适用于主动向AI声明当前背景,或任务漂移时重置状态）
+- 整理文档`project_docs_optimize`：按照oms标准整理文档（适用于发现docs文件杂乱时）
+- 将xxx提取为团队skill`project_skill_extract`：将指定规则提取成skill供团队复用（适用于较固定的规则应用场景）
+
+### 5. 完整闭环
+
+当一个版本定版时，即设计、实施、验收全部通过时，应该执行`project_release` （定版）操作。
+
+该操作会将需求整个周期内产生的文档进行状态更新、经验提取、规则固化，确保本次开发中产生的价值数据得到记录。
+
+### 6. （可选）团队Skill加载
+当`./.skillshare/skills`中存在团队技能时，需要按照如下步骤加载，确保开发者使用的ide/cli/agent能够读取到对应的skill。
+
+```bash
+# 1.确保在当前项目下执行
+cd 项目路径
+# 2.使用skillshare执行项目初始化，选择target（即本项目需要被哪些ide/cli/agent识别到）
+skillshare init -p
+# 3.同步skill（将团队skill加载到可别识别的路径中）
+skillshare sync
+```
 
 ## 使用示例
 
@@ -190,7 +269,8 @@ docs/
 
 ```text
 用户：项目初始化。
-Agent：[project_init] 执行 bootstrap，生成 AGENTS.md、architecture、progress、knowledge index 等治理骨架。
+Agent：[project_init] 扫描项目文档、外部 AI 规则和 `.skillshare/skills/`，发现存在 owner 漂移与缺失 baseline。
+       下一步建议：`project_docs_optimize (analyze)` 输出调整报告，确认后再执行迁移/补建。
 
 用户：继续。
 Agent：[context_sync] 读取 AGENTS.md + progress.md，当前无活跃 spec，进入正常开发链路。
@@ -210,14 +290,14 @@ Agent：[feature_confirm review] 读取 design.md + req.md，输出 execution pa
 Agent：[feature_confirm lock] 将 Current_Node 推进到 ReadyForImplementation，execution package 写入 impl.md。
 
 用户：开始实现。
-Agent：[code_implement_confirm] Pre-flight 检查工具可用 → 按 impl.md 执行，只改列出的 3 个文件。
+Agent：[code_implement_confirm] Pre-flight 检查工具可用 → 按 impl.md 执行。
 
 用户：增加规则：protocol 文件由自动化工具生成，禁止手动修改。
 Agent：[lesson_capture] 分类为 domain → 写入 docs/knowledge/lessons/domain.md。
-       建议通过 knowledge_review 升格到 docs/domain_rules.md（永久约束）。
+       当前保持在缓冲层；待 release/收口时由 knowledge_review 决定是否升格到 docs/domain_rules.md。
 
-用户：当前版本开发完成。
-Agent：[verification_gate] 运行测试，输出实际运行证据，逐条核对 req.md 验收标准，advance。
+用户：当前版本开发完成，定版。
+Agent：[verification_gate] 运行测试，输出实际运行证据，逐条核对验收标准，最后提取相关经验保存进知识库。
 ```
 
 ### 示例：多开发者并行场景
@@ -236,29 +316,17 @@ Agent：[context_sync] 发现 progress.md 中有 2 个活跃 spec：
 Agent：加载 docs/spec/2026-04-20-create-task/index.md，恢复上下文，继续 Implementing 阶段。
 ```
 
-## Skill 编写约束
-
-OMS skill 文件本身在被调用时会占用上下文。为避免 skill 自身成为上下文负担，编写和维护 skill 时须遵守：
-
-- **单个 `SKILL.md` 不超过 150 行**
-- 超过时，将示例、参考表格、扩展说明移入 skill 目录下的 `references/` 子文件夹，主文件只保留核心流程逻辑
-- Instructions 中的正反例（✅/❌）每个 skill 合计不超过 4 对，优先保留最易混淆的那几条
-- Iron Law、Never、Red Flags 每节不超过 6 条，超过时合并相近条目
 
 ## 运行时分发模型
 
-这个仓库是 skill 分发仓库，不是某个业务项目本身。运行时模板跟随 owner skill 一起分发：
-
-- `project_init/templates/`：AGENTS.md、architecture、progress、spec-root-index、knowledge-index 等基础模板
-- `feature_plan/templates/`：spec 单文件模板（spec.v3.md）与多文件模板（spec-index/req/design/impl.v3.md）
-- `capability_bootstrap/templates/`：frontend、interfaces、data-model、domain-rules 等能力文档模板
-
+这个仓库是 skill 分发仓库，不是某个业务项目本身。
 分发时须保留完整 skill 文件夹（含 `templates/` 和 `references/`），而不是只拷贝 `SKILL.md`。
 
 ## 与 v2 的主要差异
 
 - `docs/spec/` 现在支持双模式：Patch 用带日期单文件，Feature 用带日期子目录（index/req/design/impl），并通过 `docs/spec/index.md` 汇总历史模块与处理方向。
 - `docs/lessons.md` 废弃，改为 `docs/knowledge/lessons/` 分类体系，按操作类型精准注入。
+- 长期知识默认直接进入 owner：`docs/domain_rules.md`、`docs/architecture.md` 或 capability docs，不再保留常规长期 knowledge 大层。
 - 每个 skill 内置 Iron Law、Never、Red Flags，AI 行为约束从"软提示"变为"硬规则"。
 - `workflow_guard` 和 `context_sync` 改为两步定位，多个活跃 spec 时暂停并要求用户确认。
 - `architecture.md`：v2 曾作为「仅 Feature/跨模块才读」的轻量策略；v3 现已改为在设计与确认阶段**若文件存在则读**（含 Patch、优先相关节），并在 `code_implement_confirm` / `verification_gate` 执行验证前**强制**读取，以与 `AGENTS.md` baseline 及仓库内工具约定一致。`workflow_guard` 仅定位意图时可不读。
@@ -266,12 +334,13 @@ OMS skill 文件本身在被调用时会占用上下文。为避免 skill 自身
 - `workflow_repair` 成为显式修复入口。
 - `docs/memory/` 变成可选支持层，不再是默认活跃状态存储。
 - 模板资产改为 skill-local 分发，单个 SKILL.md 有 150 行上限约束。
+- `project_init` 变成可重复执行的扫描与路由入口；`project_docs_optimize` 统一承担兼容迁移、文档重构和 AI 规则导入分析。
+- `docs/context/project_brief.md` 进入需求阶段必读集合，用于在澄清需求前先校准项目背景。
 
 兼容说明：
 
-- 旧版 `docs/lessons.md` 在 `project_init`（migrate/reconcile）和 `lesson_capture` 中自动迁移，迁移完成后删除原文件。
-- legacy durable knowledge（`docs/pitfalls.md`、`docs/anti-patterns.md`）在迁移期仍可作为兼容输入，但新的长期知识应进入 `docs/knowledge/...`。
-- old prompts that still mention `code_implement_plan` should be migrated to `feature_confirm`.
+- `docs/lessons.md`、`docs/pitfalls.md`、`docs/anti-patterns.md` 等旧结构只作为兼容输入保留；发现后应由 `project_docs_optimize` 分析并提出迁移方案。
+- `.skillshare/skills/` 被视为团队 skill 资产入口；OMS 只盘点该目录，不负责这些 skill 的加载与执行。
 
 ## License
 

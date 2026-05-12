@@ -111,28 +111,28 @@ OMS 文档正文默认使用中文；路径、代码标识符、API 名称、fro
 ## Output
 
 ```markdown
-## Feature Confirm
+## 方案确认结果
 
-**Mode**: review | lock
-**Current Spec**: `docs/spec/YYYY-MM-DD-...`
-**Spec Mode**: single | multi
-**Scope**: Feature | Patch
-**Current Node**: DesignDraft | ReadyForImplementation
-**Decision**: stay | advance | repair_required
+**模式**: review | lock
+**当前 Spec**: `docs/spec/YYYY-MM-DD-...`
+**Spec 模式**: single | multi
+**范围**: Feature | Patch
+**当前节点**: DesignDraft | ReadyForImplementation
+**决策**: stay | advance | repair_required
 
-**Simplicity Gate**:
+**简洁性门禁**:
 - [ ] 改动范围未超出需求
 - [ ] 无顺手改的重构
 - [ ] 无未被需求提及的新依赖
 
-**Execution Package**:
+**执行包**:
 - ...
 
-**Patch Semantics**:
+**Patch 语义**:
 - ...
 
-**Docs To Update**:
+**需更新文档**:
 - ...
 
-**Next Action**: `feature_confirm (lock)` | `code_implement_confirm` | `workflow_repair`
+**下一步动作**: `feature_confirm (lock)` | `code_implement_confirm` | `workflow_repair`
 ```

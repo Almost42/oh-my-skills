@@ -2,19 +2,21 @@
 
 ## 加载规则
 
-- 当任务具有广泛相关性时，加载 `common` 知识。
-- 当任务涉及对应技术栈时，加载 `stack:*` 知识。
-- 当 spec 涉及对应模块时，加载 `module:*` 知识。
-- 只有当前任务确实依赖时，才加载 `capability:*` 或 `flow:*` 知识。
-- **Lessons 按操作类型精准加载**（见下方 Lessons 路由），不全量加载。
+- 本文件只做路由，不承载长期知识正文。
+- 优先加载明确 owner：`docs/domain_rules.md` > capability docs > `docs/architecture.md` > lessons。
+- baseline 只读取：`AGENTS.md`、`docs/progress.md`、`docs/spec/index.md`、活跃 spec 状态锚点、`docs/knowledge/index.md`
+- `docs/knowledge/lessons/` 永不进入 baseline，只在对应动作开始前按分类精准加载。
 
-## 知识映射
+## Owner 路由
 
-| 标签 | 文件 | 何时加载 |
+| 信号 | 文件 | 何时加载 |
 | :--- | :--- | :--- |
-| `common` | `docs/knowledge/pitfalls/common.md` | 广泛相关的通用注意事项 |
-| `stack:example` | `docs/knowledge/pitfalls/stack-example.md` | 技术栈相关工作 |
-| `module:example` | `docs/knowledge/anti-patterns/module-example.md` | 模块级策略约束 |
+| `domain` | `docs/domain_rules.md` | 任务涉及业务硬约束、禁区、协议规则 |
+| `capability:interfaces` | `docs/interfaces.md` | 接口契约、输入输出、兼容性成为主要关注点 |
+| `capability:data` | `docs/data_model.md` | 数据模型、不变量、迁移约束成为主要关注点 |
+| `capability:frontend` | `docs/frontend/guidelines.md` | 前端交互、状态协作、响应式规则成为主要关注点 |
+| `capability:operations` | `docs/operations.md` | 发布、配置、恢复、运维限制成为主要关注点 |
+| `architecture` | `docs/architecture.md` | 需要理解结构边界、模块关系、工具链或环境约定 |
 
 ## Lessons 路由
 
@@ -40,8 +42,8 @@ Lessons 文件路径：`docs/knowledge/lessons/{design|code|testing|workflow|dom
 - 禁止使用段落描述替代文件路径（如"docs/offerwall-refactor 相关内容"）
 - 大文件内部有明确段落时，可使用锚点：`docs/spec/YYYY-MM-DD-{slug}/design.md#api-contracts`
 
-## 迁移兼容
+## 收口原则
 
-- 在 v3 迁移期间，仍允许读取 `docs/pitfalls.md` 和 `docs/anti-patterns.md` 作为兼容输入。
-- 若项目存在 `docs/lessons.md`，应触发 `lesson_capture` 的迁移逻辑，将内容迁移至分类文件后删除原文件。
-- 新的长期知识应写入 `docs/knowledge/...`。
+- 新的长期知识优先直接进入 owner：`docs/domain_rules.md`、`docs/architecture.md` 或 capability docs。
+- `docs/knowledge/lessons/*` 只保存短期纠错与待判断经验。
+- 若发现 legacy knowledge、旧 lessons 或职责混杂，交给 `project_docs_optimize` 分析和调整。

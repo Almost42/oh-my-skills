@@ -25,10 +25,18 @@
 - 保留系统结构、边界与约束
 - 建议保留 `## 构建与验证`、`## 开发环境与工具约定`（见 `project_init/templates/architecture.v3.md`）：短而可执行的命令与工具事实，便于 Patch/执行阶段按文档选命令
 - 不应混入任务流水账
+- 不应承担项目级硬约束；那类内容应进入 `docs/domain_rules.md`
+
+### capability docs
+
+- 只在某个能力已经形成稳定 owner 时创建
+- 保留能力专属事实、约束、不变量与验证习惯
+- 不应复制 `docs/architecture.md` 或 `docs/domain_rules.md` 中已经明确的内容
 
 ### `docs/knowledge/index.md`
 
 - 保留知识路由与加载规则
+- 不应承载长期知识正文
 - 不应混入会话级记录
 
 ## 处理原则

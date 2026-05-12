@@ -47,12 +47,12 @@ OMS v3 的会话交接器。它只在确有 handoff 价值时创建 memory 快�
 ## Output
 
 ```markdown
-## Session Archive
+## 会话归档结果
 
-**Memory Enabled**: yes | no
-**Archive File**: ...
-**Related Specs**:
+**是否启用 Memory**: yes | no
+**归档文件**: ...
+**关联 Specs**:
 - ...
 
-**Next Action**: `context_sync` first, `session_resume` only if needed
+**下一步动作**: `context_sync` first, `session_resume` only if needed
 ```

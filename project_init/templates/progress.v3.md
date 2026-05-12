@@ -12,7 +12,7 @@
 
 | Spec | 范围 | 当前节点 | 最后确认节点 | 阻塞项 | 下一动作 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| `docs/spec/YYYY-MM-DD-example.md` | Patch | DesignDraft | DesignDraft | 等待评审 | `feature_confirm (review)` |
+| `docs/spec/YYYY-MM-DD-example.md` | Patch | DesignDraft | DesignDraft | 等待评审 | `feature_confirm（review）` |
 
 ## 当前风险
 
