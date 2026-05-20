@@ -20,7 +20,10 @@ OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完
 
 - `code_implement_confirm` 已把工作推进到 `Verifying`。
 - AI 准备声称"完成了""修好了""测试通过了"。
-- 发布或交付前需要最后一轮验证判断。
+- 用户说"需求验收通过""验收通过""验证完成"——单个 spec 的验收确认。
+- 发布或交付前需要最后一轮验证判断（此时通常由 `project_release` 统一调度）。
+
+> **注意**：本 skill 处理的是**单个 spec 的验收完成**，不是版本级定版。版本级定版由 `project_release` 负责。
 
 ## Instructions
 
@@ -62,12 +65,16 @@ OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完
 结果只能是：
 
 1. `stay`：继续留在 `Verifying`，还缺证据或还有未完成项
-2. `advance`：验证满足，可以进入正常完成或 `project_release`
+2. `advance`：验收通过，**自动同步 `docs/progress.md`**，spec 进入完成状态。后续由 `project_release` 统一归档
 3. `repair_required`：发现需求、设计或实现假设不成立，转到 `workflow_repair`
 
-### Step 5: Report Evidence And Next Step
+### Step 5: Report Evidence And Auto-Sync
 
-用户可见输出必须同时展示证据和下一步。
+`advance` 时自动更新 `docs/progress.md`，然后输出验证结果。spec 标记为已完成。
+
+用户可见输出必须同时展示证据和当前状态。`advance` 不输出"下一步建议"路由。
+
+**不在这一步触发 `project_release`**——定版是版本级操作，由用户明确说"发布/定版"时触发，一次性归档所有已完成的 spec。
 
 ## Red Flags - STOP
 
@@ -78,32 +85,14 @@ OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完
 
 ## Rationalization 防御
 
-| 常见理由 | 实际含义 |
-| :--- | :--- |
-| "上次测试过了" | 上次不是现在，代码可能已变 |
-| "逻辑上应该没问题" | 逻辑判断不替代运行结果 |
-| "只改了很小的地方" | 小改动同样可以引入回归 |
-| "构建通过了就行" | 构建通过 ≠ 功能正确 |
-| "子代理说成功了" | 子代理报告需要独立验证 |
+常见理由与实际含义对照表见 `references/rationalization.md`。
 
 ## Output
 
-```markdown
-## 验证门禁结果
+> 完整模板见 `references/output-templates.md`
 
-**当前 Spec**: `docs/spec/YYYY-MM-DD-...`
-**Spec 模式**: 单文件（single） | 多文件（multi）
-**当前节点**: 验证中（Verifying）
-**本轮结论**: 继续补证据或补验证（stay） | 验证通过，可进入定版（advance） | 需先修复流程问题（repair_required）
+**stay** — 输出证据日志 + 验收标准核对 + 缺失证据，建议回到 `code_implement_confirm`。
 
-**证据日志** (本轮实际运行):
-- 命令: ...
-- 输出摘要: ...
-- 通过/失败: ...
+**advance** — 不输出"下一步建议"。输出证据日志 + 验收标准核对（全部通过），自动同步 progress。定版由 `project_release` 统一处理。
 
-**验收标准核对**:
-- [ ] 标准 1: ...
-- [ ] 标准 2: ...
-
-**下一步建议**: 回到代码实施继续补齐（`code_implement_confirm`） | 当前流程存在缺口，建议先修复（`workflow_repair`） | 验证通过，可执行定版归档（`project_release`）
-```
+**repair_required** — 输出受阻原因，路由到 `workflow_repair`。

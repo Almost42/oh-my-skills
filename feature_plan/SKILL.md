@@ -49,28 +49,10 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 
 ### Step 2: Determine Spec Mode And File Structure
 
-根据 `Scope` 确定 spec 类型：
-
-- spec 文件或目录名必须包含创建日期（精确到日），统一格式为 `YYYY-MM-DD-{slug}`；日期一旦创建不随后续更新改变。
-- `slug` 使用短横线小写英文或项目既有命名，表达需求主题；不得创建无日期前缀的 `docs/spec/create-task.md` 或 `docs/spec/create-task/`。
-- `docs/spec/index.md` 是 spec 根索引，简要记录每个需求关注的模块、处理方向、日期和状态锚点；创建或修订 spec 时同步更新该索引，但节点真相仍在 spec 状态锚点。
-- OMS 文档正文默认使用中文；路径、代码标识符、API 名称、frontmatter 枚举值和既有英文术语可保留英文。
-
-- `Scope: Patch` → **Single-file mode**
-  - 文件：`docs/spec/YYYY-MM-DD-{slug}.md`
-  - 模板：`feature_plan/templates/spec.v3.md`
-  - 内容完整写入单文件
-
-- `Scope: Feature` → **Multi-file mode**
-  - 目录：`docs/spec/YYYY-MM-DD-{slug}/`
-  - 状态锚点：`index.md`（持有所有 frontmatter，状态变更只写这里）
-  - 需求内容：`req.md`（业务背景、需求范围、验收标准）
-  - 设计内容：`design.md`（技术方案、接口影响、影响分析）
-  - 实施包：`impl.md`（ReadyForImplementation 后由 feature_confirm 填充）
-  - 模板：`feature_plan/templates/spec-index.v3.md` / `spec-req.v3.md` / `spec-design.v3.md` / `spec-impl.v3.md`
-
-✅ Feature 类需求 → 创建 `docs/spec/2026-04-20-create-task/index.md` + `req.md` + `design.md` + `impl.md`（空），并更新 `docs/spec/index.md`
-❌ Feature 类需求 → 把所有内容堆进一个 `create-task.md`
+- `Scope: Patch` → **Single-file**: `docs/spec/YYYY-MM-DD-{slug}.md`，模板 `spec.v3.md`
+- `Scope: Feature` → **Multi-file**: `docs/spec/YYYY-MM-DD-{slug}/`，子文件为 `index.md` + `req.md` + `design.md` + `impl.md`
+- 命名规则与完整模板清单见 `references/spec-structure.md`
+- 创建或修订后同步 `docs/spec/index.md`（只写简略检索信息）
 
 ### Step 3: Decide Whether To Create Or Revise
 
@@ -115,36 +97,16 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 - 若 `Scope: Patch`，明确记录 patch path、影响边界与简化原因。
 - 若设计会改变结构、能力边界或知识路由，标注后续需要同步的文档。
 
-### Step 7: Report Without Advancing Too Far
+### Step 7: Report And Auto-Continue
 
-- 正常结果：保持在 `DesignDraft`，转到 `feature_confirm (review)`。
+- 正常结果：保持在 `DesignDraft`，输出设计草案摘要后**直接进入 `feature_confirm (review)`**，不输出"下一步建议"停等。
 - 若设计仍暴露需求空洞：回到 `requirement_probe`。
 - 若是在已确认流程中发现问题：提议 `workflow_repair`。
 
 ## Output
 
-```markdown
-## 设计草案结果
+> 完整模板见 `references/output-templates.md`
 
-**Spec**: `docs/spec/YYYY-MM-DD-...`
-**范围**: 新功能/跨模块能力（Feature） | 局部修复/小范围修改（Patch）
-**Spec 模式**: 单文件（single） | 多文件（multi）
-**当前节点**: 方案设计中（DesignDraft）
-**最近确认节点**: ...
+**正常完成** — 输出设计草案 + YAGNI 检查 + 潜在冲突，不输出"下一步建议"，自动进入 `feature_confirm (review)`。
 
-**YAGNI 检查**:
-- [ ] 所有设计项均有需求来源
-- [ ] 无"以防万一"的抽象
-- [ ] 最简方案可满足需求
-
-**已加载知识**:
-- ...
-
-**潜在冲突**:
-- ...
-
-**后续需同步文档**:
-- ...
-
-**下一步建议**: 进入方案评审（`feature_confirm review`） | 需求仍有缺口，回到需求澄清（`requirement_probe`） | 当前流程存在缺口，建议先修复工作流（`workflow_repair`）
-```
+**需求不足/发现问题** — 输出受阻原因，回到 `requirement_probe` 或 `workflow_repair`。

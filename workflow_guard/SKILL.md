@@ -81,7 +81,8 @@ OMS v3 的第一入口。先判断"该走哪条链路"，再建议任何动作�
 - 已批准的实现开始落地 -> `code_implement_confirm`
 - 发现需求/设计/验证不闭环 -> `workflow_repair`
 - 声称完成或修复 -> `verification_gate`
-- 发布 -> `project_release`
+- 需求验收通过 / 验收通过 / 验证完成 -> `verification_gate`（单个 spec 的验收确认）
+- 发布 / 定版 -> `project_release`（版本级操作，归档所有已完成 spec）
 
 若识别为补丁需求，默认仍先进入 `requirement_probe`，并明确标注 `Scope: Patch`。
 
@@ -105,7 +106,12 @@ OMS v3 的第一入口。先判断"该走哪条链路"，再建议任何动作�
 
 若意图属于初始化 / 迁移 / 对账，先路由到 `project_init`。
 
-输出当前节点、建议 skill、需要读取的文档、缺失门禁和下一步动作。
+**静默路由规则**：以下场景跳过完整报告，直接进入目标 skill：
+
+- **意图 = `context_sync` 且只有一个活跃 spec**：不输出"工作流状态"报告，直接加载 `context_sync`。用户说"继续"/"恢复"时不需要先看一份路由分析。
+- **意图 = `feature_confirm (review)`，spec 处在 `DesignDraft`，门禁无缺失**：跳过报告，直接进入 `feature_confirm (review)`。
+
+其他情况正常输出路由报告。
 
 ## Red Flags - STOP
 
@@ -131,3 +137,6 @@ OMS v3 的第一入口。先判断"该走哪条链路"，再建议任何动作�
 
 **下一步建议**: 先执行项目初始化扫描（`project_init`） | 先恢复项目上下文（`context_sync`） | 先进入需求澄清（`requirement_probe`） | 先补建能力文档（`capability_bootstrap`） | 当前流程存在缺口，建议先修复（`workflow_repair`）
 ```
+
+> **静默路由时不输出此报告**。单 spec + context_sync 意图时，直接进入目标 skill。
+> 多 spec 需用户确认时，仅列出选项，不输出完整路由报告。

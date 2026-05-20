@@ -83,10 +83,7 @@ OMS v3 的执行器。只处理已经获批的 execution package，不负责替�
 
 ### Step 4: Handle Unexpected Findings
 
-在实现过程中若发现 spec 以外的问题：
-
-- ✅ 记录在本轮输出的"观察到但未修复"列表中，提示后续处理
-- ❌ 不得在不走 `workflow_repair` 的情况下扩展 scope
+在实现过程中若发现 spec 以外的问题，记录在"观察到但未修复"列表中，不得在不走 `workflow_repair` 的情况下扩展 scope。
 
 ### Step 5: Run Self-Check
 
@@ -98,23 +95,14 @@ OMS v3 的执行器。只处理已经获批的 execution package，不负责替�
 
 #### 重试上限规则
 
-**相同错误连续出现 2 次 → 立即停止，报告用户，不再重试。**
-
-| 错误类型 | 处置方式 |
-| :--- | :--- |
-| `command not found` / `No such file or directory`（工具类） | 环境问题，停止，让用户确认工具安装 |
-| 相同的编译错误出现 2 次 | 代码问题超出预期，停止，说明原因 |
-| 网络超时连续 2 次 | 停止，让用户检查网络或镜像配置 |
-| 测试失败但错误信息每次不同 | 可继续调查，但不超过 3 轮 |
-
-Never 在没有任何变更的情况下对同一命令重试超过 2 次。
+**相同错误连续出现 2 次 → 立即停止，报告用户，不再重试。** 详细处置表见 `references/retry-rules.md`。
 
 ### Step 6: Decide Result Explicitly
 
 结果只能是：
 
 1. `stay`：保持在 `Implementing`，说明剩余工作与下一步
-2. `advance`：条件满足时把 `Current_Node` 推进到 `Verifying`，然后转给 `verification_gate`
+2. `advance`：条件满足时把 `Current_Node` 推进到 `Verifying`，然后自动同步 `docs/progress.md`，**直接进入 `verification_gate`**，不输出"下一步建议"停等
 3. `repair_required`：发现需求、设计、实施边界或验收假设存在问题，转到 `workflow_repair`
 
 ## Red Flags - STOP
@@ -128,26 +116,10 @@ Never 在没有任何变更的情况下对同一命令重试超过 2 次。
 
 ## Output
 
-```markdown
-## 代码实施结果
+> 完整模板见 `references/output-templates.md`
 
-**当前 Spec**: `docs/spec/...`
-**Spec 模式**: 单文件（single） | 多文件（multi）
-**范围**: 新功能/跨模块能力（Feature） | 局部修复/小范围修改（Patch）
-**当前节点**: 待实施（ReadyForImplementation） | 实施中（Implementing） | 待验证（Verifying）
-**本轮结论**: 继续实施（stay） | 可以进入验证（advance） | 需先修复流程问题（repair_required）
+**stay** — 输出执行摘要 + 剩余工作 + 观察项 + 验证快照 + 回退基线。
 
-**执行摘要**:
-- ...
+**advance** — 不输出"下一步建议"，自动同步 progress 并进入 `verification_gate`。输出简要实施摘要。
 
-**观察到但未修复**:
-- ...
-
-**验证快照**:
-- ...
-
-**回退基线**:
-- ...
-
-**下一步建议**: 继续当前实施（`code_implement_confirm`） | 进入验证门禁（`verification_gate`） | 当前流程存在缺口，建议先修复（`workflow_repair`）
-```
+**repair_required** — 输出受阻原因，路由到 `workflow_repair`。
