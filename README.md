@@ -48,8 +48,7 @@ project_init                # 项目初始化扫描
   -> feature_plan           # 设计草案
   -> feature_confirm        # 方案确认（review / lock）
   -> code_implement_confirm # 代码实施
-  -> verification_gate      # 验证门禁
-  -> project_release        # 项目发布 / 归档
+  -> verification_gate      # 验证门禁（验收通过后自动归档，流程闭环）
 ```
 
 关键约束：
@@ -189,7 +188,7 @@ docs/
 写入约束：
 
 - `docs/context/`：只允许 `project_init` 和 `project_docs_optimize` 写入或重组。
-- `docs/history/`：只允许 `project_init`、`project_release` 和 `project_docs_optimize` 写入。
+- `docs/history/`：只允许 `project_init` 和 `project_docs_optimize` 写入，`verification_gate (advance)` 追加事件摘要。
 
 ## 快速开始
 
@@ -235,8 +234,7 @@ requirement_probe           #描述需求
   -> feature_plan           #设计需求方案
   -> feature_confirm        #确认需求方案
   -> code_implement_confirm #确认实施方案
-  -> verification_gate      #验证
-  -> project_release        #定版
+  -> verification_gate      #验证（验收通过后自动归档）
 ```
 
 可选的操作：
@@ -248,9 +246,13 @@ requirement_probe           #描述需求
 
 ### 5. 完整闭环
 
-当一个版本定版时，即设计、实施、验收全部通过时，应该执行`project_release` （定版）操作。
+当一个 spec 的验收通过时，`verification_gate (advance)` 会自动完成：
 
-该操作会将需求整个周期内产生的文档进行状态更新、经验提取、规则固化，确保本次开发中产生的价值数据得到记录。
+- 更新 `docs/progress.md`，移除已完成 spec
+- 更新 `docs/history/`，追加事件摘要
+- 更新 `docs/spec/index.md`，标记为 `Archived`
+
+需求验收通过即视为流程闭环完成。如需对 lessons 进行升格审查，可主动触发 `knowledge_review`。
 
 ### 6. （可选）团队Skill加载
 当`./.skillshare/skills`中存在团队技能时，需要按照如下步骤加载，确保开发者使用的ide/cli/agent能够读取到对应的skill。
@@ -295,10 +297,10 @@ Agent：[code_implement_confirm] Pre-flight 检查工具可用 → 按 impl.md �
 
 用户：增加规则：protocol 文件由自动化工具生成，禁止手动修改。
 Agent：[lesson_capture] 分类为 domain → 写入 docs/knowledge/lessons/domain.md。
-       当前保持在缓冲层；待 release/收口时由 knowledge_review 决定是否升格到 docs/domain_rules.md。
+       当前保持在缓冲层；待收口时由 knowledge_review 决定是否升格到 docs/domain_rules.md。
 
-用户：当前版本开发完成，定版。
-Agent：[verification_gate] 运行测试，输出实际运行证据，逐条核对验收标准，最后提取相关经验保存进知识库。
+用户：需求验收通过。
+Agent：[verification_gate] 运行测试，输出实际运行证据，逐条核对验收标准，验收通过后自动归档 spec 并同步 progress/history/index。流程闭环完成。
 ```
 
 ### 示例：多开发者并行场景

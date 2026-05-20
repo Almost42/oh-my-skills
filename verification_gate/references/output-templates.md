@@ -30,7 +30,7 @@
 ## 验证门禁结果
 
 **当前 Spec**: `docs/spec/YYYY-MM-DD-...`
-**当前节点**: 验收通过
+**当前节点**: 已归档（Archived）
 **本轮结论**: 需求已完成（advance）
 
 **证据日志** (本轮实际运行):
@@ -42,10 +42,10 @@
 - [x] 标准 1: ...
 - [x] 标准 2: ...
 
-（已自动同步 docs/progress.md）
+（已自动同步 docs/progress.md、docs/history/、docs/spec/index.md）
 ```
 
-> advance 不输出"下一步建议"。验收通过后 spec 进入完成状态，progress 已自动更新。定版（project_release）是版本级操作，在用户明确说"发布"时统一归档已完成的 spec。
+> advance 不输出"下一步建议"。验收通过后 spec 进入 `Archived`，progress/history/index 已自动更新。需求已完成，流程闭环。
 
 ## repair_required（需要修复）
 

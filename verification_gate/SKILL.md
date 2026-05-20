@@ -21,9 +21,6 @@ OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完
 - `code_implement_confirm` 已把工作推进到 `Verifying`。
 - AI 准备声称"完成了""修好了""测试通过了"。
 - 用户说"需求验收通过""验收通过""验证完成"——单个 spec 的验收确认。
-- 发布或交付前需要最后一轮验证判断（此时通常由 `project_release` 统一调度）。
-
-> **注意**：本 skill 处理的是**单个 spec 的验收完成**，不是版本级定版。版本级定版由 `project_release` 负责。
 
 ## Instructions
 
@@ -65,16 +62,20 @@ OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完
 结果只能是：
 
 1. `stay`：继续留在 `Verifying`，还缺证据或还有未完成项
-2. `advance`：验收通过，**自动同步 `docs/progress.md`**，spec 进入完成状态。后续由 `project_release` 统一归档
+2. `advance`：验收通过，自动归档并同步状态。流程结束
 3. `repair_required`：发现需求、设计或实现假设不成立，转到 `workflow_repair`
 
-### Step 5: Report Evidence And Auto-Sync
+### Step 5: Advance — Archive And Sync
 
-`advance` 时自动更新 `docs/progress.md`，然后输出验证结果。spec 标记为已完成。
+`advance` 时自动完成三项操作：
 
-用户可见输出必须同时展示证据和当前状态。`advance` 不输出"下一步建议"路由。
+1. **更新 `docs/progress.md`**：移除当前 spec，调整活跃项
+2. **更新 `docs/history/`**：追加事件摘要（spec 完成日期、验收结论、关键产出）
+3. **更新 `docs/spec/index.md`**：当前 spec 条目状态改为 `Archived`
 
-**不在这一步触发 `project_release`**——定版是版本级操作，由用户明确说"发布/定版"时触发，一次性归档所有已完成的 spec。
+然后输出验证结果。用户可见输出必须同时展示证据和当前状态。
+
+> `advance` 不输出任何"下一步建议"——需求验收通过后 spec 进入 `Archived`，流程闭环完成。如需 lessons 升格审查，用户可主动触发 `knowledge_review`。
 
 ## Red Flags - STOP
 
@@ -93,6 +94,6 @@ OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完
 
 **stay** — 输出证据日志 + 验收标准核对 + 缺失证据，建议回到 `code_implement_confirm`。
 
-**advance** — 不输出"下一步建议"。输出证据日志 + 验收标准核对（全部通过），自动同步 progress。定版由 `project_release` 统一处理。
+**advance** — 不输出"下一步建议"。输出证据日志 + 验收标准核对（全部通过），自动同步 progress。需求已完成。
 
 **repair_required** — 输出受阻原因，路由到 `workflow_repair`。

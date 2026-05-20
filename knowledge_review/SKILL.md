@@ -11,7 +11,7 @@ OMS v3.1 的收口审核器。它负责把 lessons 和会话候选分流到长�
 
 - `lesson_capture` 产生了可能升格的经验。
 - `session_archive` 留下了值得保留的会话候选。
-- `project_release` 需要做版本级知识审查。
+- 用户主动触发知识收口审查。
 
 ## Instructions
 

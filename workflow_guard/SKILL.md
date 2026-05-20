@@ -81,8 +81,7 @@ OMS v3 的第一入口。先判断"该走哪条链路"，再建议任何动作�
 - 已批准的实现开始落地 -> `code_implement_confirm`
 - 发现需求/设计/验证不闭环 -> `workflow_repair`
 - 声称完成或修复 -> `verification_gate`
-- 需求验收通过 / 验收通过 / 验证完成 -> `verification_gate`（单个 spec 的验收确认）
-- 发布 / 定版 -> `project_release`（版本级操作，归档所有已完成 spec）
+- 需求验收通过 / 验收通过 / 验证完成 -> `verification_gate`（单个 spec 的验收确认，验收通过后自动归档）
 
 若识别为补丁需求，默认仍先进入 `requirement_probe`，并明确标注 `Scope: Patch`。
 

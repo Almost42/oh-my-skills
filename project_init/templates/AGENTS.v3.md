@@ -43,7 +43,7 @@
 - 恢复工作 -> `context_sync`
 - 新需求 -> `requirement_probe`
 - 设计草案评审 -> `feature_confirm (review)`；执行批准 -> `feature_confirm (lock)`；代码执行 -> `code_implement_confirm`
-- 修复或回退提案 -> `workflow_repair`；完成声明 -> `verification_gate`；发布 -> `project_release`
+- 修复或回退提案 -> `workflow_repair`；完成声明 -> `verification_gate`
 
 ## Skill 宣告
 
@@ -53,7 +53,7 @@
 
 - 将项目事实更新到各自负责的 owner 文档中；`docs/progress.md` 只做轻量摘要；lessons 先写入 `docs/knowledge/lessons/` 缓冲层，再在收口时决定是否升格到 `docs/domain_rules.md`、`docs/architecture.md` 或 capability docs；默认不创建 `docs/memory/`。
 - `docs/context/` 只允许 `project_init` 和 `project_docs_optimize` 写入或重组。
-- `docs/history/` 只允许 `project_init`、`project_release` 和 `project_docs_optimize` 写入；只记录事件摘要，不记录需求正文。
+- `docs/history/` 只允许 `project_init` 和 `project_docs_optimize` 写入，`verification_gate (advance)` 追加事件摘要；只记录事件摘要，不记录需求正文。
 
 ## 工具适配策略
 
