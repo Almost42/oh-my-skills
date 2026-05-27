@@ -36,20 +36,20 @@ OMS v3 的执行器。只处理已经获批的 execution package，不负责替�
 
 开始代码工作前必须确认：
 
-1. 读取 spec 状态锚点（`docs/spec/YYYY-MM-DD-{slug}.md` 或 `docs/spec/YYYY-MM-DD-{slug}/index.md`）
+1. 读取 spec 状态锚点（`docs/ai/spec/YYYY-MM-DD-{slug}.md` 或 `docs/ai/spec/YYYY-MM-DD-{slug}/index.md`）
 2. `Status: Active`
 3. `Current_Node` 为 `ReadyForImplementation` 或 `Implementing`
 4. 若 multi-file spec：读取 `impl.md`（execution package 详情）和 `req.md`（验收标准）
-5. **读取 `docs/architecture.md`（若存在）**：在运行构建/测试前必须加载；优先关注与本次改动路径、**构建、测试、工具链、IDE/Wrapper** 相关的章节（如 `## 构建与验证`、`## 开发环境与工具约定`）；若未分节则读全文。团队把「唯一允许的 Maven/命令/profile」写在这里时，**不得**用通例或猜测替代。若 `AGENTS.md` 对命令另有明确约束，与之一并遵守。
-6. 加载 `docs/knowledge/lessons/code.md`（若存在）
-7. 加载 `docs/knowledge/lessons/domain.md`（若存在，域规则对实现决策有约束力）
+5. **读取 `docs/ai/architecture.md`（若存在）**：在运行构建/测试前必须加载；优先关注与本次改动路径、**构建、测试、工具链、IDE/Wrapper** 相关的章节（如 `## 构建与验证`、`## 开发环境与工具约定`）；若未分节则读全文。团队把「唯一允许的 Maven/命令/profile」写在这里时，**不得**用通例或猜测替代。若 `AGENTS.md` 对命令另有明确约束，与之一并遵守。
+6. 加载 `docs/ai/knowledge/lessons/code.md`（若存在）
+7. 加载 `docs/ai/knowledge/lessons/domain.md`（若存在，域规则对实现决策有约束力）
 8. 若是 `Scope: Patch`：已有获批的 patch path
 
 若当前节点仍是 `RequirementDraft` / `DesignDraft`，不要写代码，改回 `requirement_probe`、`feature_plan` 或 `feature_confirm`。
 
 ### Step 1.5: Pre-flight Tool Check
 
-在运行任何构建、测试或工具命令前，先验证命令可用，并与 **Step 1 已读** 的 `docs/architecture.md` / `AGENTS.md` 中的约定**一致**（例如必须用 `./mvnw`、某 profile、某目录下执行）：
+在运行任何构建、测试或工具命令前，先验证命令可用，并与 **Step 1 已读** 的 `docs/ai/architecture.md` / `AGENTS.md` 中的约定**一致**（例如必须用 `./mvnw`、某 profile、某目录下执行）：
 
 - 若文档规定必须使用 wrapper、特定 profile 或非全局 `mvn`：**禁止**用未约定的通例命令代替（除非先经用户确认变更约定）。
 - 检查所需工具是否可以在当前 shell 环境中执行（如文档约定的 `mvn -v`/`./mvnw -v`、`npm -v`、`go version`）
@@ -102,7 +102,7 @@ OMS v3 的执行器。只处理已经获批的 execution package，不负责替�
 结果只能是：
 
 1. `stay`：保持在 `Implementing`，说明剩余工作与下一步
-2. `advance`：条件满足时把 `Current_Node` 推进到 `Verifying`，然后自动同步 `docs/progress.md`，**直接进入 `verification_gate`**，不输出"下一步建议"停等
+2. `advance`：条件满足时把 `Current_Node` 推进到 `Verifying`，然后自动同步 `docs/ai/progress.md`，**直接进入 `verification_gate`**，不输出"下一步建议"停等
 3. `repair_required`：发现需求、设计、实施边界或验收假设存在问题，转到 `workflow_repair`
 
 ## Red Flags - STOP

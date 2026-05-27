@@ -12,7 +12,7 @@ description: >-
 
 - `context_sync` 明确判断 baseline 文档不足。
 - 用户明确要求恢复长会话交接信息。
-- 项目已经启用了 `docs/memory/`，且当前问题确实依赖历史推理链。
+- 项目已经启用了 `docs/ai/memory/`，且当前问题确实依赖历史推理链。
 
 ## Instructions
 
@@ -21,15 +21,15 @@ description: >-
 
 - 为什么 baseline 不足
 - 需要恢复的是哪些缺失信息
-- 是否真的需要读取 `docs/memory/`
+- 是否真的需要读取 `docs/ai/memory/`
 
 ### Step 2: Read Optional Archive Layer
-若 `docs/memory/` 存在，则读取：
+若 `docs/ai/memory/` 存在，则读取：
 
 - `memory_active.md`（若存在）
 - 相关 `session_*.md` 散档
 
-若 `docs/memory/` 不存在，则明确告知：当前项目未启用 memory，改用 baseline 文档继续工作。
+若 `docs/ai/memory/` 不存在，则明确告知：当前项目未启用 memory，改用 baseline 文档继续工作。
 
 ### Step 3: Reconstruct Missing Context
 补齐：
@@ -39,7 +39,7 @@ description: >-
 - 与当前 active spec 相关的历史说明
 
 ### Step 4: Optional Consolidation
-仅当项目已经启用 `docs/memory/` 且确有必要时，才整理或更新 `memory_active.md`。不要把 memory 重新变成默认 active-state 来源。
+仅当项目已经启用 `docs/ai/memory/` 且确有必要时，才整理或更新 `memory_active.md`。不要把 memory 重新变成默认 active-state 来源。
 
 ### Step 5: Report
 明确说明：

@@ -32,21 +32,17 @@ OMS v3 的第一入口。先判断"该走哪条链路"，再建议任何动作�
 
 ## Instructions
 
-### Step 1: Locate Context（两步走，不要一次全读）
+### Step 1: Locate Context（最小集优先）
 
-**第一步：只读定位文档**
+**第一步：只读最小定位文档**（2 个文件，足够判断活跃 spec 情况）
 
 1. `AGENTS.md`
-2. `docs/progress.md`
-3. `docs/spec/index.md`（若存在，用于理解历史模块关注点）
-4. `docs/knowledge/lessons/workflow.md`（若存在）
+2. `docs/ai/progress.md`
 
-**第二步：按 progress.md 结果决定加载哪个 spec**
-
-从 `docs/progress.md` 识别当前活跃 spec 列表：
+从 `docs/ai/progress.md` 识别当前活跃 spec 列表：
 
 **情况 A：只有一个活跃 spec**
-→ 读取该 spec 的状态锚点（`docs/spec/YYYY-MM-DD-{slug}.md` 或 `docs/spec/YYYY-MM-DD-{slug}/index.md`）
+→ 暂不加载 spec 锚点，仅在 Step 4 决定路由后由目标 skill 按需加载
 
 **情况 B：有多个活跃 spec**
 → 不加载任何 spec，直接向用户列出所有活跃 spec 并要求确认：
@@ -61,12 +57,20 @@ OMS v3 的第一入口。先判断"该走哪条链路"，再建议任何动作�
 请指定编号或名称。
 ```
 
-等待用户回复后，只读取用户指定的那个 spec 状态锚点，其余不加载。
+等待用户回复后，不加载 spec，将用户选择传递到目标 skill。
 
 **情况 C：没有活跃 spec**
 → 不加载任何 spec，直接进入 Step 2 的意图识别
 
-⚠️ `docs/architecture.md` 在此步骤不加载——workflow_guard 不需要架构细节来识别意图和路由。
+**第二步：按意图决定是否补载**（在 Step 2 识别意图后）
+
+仅在 Step 2 识别为非 context_sync 意图时，补载：
+- `docs/ai/spec/index.md`（若存在）
+- `docs/ai/knowledge/lessons/workflow.md`（若存在）
+
+若意图为 `context_sync`，跳过上述补载——这些文档由 context_sync 自行加载，避免重复。
+
+⚠️ `docs/ai/architecture.md` 在此步骤不加载——workflow_guard 不需要架构细节来识别意图和路由。
 
 ### Step 2: Identify Intent
 

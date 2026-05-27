@@ -18,13 +18,13 @@ OMS 解决的是 AI 参与开发时最常见的几类失控问题：
 对应地，OMS 提供这些核心能力：
 
 - **节点化工作流**：把需求、设计、实施、验证拆成明确阶段，每个阶段有进入门禁。
-- **文档化状态管理**：spec 状态锚点持有真实节点，`docs/progress.md` 只做摘要。
+- **文档化状态管理**：spec 状态锚点持有真实节点，`docs/ai/progress.md` 只做摘要。
 - **设计与实施分离**：只有进入 `ReadyForImplementation` 后才允许实施代码。
 - **显式修复机制**：当设计或实现不闭环时，走 `workflow_repair`，而不是偷偷改状态。
 - **精准上下文注入**：每个 skill 只加载当前步骤必需的文档，多开发者场景下自动识别活跃 spec 并要求用户确认。
 - **AI 行为约束**：每个 skill 内置 Iron Law、Never 规则和 Red Flags，防止 agent 假设替代澄清、顺手修改范围外代码、声称完成但没有证据。
 - **可分发运行时**：模板资产跟随 skill 一起分发，不依赖仓库中的统一模板目录。
-- **历史 spec 可回溯**：spec 文件或目录名包含创建日期，`docs/spec/index.md` 按模块与处理方向索引历史需求。
+- **历史 spec 可回溯**：spec 文件或目录名包含创建日期，`docs/ai/spec/index.md` 按模块与处理方向索引历史需求。
 
 ## 核心工作流
 
@@ -64,20 +64,20 @@ spec 文件根据 `Scope` 自动选择存储方式：
 
 | Scope | 文件结构 | 说明 |
 | :--- | :--- | :--- |
-| `Patch` | `docs/spec/YYYY-MM-DD-{slug}.md`（单文件） | 局部修复，内容完整写入一个文件 |
-| `Feature` | `docs/spec/YYYY-MM-DD-{slug}/`（子目录） | 新能力开发，内容按阶段拆分 |
+| `Patch` | `docs/ai/spec/YYYY-MM-DD-{slug}.md`（单文件） | 局部修复，内容完整写入一个文件 |
+| `Feature` | `docs/ai/spec/YYYY-MM-DD-{slug}/`（子目录） | 新能力开发，内容按阶段拆分 |
 
 命名规则：
 
 - 日期为 spec 创建日期，精确到日，后续更新不改文件名或目录名。
 - `slug` 保持短小稳定，用来表达需求主题。
-- `docs/spec/index.md` 是根索引，只记录 spec 路径、日期、范围、当前节点、关注模块、处理方向和最近更新；节点真相仍在各 spec 状态锚点。
+- `docs/ai/spec/index.md` 是根索引，只记录 spec 路径、日期、范围、当前节点、关注模块、处理方向和最近更新；节点真相仍在各 spec 状态锚点。
 - OMS 文档正文默认使用中文；路径、代码标识符、API 名称、frontmatter 枚举值和既有英文术语可保留英文。
 
 Feature 类 spec 的子目录结构：
 
 ```text
-docs/spec/YYYY-MM-DD-{slug}/
+docs/ai/spec/YYYY-MM-DD-{slug}/
 ├── index.md     ← 状态锚点，持有所有 frontmatter，节点变更只写这里
 ├── req.md       ← 需求范围与验收标准（requirement_probe 阶段写入）
 ├── design.md    ← 技术方案与影响分析（feature_plan 阶段写入）
@@ -90,20 +90,20 @@ docs/spec/YYYY-MM-DD-{slug}/
 
 OMS 将上下文视为有限资源，通过以下机制减少不必要加载：
 
-**Spec 按需定位**：新对话开始时，先读 `docs/progress.md` 定位活跃 spec，而不是全量扫描 `docs/spec/`。
+**Spec 按需定位**：新对话开始时，先读 `docs/ai/progress.md` 定位活跃 spec，而不是全量扫描 `docs/ai/spec/`。
 
-**项目背景校准**：需求阶段先读 `docs/context/project_brief.md`（若存在），用项目目的、范围、成功标准和术语表校准需求判断。
+**项目背景校准**：需求阶段先读 `docs/ai/context/project_brief.md`（若存在），用项目目的、范围、成功标准和术语表校准需求判断。
 
-**多开发者场景**：若 `docs/progress.md` 中存在多个活跃 spec（多人并行开发），agent 会列出所有进行中的工作项并要求用户明确指定，而不是自行猜测：
+**多开发者场景**：若 `docs/ai/progress.md` 中存在多个活跃 spec（多人并行开发），agent 会列出所有进行中的工作项并要求用户明确指定，而不是自行猜测：
 
 ```
 当前项目有多个进行中的工作项，请确认本次对话要处理哪个：
-1. 2026-04-20-create-task — Implementing — 新增创建任务接口
-2. 2026-04-18-offerwall-refactor — DesignDraft — 广告墙重构方案
+1. 2026-04-20-create-task — 实施中 — 新增创建任务接口
+2. 2026-04-18-offerwall-refactor — 方案设计 — 广告墙重构方案
 请指定编号或名称。
 ```
 
-**architecture.md 加载**：`docs/architecture.md` 若存在，则 `feature_plan` / `feature_confirm` 均必读（Patch 优先关注与范围、构建/测试/工具链相关的节）；`code_implement_confirm` 与 `verification_gate` 在跑构建/测试前**强制**阅读，与 `AGENTS.md` 中的 baseline 与工具约定对齐。`workflow_guard` 入口仍可不调 architecture，以免意图识别过荷。
+**architecture.md 加载**：`docs/ai/architecture.md` 若存在，则 `feature_plan` / `feature_confirm` 均必读（Patch 优先关注与范围、构建/测试/工具链相关的节）；`code_implement_confirm` 与 `verification_gate` 在跑构建/测试前**强制**阅读，与 `AGENTS.md` 中的 baseline 与工具约定对齐。`workflow_guard` 入口仍可不调 architecture，以免意图识别过荷。
 
 **Lessons 精准注入**：Lessons 按操作类型分类存储，各 skill 只加载当前阶段对应的分类文件。
 
@@ -130,18 +130,18 @@ OMS 将上下文视为有限资源，通过以下机制减少不必要加载：
 OMS v3.1 采用 owner-first 的精简知识体系：
 
 - `AGENTS.md`：治理边界、加载策略、触发路由
-- `docs/context/project_brief.md`：项目目的、范围、成功标准、术语等稳定背景
-- `docs/architecture.md`：结构、模块边界、工具链与环境约定
-- `docs/domain_rules.md`：项目级硬约束、禁区、协议规则
+- `docs/ai/context/project_brief.md`：项目目的、范围、成功标准、术语等稳定背景
+- `docs/ai/architecture.md`：结构、模块边界、工具链与环境约定
+- `docs/ai/domain_rules.md`：项目级硬约束、禁区、协议规则
 - capability docs：能力专属稳定事实与操作约束，仅在能力成体系时创建
-- `docs/knowledge/index.md`：路由器，只决定“该读哪些 owner 文件”
-- `docs/knowledge/lessons/*`：短期纠错缓冲层
-- `docs/history/*`：初始化、发布/归档、治理审计等事件摘要
+- `docs/ai/knowledge/index.md`：路由器，只决定“该读哪些 owner 文件”
+- `docs/ai/knowledge/lessons/*`：短期纠错缓冲层
+- `docs/ai/history/*`：初始化、发布/归档、治理审计等事件摘要
 
 **Lessons 分类体系**：Lessons 只保存短期经验，不直接充当长期知识仓库：
 
 ```text
-docs/knowledge/lessons/
+docs/ai/knowledge/lessons/
 ├── design.md    ← 需求/设计阶段的判断错误
 ├── code.md      ← 实现阶段的操作失误与禁止行为
 ├── testing.md   ← 验证/测试相关的遗漏
@@ -149,7 +149,7 @@ docs/knowledge/lessons/
 └── domain.md    ← 业务规则与领域特定约束（收口时再决定是否升格）
 ```
 
-对话中的纠正、问题和经验默认先写入 `lessons`。只有在收口节点经 `knowledge_review` 审核后，才允许分流到 `docs/domain_rules.md`、`docs/architecture.md` 或 capability docs，避免长期 owner 文档过拟合单次会话。
+对话中的纠正、问题和经验默认先写入 `lessons`。只有在收口节点经 `knowledge_review` 审核后，才允许分流到 `docs/ai/domain_rules.md`、`docs/ai/architecture.md` 或 capability docs，避免长期 owner 文档过拟合单次会话。
 
 ## 会生成哪些文档
 
@@ -157,7 +157,7 @@ docs/knowledge/lessons/
 
 ```text
 AGENTS.md
-docs/
+docs/ai/
 ├── context/project_brief.md
 ├── architecture.md
 ├── domain_rules.md               # optional, 仅在项目级硬约束成体系时创建
@@ -173,22 +173,22 @@ docs/
 这些文档的职责：
 
 - `AGENTS.md`：治理边界、加载策略、技能路由。
-- `docs/context/project_brief.md`：项目背景 owner；仅用于项目目的、范围、成功标准、术语等稳定背景。
-- `docs/spec/index.md`：历史需求根索引，用于按模块与处理方向回溯 spec。
-- `docs/spec/YYYY-MM-DD-*`：单个需求或补丁的协议，也是 workflow node 的 source of truth。
-- `docs/progress.md`：当前状态指针，summary-only，不承载节点真相。
-- `docs/architecture.md`：系统结构与边界；团队可补充构建/测试/环境约定；按各 skill 规则加载（设计/含 Patch 的确认阶段若存在则读，执行与验证前必读；与 `AGENTS.md` 一致时以 skill 中「跑命令前」规则为准）。
-- `docs/domain_rules.md`：项目级硬约束、禁区与协议规则；仅在相关任务确实依赖时加载。
+- `docs/ai/context/project_brief.md`：项目背景 owner；仅用于项目目的、范围、成功标准、术语等稳定背景。
+- `docs/ai/spec/index.md`：历史需求根索引，用于按模块与处理方向回溯 spec。
+- `docs/ai/spec/YYYY-MM-DD-*`：单个需求或补丁的协议，也是 workflow node 的 source of truth。
+- `docs/ai/progress.md`：当前状态指针，summary-only，不承载节点真相。
+- `docs/ai/architecture.md`：系统结构与边界；团队可补充构建/测试/环境约定；按各 skill 规则加载（设计/含 Patch 的确认阶段若存在则读，执行与验证前必读；与 `AGENTS.md` 一致时以 skill 中「跑命令前」规则为准）。
+- `docs/ai/domain_rules.md`：项目级硬约束、禁区与协议规则；仅在相关任务确实依赖时加载。
 - capability docs：能力专属的稳定事实与操作约束；不是必建全套。
-- `docs/knowledge/index.md`：owner 路由入口，含 lessons 加载规则。
-- `docs/knowledge/lessons/`：按操作类型分类的短期纠错经验，精准注入，不全量加载。
-- `docs/history/`：只记录初始化、发布/归档、治理审计等事件摘要，不记录需求正文；spec 主档案始终保留在 `docs/spec/`。
-- `docs/memory/`：可选快照层，只在 handoff 或历史重建需要时启用。
+- `docs/ai/knowledge/index.md`：owner 路由入口，含 lessons 加载规则。
+- `docs/ai/knowledge/lessons/`：按操作类型分类的短期纠错经验，精准注入，不全量加载。
+- `docs/ai/history/`：只记录初始化、发布/归档、治理审计等事件摘要，不记录需求正文；spec 主档案始终保留在 `docs/ai/spec/`。
+- `docs/ai/memory/`：可选快照层，只在 handoff 或历史重建需要时启用。
 
 写入约束：
 
-- `docs/context/`：只允许 `project_init` 和 `project_docs_optimize` 写入或重组。
-- `docs/history/`：只允许 `project_init` 和 `project_docs_optimize` 写入，`verification_gate (advance)` 追加事件摘要。
+- `docs/ai/context/`：只允许 `project_init` 和 `project_docs_optimize` 写入或重组。
+- `docs/ai/history/`：只允许 `project_init` 和 `project_docs_optimize` 写入，`verification_gate (advance)` 追加事件摘要。
 
 ## 快速开始
 
@@ -206,7 +206,7 @@ skillshare sync
 
 安装完成后，OMS 中的 skills、templates 和 references 会一起进入你的 skill 运行环境。
 
-如果你还希望把项目里的常用流程沉淀成团队 skill，后续可使用独立的 `project_skill_extract`，它会把生成结果写入项目的 `.skillshare/skills/`。
+如果你还希望把项目里的常用流程沉淀成团队 skill，后续可使用独立的 `project_skill_extract`，它会把生成结果写入项目的 `docs/ai/skills/`。
 
 ### 2. 在目标项目执行 `project_init`
 
@@ -214,7 +214,7 @@ skillshare sync
 
 `project_init` 是可重复执行的扫描入口，它会：
 
-- 盘点当前项目的 docs、spec、外部 AI 规则来源和 `.skillshare/skills/`
+- 盘点当前项目的 docs、spec、外部 AI 规则来源和 `docs/ai/skills/`
 - 判断哪些结构符合当前 OMS 规范，哪些存在 drift
 - 给出面向开发者的初始化结论：当前是否合规、是否可以继续工作、是否需要先确认结构调整
 - 在需要时建议转到 `project_docs_optimize (analyze)` 输出调整报告
@@ -248,14 +248,14 @@ requirement_probe           #描述需求
 
 当一个 spec 的验收通过时，`verification_gate (advance)` 会自动完成：
 
-- 更新 `docs/progress.md`，移除已完成 spec
-- 更新 `docs/history/`，追加事件摘要
-- 更新 `docs/spec/index.md`，标记为 `Archived`
+- 更新 `docs/ai/progress.md`，移除已完成 spec
+- 更新 `docs/ai/history/`，追加事件摘要
+- 更新 `docs/ai/spec/index.md`，标记为 `Archived`
 
 需求验收通过即视为流程闭环完成。如需对 lessons 进行升格审查，可主动触发 `knowledge_review`。
 
 ### 6. （可选）团队Skill加载
-当`./.skillshare/skills`中存在团队技能时，需要按照如下步骤加载，确保开发者使用的ide/cli/agent能够读取到对应的skill。
+当`./docs/ai/skills`中存在团队技能时，需要按照如下步骤加载，确保开发者使用的ide/cli/agent能够读取到对应的skill。
 
 ```bash
 # 1.确保在当前项目下执行
@@ -272,7 +272,7 @@ skillshare sync
 
 ```text
 用户：项目初始化。
-Agent：[project_init] 扫描项目文档、外部 AI 规则和 `.skillshare/skills/`，发现存在 owner 漂移与缺失 baseline。
+Agent：[project_init] 扫描项目文档、外部 AI 规则和 `docs/ai/skills/`，发现存在 owner 漂移与缺失 baseline。
        下一步建议：`project_docs_optimize (analyze)` 输出调整报告，确认后再执行迁移/补建。
 
 用户：继续。
@@ -283,7 +283,7 @@ Agent：[requirement_probe] 补齐鉴权规则、入参校验、返回结构、�
        Scope 判断：Feature（涉及新接口和数据写入）→ 将使用 multi-file spec。
 
 用户：标题不能为空，截止时间不能早于当前时间，成功返回任务 id 和 createdAt。
-Agent：[feature_plan] 创建 docs/spec/2026-04-20-create-task/index.md + req.md + design.md + impl.md（空），并更新 docs/spec/index.md。
+Agent：[feature_plan] 创建 docs/ai/spec/2026-04-20-create-task/index.md + req.md + design.md + impl.md（空），并更新 docs/ai/spec/index.md。
        YAGNI 自查通过：无未被要求的抽象。
 
 用户：先输出实施方案，我要 review。
@@ -296,8 +296,8 @@ Agent：[feature_confirm lock] 将 Current_Node 推进到 ReadyForImplementation
 Agent：[code_implement_confirm] Pre-flight 检查工具可用 → 按 impl.md 执行。
 
 用户：增加规则：protocol 文件由自动化工具生成，禁止手动修改。
-Agent：[lesson_capture] 分类为 domain → 写入 docs/knowledge/lessons/domain.md。
-       当前保持在缓冲层；待收口时由 knowledge_review 决定是否升格到 docs/domain_rules.md。
+Agent：[lesson_capture] 分类为 domain → 写入 docs/ai/knowledge/lessons/domain.md。
+       当前保持在缓冲层；待收口时由 knowledge_review 决定是否升格到 docs/ai/domain_rules.md。
 
 用户：需求验收通过。
 Agent：[verification_gate] 运行测试，输出实际运行证据，逐条核对验收标准，验收通过后自动归档 spec 并同步 progress/history/index。流程闭环完成。
@@ -310,13 +310,13 @@ Agent：[verification_gate] 运行测试，输出实际运行证据，逐条核�
 Agent：[context_sync] 发现 progress.md 中有 2 个活跃 spec：
 
 当前项目有多个进行中的工作项，请确认本次对话要处理哪个：
-1. 2026-04-20-create-task — Implementing — 新增创建任务接口
-2. 2026-04-18-offerwall-refactor — DesignDraft — 广告墙重构方案
+1. 2026-04-20-create-task — 实施中 — 新增创建任务接口
+2. 2026-04-18-offerwall-refactor — 方案设计 — 广告墙重构方案
 
 请指定编号或名称。
 
 用户：1
-Agent：加载 docs/spec/2026-04-20-create-task/index.md，恢复上下文，继续 Implementing 阶段。
+Agent：加载 docs/ai/spec/2026-04-20-create-task/index.md，恢复上下文，继续实施阶段。
 ```
 
 
@@ -327,23 +327,23 @@ Agent：加载 docs/spec/2026-04-20-create-task/index.md，恢复上下文，继
 
 ## 与 v2 的主要差异
 
-- `docs/spec/` 现在支持双模式：Patch 用带日期单文件，Feature 用带日期子目录（index/req/design/impl），并通过 `docs/spec/index.md` 汇总历史模块与处理方向。
-- `docs/lessons.md` 废弃，改为 `docs/knowledge/lessons/` 分类体系，按操作类型精准注入。
-- 长期知识默认直接进入 owner：`docs/domain_rules.md`、`docs/architecture.md` 或 capability docs，不再保留常规长期 knowledge 大层。
+- `docs/ai/spec/` 现在支持双模式：Patch 用带日期单文件，Feature 用带日期子目录（index/req/design/impl），并通过 `docs/ai/spec/index.md` 汇总历史模块与处理方向。
+- `docs/ai/lessons.md` 废弃，改为 `docs/ai/knowledge/lessons/` 分类体系，按操作类型精准注入。
+- 长期知识默认直接进入 owner：`docs/ai/domain_rules.md`、`docs/ai/architecture.md` 或 capability docs，不再保留常规长期 knowledge 大层。
 - 每个 skill 内置 Iron Law、Never、Red Flags，AI 行为约束从"软提示"变为"硬规则"。
 - `workflow_guard` 和 `context_sync` 改为两步定位，多个活跃 spec 时暂停并要求用户确认。
 - `architecture.md`：v2 曾作为「仅 Feature/跨模块才读」的轻量策略；v3 现已改为在设计与确认阶段**若文件存在则读**（含 Patch、优先相关节），并在 `code_implement_confirm` / `verification_gate` 执行验证前**强制**读取，以与 `AGENTS.md` baseline 及仓库内工具约定一致。`workflow_guard` 仅定位意图时可不读。
 - `feature_confirm` 吸收了实施方案确认动作，旧的独立 `code_implement_plan` 已被移除。
 - `workflow_repair` 成为显式修复入口。
-- `docs/memory/` 变成可选支持层，不再是默认活跃状态存储。
+- `docs/ai/memory/` 变成可选支持层，不再是默认活跃状态存储。
 - 模板资产改为 skill-local 分发，单个 SKILL.md 有 150 行上限约束。
 - `project_init` 变成可重复执行的扫描与路由入口；`project_docs_optimize` 统一承担兼容迁移、文档重构和 AI 规则导入分析。
-- `docs/context/project_brief.md` 进入需求阶段必读集合，用于在澄清需求前先校准项目背景。
+- `docs/ai/context/project_brief.md` 进入需求阶段必读集合，用于在澄清需求前先校准项目背景。
 
 兼容说明：
 
-- `docs/lessons.md`、`docs/pitfalls.md`、`docs/anti-patterns.md` 等旧结构只作为兼容输入保留；发现后应由 `project_docs_optimize` 分析并提出迁移方案。
-- `.skillshare/skills/` 被视为团队 skill 资产入口；OMS 只盘点该目录，不负责这些 skill 的加载与执行。
+- `docs/ai/lessons.md`、`docs/ai/pitfalls.md`、`docs/ai/anti-patterns.md` 等旧结构只作为兼容输入保留；发现后应由 `project_docs_optimize` 分析并提出迁移方案。
+- `docs/ai/skills/` 被视为团队 skill 资产入口；OMS 只盘点该目录，不负责这些 skill 的加载与执行。
 
 ## License
 

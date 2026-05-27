@@ -1,11 +1,11 @@
 ---
 name: lesson_capture
-description: 在修正信息需要记录时使用，自动分类写入 docs/knowledge/lessons/ 对应文件；它只负责短期缓冲，不负责 legacy 迁移或长期升格。
+description: 在修正信息需要记录时使用，自动分类写入 docs/ai/knowledge/lessons/ 对应文件；它只负责短期缓冲，不负责 legacy 迁移或长期升格。
 ---
 
 # 纠错经验记录
 
-OMS v3 的纠错落点。按操作类型分类写入 `docs/knowledge/lessons/`，不合并到单一文件。
+OMS v3 的纠错落点。按操作类型分类写入 `docs/ai/knowledge/lessons/`，不合并到单一文件。
 
 **执行时宣告**："[lesson_capture] 记录并归类纠错经验..."
 
@@ -17,9 +17,9 @@ OMS v3 的纠错落点。按操作类型分类写入 `docs/knowledge/lessons/`�
 
 ## Never
 
-- Never 把所有 lesson 都写入 `docs/lessons.md`（旧版单文件，已被分类体系替代）
+- Never 把所有 lesson 都写入 `docs/ai/lessons.md`（旧版单文件，已被分类体系替代）
 - Never 在未确认分类前就追加内容
-- Never 因为这条经验看起来“很重要”就直接改写 `docs/domain_rules.md`、`docs/architecture.md` 或 capability docs
+- Never 因为这条经验看起来“很重要”就直接改写 `docs/ai/domain_rules.md`、`docs/ai/architecture.md` 或 capability docs
 
 ## Instructions
 
@@ -29,11 +29,11 @@ OMS v3 的纠错落点。按操作类型分类写入 `docs/knowledge/lessons/`�
 
 | 分类 | 写入文件 | 适用场景 |
 | :--- | :--- | :--- |
-| `design` | `docs/knowledge/lessons/design.md` | 需求澄清、方案设计、spec 相关的判断错误 |
-| `code` | `docs/knowledge/lessons/code.md` | 实现阶段的操作失误、禁止操作、边界违反 |
-| `testing` | `docs/knowledge/lessons/testing.md` | 验证/测试相关的遗漏或误判 |
-| `workflow` | `docs/knowledge/lessons/workflow.md` | 节点推进、状态机、流程顺序相关 |
-| `domain` | `docs/knowledge/lessons/domain.md` | 业务规则、领域特定约束、项目约定 |
+| `design` | `docs/ai/knowledge/lessons/design.md` | 需求澄清、方案设计、spec 相关的判断错误 |
+| `code` | `docs/ai/knowledge/lessons/code.md` | 实现阶段的操作失误、禁止操作、边界违反 |
+| `testing` | `docs/ai/knowledge/lessons/testing.md` | 验证/测试相关的遗漏或误判 |
+| `workflow` | `docs/ai/knowledge/lessons/workflow.md` | 节点推进、状态机、流程顺序相关 |
+| `domain` | `docs/ai/knowledge/lessons/domain.md` | 业务规则、领域特定约束、项目约定 |
 
 若一条 lesson 跨多个分类，以"主要触发场景"为准选一个，不拆分记录。
 
@@ -62,7 +62,7 @@ lesson 默认停留在缓冲层，不在当次对话中直接升格到长期 own
 
 - `domain` 类 lesson → 可在收口节点建议 `knowledge_review`
 - 其他分类 → 若已重复出现或具备长期价值，可在收口节点建议 `knowledge_review`
-- 是否进入 `docs/domain_rules.md`、`docs/architecture.md` 或 capability docs，由 `knowledge_review` 在收口阶段决定
+- 是否进入 `docs/ai/domain_rules.md`、`docs/ai/architecture.md` 或 capability docs，由 `knowledge_review` 在收口阶段决定
 - 若项目仍有旧结构或 lessons owner 不清晰，应建议先走 `project_docs_optimize`
 
 ## Output
@@ -71,7 +71,7 @@ lesson 默认停留在缓冲层，不在当次对话中直接升格到长期 own
 ## 经验记录结果
 
 **分类**: 设计（design） | 实现（code） | 验证（testing） | 流程（workflow） | 领域（domain）
-**写入位置**: `docs/knowledge/lessons/{category}.md`
+**写入位置**: `docs/ai/knowledge/lessons/{category}.md`
 **Owner 层级**: 短期缓冲层（temporary buffer）
 
 **场景**: ...

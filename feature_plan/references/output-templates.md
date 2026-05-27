@@ -5,10 +5,10 @@
 ```markdown
 ## 设计草案结果
 
-**Spec**: `docs/spec/YYYY-MM-DD-...`
+**Spec**: `docs/ai/spec/YYYY-MM-DD-...`
 **范围**: 新功能/跨模块能力（Feature） | 局部修复/小范围修改（Patch）
 **Spec 模式**: 单文件（single） | 多文件（multi）
-**当前节点**: 方案设计中（DesignDraft）
+**当前节点**: 方案设计中
 **最近确认节点**: ...
 
 **YAGNI 检查**:
@@ -36,6 +36,6 @@
 ## 设计草案受阻
 
 **问题**: 需求仍有缺口 / 已确认流程存在问题
-**当前节点**: 方案设计中（DesignDraft）
-**建议**: 回到需求澄清（`requirement_probe`） | 走工作流修复（`workflow_repair`）
+**当前节点**: 方案设计中
+**建议**: 回到需求澄清阶段（`requirement_probe`） | 走工作流修复（`workflow_repair`）
 ```

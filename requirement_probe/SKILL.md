@@ -19,7 +19,7 @@ OMS v3 的需求澄清入口。先把需求边界问清楚，再决定是留在 
 ## When to Use
 
 - 用户提出新功能、修改请求、需求补充或模糊问题。
-- 当前还不能稳定写出 `docs/spec/YYYY-MM-DD-*.md` 或 `docs/spec/YYYY-MM-DD-*/index.md` 的设计草案。
+- 当前还不能稳定写出 `docs/ai/spec/YYYY-MM-DD-*.md` 或 `docs/ai/spec/YYYY-MM-DD-*/index.md` 的设计草案。
 - 需要先判断这是 `Scope: Feature` 还是 `Scope: Patch`。
 
 ## Never
@@ -28,6 +28,7 @@ OMS v3 的需求澄清入口。先把需求边界问清楚，再决定是留在 
 - Never 一次提多个问题（每次只问最关键的一个缺口）
 - Never 在需求仍模糊时推进到 `DesignDraft`
 - Never 把"用户语气肯定"当作需求已足够清晰的凭据
+- Never 向用户输出 `RequirementDraft`、`DesignDraft`、`ReadyForImplementation`、`Completer`、`pending` 等 OMS 内部状态机概念；分流时用自然语言（如"需求澄清阶段""方案设计阶段"），下一阶段建议用 skill 名而非节点名
 
 ## Instructions
 
@@ -36,12 +37,12 @@ OMS v3 的需求澄清入口。先把需求边界问清楚，再决定是留在 
 优先读取：
 
 1. `AGENTS.md`
-2. `docs/context/project_brief.md`（若存在，用于校准项目目的、范围和成功标准）
-3. `docs/progress.md`
-4. `docs/spec/index.md`（按模块和处理方向定位历史 spec，若存在）
-5. 相关活跃 spec 状态锚点（`docs/spec/YYYY-MM-DD-*.md` 或 `docs/spec/YYYY-MM-DD-*/index.md`）
+2. `docs/ai/context/project_brief.md`（若存在，用于校准项目目的、范围和成功标准）
+3. `docs/ai/progress.md`
+4. `docs/ai/spec/index.md`（按模块和处理方向定位历史 spec，若存在）
+5. 相关活跃 spec 状态锚点（`docs/ai/spec/YYYY-MM-DD-*.md` 或 `docs/ai/spec/YYYY-MM-DD-*/index.md`）
 6. 当前问题直接涉及的 capability docs
-7. `docs/knowledge/lessons/design.md`（若存在）
+7. `docs/ai/knowledge/lessons/design.md`（若存在）
 
 不要因为"先看看再说"而整库扫描文档。
 
@@ -67,11 +68,11 @@ OMS v3 的需求澄清入口。先把需求边界问清楚，再决定是留在 
   - 引入新能力
   - 跨模块或跨文档影响明显
   - 涉及接口、数据、流程、架构或长期约束变化
-  - 将使用 multi-file spec（`docs/spec/YYYY-MM-DD-{slug}/`）
+  - 将使用 multi-file spec（`docs/ai/spec/YYYY-MM-DD-{slug}/`）
 - `Patch`
   - 局部修复、纠偏、兼容修正、文案/行为小改
   - 影响面可明确圈定
-  - 将使用 single-file spec（`docs/spec/YYYY-MM-DD-{slug}.md`）
+  - 将使用 single-file spec（`docs/ai/spec/YYYY-MM-DD-{slug}.md`）
 
 ### Step 4: Decide The Node
 
@@ -92,7 +93,7 @@ OMS v3 的需求澄清入口。先把需求边界问清楚，再决定是留在 
 - 涉及的 capability tags
 - 涉及的 module tags
 - 是否需要先调用 `capability_bootstrap`
-- 若进入 spec 写作，提醒后续 `feature_plan` 使用 `YYYY-MM-DD-{slug}` 命名并更新 `docs/spec/index.md`
+- 若进入 spec 写作，提醒后续 `feature_plan` 使用 `YYYY-MM-DD-{slug}` 命名并更新 `docs/ai/spec/index.md`
 - OMS 文档正文默认使用中文；路径、代码标识符、API 名称、frontmatter 枚举值和既有英文术语可保留英文。
 
 ### Step 6: Route Explicitly
@@ -118,10 +119,12 @@ OMS v3 的需求澄清入口。先把需求边界问清楚，再决定是留在 
 
 ## Output
 
+> 向用户输出时，用自然语言替代状态机术语：说"需求澄清阶段""方案设计阶段"，不说 `RequirementDraft` / `DesignDraft`。skill 名（如 `feature_plan`）作为下一步路由标识可以保留。
+
 ```markdown
 ## 需求澄清结果
 
-**当前节点判断**: 保持在需求澄清（RequirementDraft） | 可以进入方案设计（DesignDraft）
+**当前节点判断**: 保持在需求澄清阶段 | 可以进入方案设计阶段
 **建议范围**: 新功能/跨模块能力（Feature） | 局部修复/小范围修改（Patch）
 **需求摘要**: ...
 
@@ -137,5 +140,5 @@ OMS v3 的需求澄清入口。先把需求边界问清楚，再决定是留在 
 **Module 标签**:
 - ...
 
-**下一步建议**: 继续补充需求信息 | 可以进入方案设计（`feature_plan`） | 当前问题属于已批准流程修复，建议走工作流修复（`workflow_repair`）
+**下一步建议**: 继续补充需求信息 | 可以进入方案设计阶段（`feature_plan`） | 当前问题属于已批准流程修复（`workflow_repair`）
 ```

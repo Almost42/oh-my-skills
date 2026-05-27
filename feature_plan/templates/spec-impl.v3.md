@@ -1,7 +1,7 @@
 # <Spec 标题> — 实施包
 
 > 状态锚点：[index.md](./index.md)（所有节点状态变更只写 index.md）
-> 本文件由 `feature_confirm lock` 时填充，`ReadyForImplementation` 前为空或草稿。
+> 本文件由 `feature_confirm lock` 时填充，进入实施前为空或草稿。
 > OMS 文档正文默认使用中文；路径、代码标识符、API 名称、frontmatter 枚举值和既有英文术语可保留英文。
 
 ## 执行包

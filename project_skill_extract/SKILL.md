@@ -1,6 +1,6 @@
 ---
 name: project_skill_extract
-description: 独立分析项目文档、规则与重复流程，提炼适合沉淀为团队 skill 的候选，并在需要时生成到 `.skillshare/skills/`。它不依赖 OMS 运行时，也不负责 skill 的加载。
+description: 独立分析项目文档、规则与重复流程，提炼适合沉淀为团队 skill 的候选，并在需要时生成到 `docs/ai/skills/`。它不依赖 OMS 运行时，也不负责 skill 的加载。
 ---
 
 # 项目技能提取
@@ -12,7 +12,7 @@ description: 独立分析项目文档、规则与重复流程，提炼适合沉�
 ## Modes
 
 - `analyze`：只分析并输出 skill 候选清单
-- `scaffold`：在用户确认后，把选定 skill 生成到 `.skillshare/skills/`
+- `scaffold`：在用户确认后，把选定 skill 生成到 `docs/ai/skills/`
 
 ## When to Use
 
@@ -31,7 +31,7 @@ description: 独立分析项目文档、规则与重复流程，提炼适合沉�
 
 - Never 把模块事实、领域规则、路径所有权直接复制成 skill 正文
 - Never 把一次性 bug 复盘或单个 spec 细节做成独立 skill
-- Never 未经确认直接覆盖 `.skillshare/skills/` 中已有 skill
+- Never 未经确认直接覆盖 `docs/ai/skills/` 中已有 skill
 
 ## Instructions
 
@@ -40,11 +40,11 @@ description: 独立分析项目文档、规则与重复流程，提炼适合沉�
 优先读取：
 
 1. `AGENTS.md`（若存在）
-2. `docs/architecture.md`（若存在）
+2. `docs/ai/architecture.md`（若存在）
 3. capability docs（若存在）
-4. `docs/knowledge/lessons/*` 中与重复问题直接相关的文件
-5. `docs/spec/index.md` 与必要的历史 spec / history 条目
-6. `.skillshare/skills/`（若存在，用于避免重复造轮子）
+4. `docs/ai/knowledge/lessons/*` 中与重复问题直接相关的文件
+5. `docs/ai/spec/index.md` 与必要的历史 spec / history 条目
+6. `docs/ai/skills/`（若存在，用于避免重复造轮子）
 
 避免全量读取无关 archive、audit 或 memory 文件。
 
@@ -88,7 +88,7 @@ description: 独立分析项目文档、规则与重复流程，提炼适合沉�
 
 若为 `scaffold` mode 且用户已确认：
 
-- 在 `.skillshare/skills/<skill-name>/SKILL.md` 生成 skill
+- 在 `docs/ai/skills/<skill-name>/SKILL.md` 生成 skill
 - 保持项目事实通过引用 docs 获取，不在 skill 中复制
 - 若目标目录已存在同名 skill，先报告差异，不静默覆盖
 
@@ -111,7 +111,7 @@ description: 独立分析项目文档、规则与重复流程，提炼适合沉�
 3. ...
 
 **生成位置**:
-- `.skillshare/skills/...`
+- `docs/ai/skills/...`
 
 **下一步建议**: 确认后生成团队 Skill（`project_skill_extract scaffold`） | 若已生成，请执行 `skillshare sync` 同步到使用环境 | 当前无需额外动作
 ```

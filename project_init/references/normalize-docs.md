@@ -8,32 +8,32 @@
 - 不应保留历史说明、长示例、项目事实堆叠
 - 超过 50 行时应主动压缩并重写，而不是继续沿用旧结构
 
-### `docs/progress.md`
+### `docs/ai/progress.md`
 
 - 必须保持 summary-only
 - 不应承载节点真相、长篇分析或历史记录
 
-### `docs/spec/index.md`
+### `docs/ai/spec/index.md`
 
 - 必须存在，作为 spec 根索引
 - 只记录 spec 路径、日期、范围、当前节点、关注模块、处理方向、最近更新
 - 不应承载详细需求、设计、实施包或节点真相
 - OMS 文档正文默认使用中文；路径、代码标识符、API 名称、frontmatter 枚举值和既有英文术语可保留英文。
 
-### `docs/architecture.md`
+### `docs/ai/architecture.md`
 
 - 保留系统结构、边界与约束
 - 建议保留 `## 构建与验证`、`## 开发环境与工具约定`（见 `project_init/templates/architecture.v3.md`）：短而可执行的命令与工具事实，便于 Patch/执行阶段按文档选命令
 - 不应混入任务流水账
-- 不应承担项目级硬约束；那类内容应进入 `docs/domain_rules.md`
+- 不应承担项目级硬约束；那类内容应进入 `docs/ai/domain_rules.md`
 
 ### capability docs
 
 - 只在某个能力已经形成稳定 owner 时创建
 - 保留能力专属事实、约束、不变量与验证习惯
-- 不应复制 `docs/architecture.md` 或 `docs/domain_rules.md` 中已经明确的内容
+- 不应复制 `docs/ai/architecture.md` 或 `docs/ai/domain_rules.md` 中已经明确的内容
 
-### `docs/knowledge/index.md`
+### `docs/ai/knowledge/index.md`
 
 - 保留知识路由与加载规则
 - 不应承载长期知识正文

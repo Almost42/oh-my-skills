@@ -26,9 +26,9 @@ Updated: YYYY-MM-DD
 
 | 文件 | 内容 | 主要写入时机 |
 | :--- | :--- | :--- |
-| [req.md](./req.md) | 需求范围、验收标准 | `requirement_probe` → `RequirementDraft` |
-| [design.md](./design.md) | 技术方案、接口影响、影响分析 | `feature_plan` → `DesignDraft` |
-| [impl.md](./impl.md) | 执行包、回滚计划、测试计划 | `feature_confirm lock` → `ReadyForImplementation` |
+| [req.md](./req.md) | 需求范围、验收标准 | `requirement_probe` 完成后 |
+| [design.md](./design.md) | 技术方案、接口影响、影响分析 | `feature_plan` 完成后 |
+| [impl.md](./impl.md) | 执行包、回滚计划、测试计划 | `feature_confirm lock` 完成后 |
 
 ## 执行包摘要
 

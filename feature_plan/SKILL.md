@@ -35,11 +35,12 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 
 必读（每次）：
 
-1. 目标 spec 状态锚点（`docs/spec/YYYY-MM-DD-{slug}.md` 或 `docs/spec/YYYY-MM-DD-{slug}/index.md`）
-2. `docs/knowledge/index.md`
+0. `AGENTS.md`（**必读**，确保方案设计遵循项目级约束和规则）
+1. 目标 spec 状态锚点（`docs/ai/spec/YYYY-MM-DD-{slug}.md` 或 `docs/ai/spec/YYYY-MM-DD-{slug}/index.md`）
+2. `docs/ai/knowledge/index.md`
 3. 与当前 capability / module tags 匹配的知识文件
-4. `docs/knowledge/lessons/design.md`（若存在）
-5. `docs/architecture.md`（若存在则**必读**，与 `AGENTS.md` 中 baseline 叙述一致）：
+4. `docs/ai/knowledge/lessons/design.md`（若存在）
+5. `docs/ai/architecture.md`（若存在则**必读**，与 `AGENTS.md` 中 baseline 叙述一致）：
    - `Scope: Feature` 或设计涉及跨模块/接口/数据时：通读以校准边界与依赖。
    - `Scope: Patch`：优先关注与 **patch path、模块边界、构建/测试/工具链** 相关的节（如 `## 构建与验证`、`## 开发环境与工具约定`）；**不必**在输出中复述与本次改动无关的大段。未分节时读全文，以免遗漏仅写在 architecture 中的命令/环境约定。
 
@@ -49,10 +50,10 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 
 ### Step 2: Determine Spec Mode And File Structure
 
-- `Scope: Patch` → **Single-file**: `docs/spec/YYYY-MM-DD-{slug}.md`，模板 `spec.v3.md`
-- `Scope: Feature` → **Multi-file**: `docs/spec/YYYY-MM-DD-{slug}/`，子文件为 `index.md` + `req.md` + `design.md` + `impl.md`
+- `Scope: Patch` → **Single-file**: `docs/ai/spec/YYYY-MM-DD-{slug}.md`，模板 `spec.v3.md`
+- `Scope: Feature` → **Multi-file**: `docs/ai/spec/YYYY-MM-DD-{slug}/`，子文件为 `index.md` + `req.md` + `design.md` + `impl.md`
 - 命名规则与完整模板清单见 `references/spec-structure.md`
-- 创建或修订后同步 `docs/spec/index.md`（只写简略检索信息）
+- 创建或修订后同步 `docs/ai/spec/index.md`（只写简略检索信息）
 
 ### Step 3: Decide Whether To Create Or Revise
 
@@ -76,7 +77,7 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 
 对 multi-file spec，设计内容写入 `design.md`，需求内容写入或更新 `req.md`，`index.md` 只持有 frontmatter 和摘要，不重复详细内容。
 
-同步 `docs/spec/index.md` 时只写简略检索信息：spec 路径、创建日期、Scope、Current_Node、Module_Tags、处理方向、最近更新日期；不得把详细需求、设计或实施包复制进去。
+同步 `docs/ai/spec/index.md` 时只写简略检索信息：spec 路径、创建日期、Scope、Current_Node、Module_Tags、处理方向、最近更新日期；不得把详细需求、设计或实施包复制进去。
 
 ### Step 5: Run YAGNI Complexity Check
 
@@ -104,6 +105,8 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 - 若是在已确认流程中发现问题：提议 `workflow_repair`。
 
 ## Output
+
+> 向用户输出时，用自然语言替代状态机术语：说"方案设计阶段""需求澄清阶段"，不说 `DesignDraft` / `RequirementDraft`。spec 文档正文中的节点表格、状态说明也遵循同样规则。frontmatter 枚举值保留英文。
 
 > 完整模板见 `references/output-templates.md`
 

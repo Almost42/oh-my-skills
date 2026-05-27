@@ -23,22 +23,23 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 扫描：
 
 1. `AGENTS.md`
-2. `docs/`
-3. `docs/spec/`
-4. `docs/knowledge/index.md`
-5. `docs/knowledge/lessons/`
-6. `docs/domain_rules.md`
+2. `docs/ai/`
+3. `docs/ai/spec/`
+4. `docs/ai/knowledge/index.md`
+5. `docs/ai/knowledge/lessons/`
+6. `docs/ai/domain_rules.md`
 7. capability docs（若存在）
-8. 外部 AI 规则来源：`CLAUDE.md`、`.claude/`、`.cursor/`、`.cursor/rules/`、`.codex/`、`docs/` 下 AI/rules/prompt/agent 相关文件、常见自定义目录
-9. `.skillshare/skills/`（若存在）
+8. 外部 AI 规则来源：`CLAUDE.md`、`.claude/`、`.cursor/`、`.cursor/rules/`、`.codex/`、`docs/ai/` 下 AI/rules/prompt/agent 相关文件、常见自定义目录
+9. `docs/ai/skills/`（若存在）
 
 识别：
 
 - always-on 文档是否缺失
-- docs/spec/knowledge/domain/capability 结构是否符合当前 OMS 规范
+- docs/ai/spec/knowledge/domain/capability 结构是否符合当前 OMS 规范
 - 是否存在 legacy knowledge / lessons / 旧规则来源
-- `docs/context/` 是否仍只承载项目背景，`docs/history/` 是否仍只承载事件摘要
-- 团队是否已有 `.skillshare/skills/` 资产
+- `docs/ai/context/` 是否仍只承载项目背景，`docs/ai/history/` 是否仍只承载事件摘要
+- 团队是否已有 `docs/ai/skills/` 资产
+- **路径规范性**：检查 AI 生成内容（spec、progress、knowledge 等）是否直接位于 `docs/` 下而非 `docs/ai/` 下（路径不规范）
 
 ### Step 2: Determine Whether Drift Exists
 
@@ -51,7 +52,8 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 - lessons / domain / capability / architecture 的 owner 边界不清
 - spec 结构或命名不规范
 - 外部 AI 规则尚未映射进 OMS owner
-- `.skillshare/skills/` 存在但尚未被盘点
+- `docs/ai/skills/` 存在但尚未被盘点
+- AI 生成内容未收敛到 `docs/ai/` 下（仍直接位于 `docs/` 根层级）
 
 ### Step 3: Build A Developer-Facing Report, Do Not Mutate
 
@@ -62,7 +64,7 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 - 当前是否可以直接继续工作 / 提出新需求
 - 发现的问题（按“阻塞项 / 建议优化 / 仅记录”分组）
 - 外部 AI 规则来源盘点
-- 当前团队 Skills（`.skillshare`）
+- 当前团队 Skills（`docs/ai/skills/`）
 - 建议调整项
 - 是否需要用户确认
 
@@ -77,6 +79,7 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 ### Step 4: Route Explicitly
 
 - 若存在文档结构漂移、legacy 输入或 AI 规则导入需求 → `project_docs_optimize (analyze)`
+- 若 AI 内容未收敛到 `docs/ai/`（路径不规范）→ 作为阻塞项上报，建议 `project_docs_optimize (analyze)` 执行目录迁移
 - 若 baseline 已符合规范且可继续工作 → `context_sync`
 - 若只缺 capability owner 文档且结构稳定 → `capability_bootstrap`
 - 若 spec / progress 状态不闭环 → `workflow_repair`
@@ -102,6 +105,7 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 
 **阻塞项**:
 - ...
+（路径不规范时在此列出，例如："AI 生成内容仍直接位于 `docs/` 根层级，未收敛到 `docs/ai/`，建议迁移后继续"）
 
 **建议优化**:
 - ...
@@ -112,7 +116,7 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 **导入的 AI 规则来源**:
 - ...
 
-**当前团队 Skills（.skillshare）**:
+**当前团队 Skills（docs/ai/skills/）**:
 - ...
 
 **建议调整项**:

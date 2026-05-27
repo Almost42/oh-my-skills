@@ -6,10 +6,10 @@
 ## 方案确认结果
 
 **本轮操作**: 方案评审（review）
-**当前 Spec**: `docs/spec/YYYY-MM-DD-...`
+**当前 Spec**: `docs/ai/spec/YYYY-MM-DD-...`
 **Spec 模式**: 单文件（single） | 多文件（multi）
 **范围**: 新功能/跨模块能力（Feature） | 局部修复/小范围修改（Patch）
-**当前节点**: 方案设计中（DesignDraft）
+**当前节点**: 方案设计中
 **本轮结论**: 保持继续完善方案（stay） | 需先修复流程问题（repair_required）
 
 **简洁性门禁**:
@@ -43,8 +43,8 @@ lock 一般不单独输出——作为 review 确认后的自动延续执行，�
 ```markdown
 ## 方案锁定完成
 
-**当前 Spec**: `docs/spec/YYYY-MM-DD-...`
-**当前节点**: 已可进入实施（ReadyForImplementation）
+**当前 Spec**: `docs/ai/spec/YYYY-MM-DD-...`
+**当前节点**: 已可进入实施
 **本轮结论**: 可以进入代码实施（advance）
 
 （随后自动同步 progress 并进入 code_implement_confirm）
@@ -55,7 +55,7 @@ lock 一般不单独输出——作为 review 确认后的自动延续执行，�
 ```markdown
 ## 方案锁定受阻
 
-**当前节点**: 方案设计中（DesignDraft）
+**当前节点**: 方案设计中
 **本轮结论**: 需先修复流程问题（repair_required）
 **问题说明**: ...
 **建议**: 转到工作流修复（`workflow_repair`）

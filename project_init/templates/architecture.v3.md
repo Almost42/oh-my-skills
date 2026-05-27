@@ -29,4 +29,4 @@
 ## 开发环境与工具约定
 
 - 可选：运行时、包管理器、IDE 或沙箱相关约束（例如仅允许某类 Maven/Gradle 调用、必用 wrapper、需在子目录执行）
-- 与结构无关的临时排障可放入 `docs/knowledge/lessons/`，长期规则放此处或 `AGENTS.md`
+- 与结构无关的临时排障可放入 `docs/ai/knowledge/lessons/`，长期规则放此处或 `AGENTS.md`

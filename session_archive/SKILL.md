@@ -21,10 +21,10 @@ OMS v3 的会话交接器。它只在确有 handoff 价值时创建 memory 快�
 
 - baseline 文档是否已经足够
 - 当前交接是否依赖大量会话级推理
-- 是否值得启用 `docs/memory/`
+- 是否值得启用 `docs/ai/memory/`
 
 ### Step 2: Enable Memory Only If Needed
-若项目尚未启用 `docs/memory/`，且当前确有交接需求，则此时再创建。
+若项目尚未启用 `docs/ai/memory/`，且当前确有交接需求，则此时再创建。
 
 ### Step 3: Write Handoff Snapshot
 创建 `session_YYYYMMDD-HHMM_<topic>.md`，记录：

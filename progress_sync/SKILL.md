@@ -1,11 +1,11 @@
 ---
 name: progress_sync
-description: 在怀疑 docs/progress.md 漂移时手动触发；日常状态同步由 feature_confirm、code_implement_confirm、verification_gate 自动完成。
+description: 在怀疑 docs/ai/progress.md 漂移时手动触发；日常状态同步由 feature_confirm、code_implement_confirm、verification_gate 自动完成。
 ---
 
 # 进度同步
 
-OMS v3 的轻量状态汇总器。`docs/progress.md` 只总结当前状态，spec 才是节点权威。
+OMS v3 的轻量状态汇总器。`docs/ai/progress.md` 只总结当前状态，spec 才是节点权威。
 
 ## Iron Law
 
@@ -16,7 +16,7 @@ progress_sync 不主动建议自己。
 
 ## When to Use
 
-- **仅手动触发**：用户怀疑 `docs/progress.md` 与 active spec 状态漂移。
+- **仅手动触发**：用户怀疑 `docs/ai/progress.md` 与 active spec 状态漂移。
 - 用户明确要求更新当前进度。
 
 > **不再适用**：`feature_confirm`、`code_implement_confirm`、`verification_gate` 等状态变更 skill 已在内部自动完成 progress 同步，不再需要单独调用本 skill。
@@ -37,10 +37,10 @@ progress_sync 不主动建议自己。
 - blocker
 - next action
 
-若 `docs/progress.md` 与 spec 冲突，以 spec 为准。
+若 `docs/ai/progress.md` 与 spec 冲突，以 spec 为准。
 
 ### Step 2: Write A Short Summary
-`docs/progress.md` 只保留：
+`docs/ai/progress.md` 只保留：
 
 - 当前焦点
 - 活跃 spec 列表
@@ -48,7 +48,7 @@ progress_sync 不主动建议自己。
 - 当前 blocker / risk
 - next action
 
-不要把 `docs/progress.md` 写成 memory，也不要让它拥有独立的 workflow 判定权。
+不要把 `docs/ai/progress.md` 写成 memory，也不要让它拥有独立的 workflow 判定权。
 
 ### Step 3: Surface Drift
 若发现以下问题，应在输出中点明：
@@ -59,13 +59,15 @@ progress_sync 不主动建议自己。
 
 ## Output
 
+> 向用户输出进度摘要时，节点名称用自然语言（实施中、方案设计、待验证、已归档），不使用 `Implementing` / `DesignDraft` 等 OMS 内部状态机术语。
+
 ```markdown
 ## 进度同步结果
 
 **当前焦点**: ...
 
 **活跃 Spec 摘要**:
-- Spec: `docs/spec/...`
+- Spec: `docs/ai/spec/...`
   当前节点: ...
   下一步动作: ...
 

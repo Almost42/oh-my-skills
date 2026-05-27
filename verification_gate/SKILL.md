@@ -28,10 +28,10 @@ OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完
 
 先读取：
 
-1. spec 状态锚点（`docs/spec/YYYY-MM-DD-{slug}.md` 或 `docs/spec/YYYY-MM-DD-{slug}/index.md`）
+1. spec 状态锚点（`docs/ai/spec/YYYY-MM-DD-{slug}.md` 或 `docs/ai/spec/YYYY-MM-DD-{slug}/index.md`）
 2. 若 multi-file spec：读取 `req.md`（验收标准）和 `impl.md`（测试计划、验证步骤）
-3. `docs/knowledge/lessons/testing.md`（若存在）
-4. **读取 `docs/architecture.md`（若存在）**：与 `code_implement_confirm` 同样优先关注 `## 构建与验证`、`## 开发环境与工具约定` 等；未分节则读全文。验证阶段选用的构建/测试命令必须与文档及 `AGENTS.md` 中的明确约定一致，**禁止**凭记忆或通例执行。
+3. `docs/ai/knowledge/lessons/testing.md`（若存在）
+4. **读取 `docs/ai/architecture.md`（若存在）**：与 `code_implement_confirm` 同样优先关注 `## 构建与验证`、`## 开发环境与工具约定` 等；未分节则读全文。验证阶段选用的构建/测试命令必须与文档及 `AGENTS.md` 中的明确约定一致，**禁止**凭记忆或通例执行。
 5. 确认 `Current_Node: Verifying`
 
 ### Step 2: Run Fresh Evidence
@@ -69,9 +69,9 @@ OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完
 
 `advance` 时自动完成三项操作：
 
-1. **更新 `docs/progress.md`**：移除当前 spec，调整活跃项
-2. **更新 `docs/history/`**：追加事件摘要（spec 完成日期、验收结论、关键产出）
-3. **更新 `docs/spec/index.md`**：当前 spec 条目状态改为 `Archived`
+1. **更新 `docs/ai/progress.md`**：移除当前 spec，调整活跃项
+2. **更新 `docs/ai/history/`**：追加事件摘要（spec 完成日期、验收结论、关键产出）
+3. **更新 `docs/ai/spec/index.md`**：当前 spec 条目状态改为 `Archived`
 
 然后输出验证结果。用户可见输出必须同时展示证据和当前状态。
 

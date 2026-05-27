@@ -5,8 +5,8 @@
 ```markdown
 ## 代码实施结果
 
-**当前 Spec**: `docs/spec/...`
-**当前节点**: 实施中（Implementing）
+**当前 Spec**: `docs/ai/spec/...`
+**当前节点**: 实施中
 **本轮结论**: 继续实施（stay）
 
 **执行摘要**:
@@ -32,8 +32,8 @@
 ```markdown
 ## 代码实施结果
 
-**当前 Spec**: `docs/spec/...`
-**当前节点**: 待验证（Verifying）
+**当前 Spec**: `docs/ai/spec/...`
+**当前节点**: 待验证
 **本轮结论**: 可以进入验证（advance）
 
 **执行摘要**:
@@ -47,8 +47,8 @@
 ```markdown
 ## 代码实施受阻
 
-**当前 Spec**: `docs/spec/...`
-**当前节点**: 实施中（Implementing）
+**当前 Spec**: `docs/ai/spec/...`
+**当前节点**: 实施中
 **本轮结论**: 需先修复流程问题（repair_required）
 **问题说明**: ...
 **建议**: 转到工作流修复（`workflow_repair`）

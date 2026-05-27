@@ -40,21 +40,24 @@ OMS v3.1 的文档治理器。它统一处理 legacy 结构、OMS 规范漂移�
 扫描：
 
 1. `AGENTS.md`
-2. `docs/architecture.md`
-3. `docs/progress.md`
-4. `docs/spec/`
-5. `docs/knowledge/index.md`
-6. `docs/knowledge/lessons/`
-7. `docs/domain_rules.md`
+2. `docs/ai/architecture.md`
+3. `docs/ai/progress.md`
+4. `docs/ai/spec/`
+5. `docs/ai/knowledge/index.md`
+6. `docs/ai/knowledge/lessons/`
+7. `docs/ai/domain_rules.md`
 8. capability docs（若存在）
-9. 外部 AI 规则来源：`CLAUDE.md`、`.claude/`、`.cursor/`、`.cursor/rules/`、`.codex/`、`docs/` 下 AI/rules/prompt/agent 文件、常见自定义规则目录
+9. 外部 AI 规则来源：`CLAUDE.md`、`.claude/`、`.cursor/`、`.cursor/rules/`、`.codex/`、`docs/ai/` 下 AI/rules/prompt/agent 文件、常见自定义规则目录
 
 识别：
 
 - owner 缺失、职责混杂、重复知识、旧结构残留
-- 仍在使用 `docs/lessons.md`、`docs/pitfalls.md`、`docs/anti-patterns.md`
+- 仍在使用 `docs/ai/lessons.md`、`docs/ai/pitfalls.md`、`docs/ai/anti-patterns.md`
 - spec/index/progress/AGENTS 是否符合当前 OMS 规范
-- 哪些外部规则应迁入 `AGENTS.md`、`architecture.md`、`domain_rules.md`、capability docs 或 lessons
+- 区分 drift 来源（参考 `references/old-oms-signatures.md` 指纹表）：
+  - 命中指纹 → 旧 OMS 遗留，适用批量重组
+  - 匹配外部工具路径（CLAUDE.md、.cursor/、.claude/、.codex/）→ 外部工具规则，适用指针文件
+  - 未命中 → 未识别来源，需用户确认处置方式
 
 ### Step 2: Build A Developer-Facing Adjustment Report
 
@@ -77,15 +80,33 @@ OMS v3.1 的文档治理器。它统一处理 legacy 结构、OMS 规范漂移�
 
 - 补建缺失 owner 文件
 - 将内容迁入 `AGENTS.md` / `architecture.md` / `domain_rules.md` / capability docs / lessons
-- 若项目背景散落在其他文档中，收敛到 `docs/context/project_brief.md`
-- 重写 `docs/knowledge/index.md` 为 owner-first 路由器
-- 同步 `docs/spec/index.md` 和 always-on 文档结构
-- 生成或更新导入审计：`docs/history/ai-rules-import-YYYY-MM-DD.md`
+- 若项目背景散落在其他文档中，收敛到 `docs/ai/context/project_brief.md`
+- 重写 `docs/ai/knowledge/index.md` 为 owner-first 路由器
+- 同步 `docs/ai/spec/index.md` 和 always-on 文档结构
+- 生成或更新导入审计：`docs/ai/history/ai-rules-import-YYYY-MM-DD.md`
 
-`docs/context/` 只允许在这里或 `project_init` 中被写入/重组。
-`docs/history/` 只允许记录初始化、发布/归档或治理审计等事件摘要，不记录需求正文。
+`docs/ai/context/` 只允许在这里或 `project_init` 中被写入/重组。
+`docs/ai/history/` 只允许记录初始化、发布/归档或治理审计等事件摘要，不记录需求正文。
 
-legacy 文件默认保留；只有用户明确同意时，才将其标记为可删除或执行删除。
+**旧 OMS 遗留 → 批量重组**（按 Step 1 来源分类执行）：
+
+- docs/ 下命中指纹的文件整体移入 docs/ai/，不逐文件语义分析
+- 特殊处理：旧版 `lessons.md` 拆入分类文件，spec 无日期前缀则补齐 `YYYY-MM-DD-`
+- 不生成指针文件，原路径直接清理
+
+**指针文件策略**（仅外部工具规则）：
+
+- **不删除原始规则文件**。对于 `CLAUDE.md`、`.claude/*`、`.cursor/rules/*.mdc`、`.codex/*` 等已成功迁入 OMS owner 的外部规则文件，执行以下操作：
+  1. 清空原文件内容
+  2. 写入指针注释，指向 OMS 体系中的新位置：
+
+```
+<!-- 项目规则已迁移至 docs/ai/ 体系，请参见 AGENTS.md -->
+<!-- 或如有更精确的迁移目标，指向具体文件：docs/ai/domain_rules.md、docs/ai/architecture.md 等 -->
+```
+
+- **保留原文件路径**：确保即使 OMS skill 未被触发，CLI/IDE 仍能通过原始路径上的指针文件发现最新规则位置。
+- 在输出报告和"手动清理建议"中说明已生成指针文件。
 
 ## Output
 
@@ -98,7 +119,9 @@ legacy 文件默认保留；只有用户明确同意时，才将其标记为可�
 **本次是否已修改文档**: 否，本次仅输出分析报告 | 是，已按确认结果完成调整
 
 **结构偏移与 legacy 输入**:
-- ...
+- （旧 OMS 遗留）...
+- （外部工具规则）...
+- （未识别来源）...
 
 **导入的规则来源**:
 - ...
@@ -111,6 +134,7 @@ legacy 文件默认保留；只有用户明确同意时，才将其标记为可�
 
 **手动清理建议**:
 - ...
+（迁移外部规则后，列出已生成的指针文件及其指向）
 
 **是否需要用户确认**: 是 | 否
 **下一步建议**: 请先确认是否按上述方案执行整理（`project_docs_optimize apply`） | 已完成收敛，可重新执行初始化扫描（`project_init`） | 已可继续恢复项目上下文（`context_sync`）

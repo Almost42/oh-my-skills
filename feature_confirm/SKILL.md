@@ -37,7 +37,7 @@ review 输出执行包时，同步询问"确认后是否直接锁定并实施"�
 - 将节点推进到 `ReadyForImplementation`
 - 记录最近一次确认节点
 - 标记 execution package 已获批准
-- **lock 完成后自动同步 `docs/progress.md`，并直接进入 `code_implement_confirm`**
+- **lock 完成后自动同步 `docs/ai/progress.md`，并直接进入 `code_implement_confirm`**
 
 ## Instructions
 
@@ -45,12 +45,12 @@ review 输出执行包时，同步询问"确认后是否直接锁定并实施"�
 
 必读（每次）：
 
-1. 目标 spec 状态锚点（`docs/spec/YYYY-MM-DD-{slug}.md` 或 `docs/spec/YYYY-MM-DD-{slug}/index.md`）
-2. `docs/knowledge/index.md` 路由到的相关知识
-3. `docs/knowledge/lessons/design.md`（若存在）
+1. 目标 spec 状态锚点（`docs/ai/spec/YYYY-MM-DD-{slug}.md` 或 `docs/ai/spec/YYYY-MM-DD-{slug}/index.md`）
+2. `docs/ai/knowledge/index.md` 路由到的相关知识
+3. `docs/ai/knowledge/lessons/design.md`（若存在）
 4. 对 multi-file spec：`design.md`（方案内容）+ `req.md`（验收标准）
-5. `docs/spec/index.md`（确认模块历史与处理方向摘要是否需要同步）
-6. `docs/architecture.md`（若存在则**必读**，与 AGENTS baseline 一致）：
+5. `docs/ai/spec/index.md`（确认模块历史与处理方向摘要是否需要同步）
+6. `docs/ai/architecture.md`（若存在则**必读**，与 AGENTS baseline 一致）：
    - `Scope: Feature` 或 execution package 涉跨模块/接口/数据时：通读以核对影响与回滚面。
    - `Scope: Patch`：优先关注与 **patch path、执行包边界、构建/测试/工具链** 相关的节；**不必**复述与本次 review 无关的大段。未分节时读全文。
 
@@ -99,10 +99,10 @@ OMS 文档正文默认使用中文；路径、代码标识符、API 名称、fro
 - `Status: Draft` -> `Status: Active`
 - `Current_Node: DesignDraft` -> `Current_Node: ReadyForImplementation`
 - `Last_Confirmed_Node` 记录为 `DesignDraft`
-- 必要时同步 `docs/architecture.md` 和相关 capability docs
+- 必要时同步 `docs/ai/architecture.md` 和相关 capability docs
 
 对 multi-file spec：将 execution package 详情写入 `impl.md`，在 `index.md` 的"执行包摘要"填写摘要（文件数、影响范围、回滚目标），不在 `index.md` 重复完整内容。
-若锁定或归档改变了 spec 摘要状态，同步 `docs/spec/index.md` 的当前节点、处理方向或最近更新日期。
+若锁定或归档改变了 spec 摘要状态，同步 `docs/ai/spec/index.md` 的当前节点、处理方向或最近更新日期。
 
 `lock` mode 的结果只能是：
 
@@ -113,8 +113,8 @@ OMS 文档正文默认使用中文；路径、代码标识符、API 名称、fro
 
 `lock` mode 完成后，**不要停等用户确认下一步**。直接：
 
-1. 自动更新 `docs/progress.md`（当前焦点、活跃 spec 状态、下一步动作）
-2. 同步 `docs/spec/index.md` 中对应条目
+1. 自动更新 `docs/ai/progress.md`（当前焦点、活跃 spec 状态、下一步动作）
+2. 同步 `docs/ai/spec/index.md` 中对应条目
 3. **直接进入 `code_implement_confirm`**，开始执行已批准的 execution package
 
 仅在 `lock` 遇到 `repair_required` 时才停等用户确认修复方案。
