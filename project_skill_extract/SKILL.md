@@ -32,6 +32,7 @@ description: 独立分析项目文档、规则与重复流程，提炼适合沉�
 - Never 把模块事实、领域规则、路径所有权直接复制成 skill 正文
 - Never 把一次性 bug 复盘或单个 spec 细节做成独立 skill
 - Never 未经确认直接覆盖 `docs/ai/skills/` 中已有 skill
+- Never 修改 `.cursor/agents/skills/`、`.agents/skills/` 或其他智能体私有加载目录
 
 ## Instructions
 
@@ -89,7 +90,9 @@ description: 独立分析项目文档、规则与重复流程，提炼适合沉�
 若为 `scaffold` mode 且用户已确认：
 
 - 在 `docs/ai/skills/<skill-name>/SKILL.md` 生成 skill
+- 同步生成或更新 `docs/ai/skills/index.md`
 - 保持项目事实通过引用 docs 获取，不在 skill 中复制
+- 不生成 Cursor / Claude / 其他工具的镜像或指针文件
 - 若目标目录已存在同名 skill，先报告差异，不静默覆盖
 
 ## Output
@@ -113,5 +116,5 @@ description: 独立分析项目文档、规则与重复流程，提炼适合沉�
 **生成位置**:
 - `docs/ai/skills/...`
 
-**下一步建议**: 确认后生成团队 Skill（`project_skill_extract scaffold`） | 若已生成，请执行 `skillshare sync` 同步到使用环境 | 当前无需额外动作
+**下一步建议**: 确认后生成团队 Skill（`project_skill_extract scaffold`） | 若团队使用 skillshare，请在恢复上下文后执行 `skillshare install ./docs/ai/skills -p -f` 与 `skillshare sync -p` | 当前无需额外动作
 ```

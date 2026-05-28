@@ -79,6 +79,7 @@ OMS v3 的第一入口。先判断"该走哪条链路"，再建议任何动作�
 - 新项目初始化、旧文档体系迁移到 OMS v3、或已有 OMS 档案需要重新扫描对账 -> `project_init`
 - 恢复上下文 -> `context_sync`
 - 新需求或补丁需求 -> `requirement_probe`
+- 同一条消息同时包含“恢复/继续”和具体新需求或补丁 -> 先 `context_sync`，随即进入 `requirement_probe`
 - 发现新能力、缺失 capability docs、或代码结构长出新的 frontend/API/data/ops/domain concern -> `capability_bootstrap`
 - Draft 方案评审 -> `feature_confirm` (`review`)
 - 执行包已确认 -> `feature_confirm` (`lock`)
@@ -111,7 +112,7 @@ OMS v3 的第一入口。先判断"该走哪条链路"，再建议任何动作�
 
 **静默路由规则**：以下场景跳过完整报告，直接进入目标 skill：
 
-- **意图 = `context_sync` 且只有一个活跃 spec**：不输出"工作流状态"报告，直接加载 `context_sync`。用户说"继续"/"恢复"时不需要先看一份路由分析。
+- **意图 = 纯 `context_sync` 且只有一个活跃 spec**：不输出"工作流状态"报告，直接加载 `context_sync`。若同条消息还带有新需求，不适用静默路由。
 - **意图 = `feature_confirm (review)`，spec 处在 `DesignDraft`，门禁无缺失**：跳过报告，直接进入 `feature_confirm (review)`。
 
 其他情况正常输出路由报告。

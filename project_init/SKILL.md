@@ -16,6 +16,11 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 - 已有项目需要按当前 OMS 标准重新扫描 docs、spec、rules 或团队 skill 资产。
 - 怀疑现有文档结构、旧知识层次或外部规则来源与当前规范不一致。
 
+## Never
+
+- Never 默认执行 `README`、`make init`、构建、起服务或其他开发侧初始化
+- Never 把开发环境可用性问题混入 OMS 扫描主结论
+
 ## Instructions
 
 ### Step 1: Scan Governance Assets
@@ -39,6 +44,8 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 - 是否存在 legacy knowledge / lessons / 旧规则来源
 - `docs/ai/context/` 是否仍只承载项目背景，`docs/ai/history/` 是否仍只承载事件摘要
 - 团队是否已有 `docs/ai/skills/` 资产
+- 若存在 `docs/ai/skills/`，是否已生成 `docs/ai/skills/index.md`
+- owner 文档是否仍声明 `.cursor/agents/skills/`、`.agents/skills/`、镜像指针或 IDE 运行时路径
 - **路径规范性**：检查 AI 生成内容（spec、progress、knowledge 等）是否直接位于 `docs/` 下而非 `docs/ai/` 下（路径不规范）
 
 ### Step 2: Determine Whether Drift Exists
@@ -53,6 +60,8 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 - spec 结构或命名不规范
 - 外部 AI 规则尚未映射进 OMS owner
 - `docs/ai/skills/` 存在但尚未被盘点
+- `docs/ai/skills/` 已存在但缺少 `docs/ai/skills/index.md`
+- OMS owner 文档仍保留 `.cursor/.agents` 镜像目录或运行时指针约定
 - AI 生成内容未收敛到 `docs/ai/` 下（仍直接位于 `docs/` 根层级）
 
 ### Step 3: Build A Developer-Facing Report, Do Not Mutate
@@ -68,6 +77,8 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 - 建议调整项
 - 是否需要用户确认
 
+默认只输出 OMS 扫描结果，不附带开发环境初始化、构建链检查或 README 执行结果。
+
 不得在此阶段直接迁移、删除、重写或重组文档。
 
 报告必须明确写出：
@@ -75,6 +86,9 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 - 本次是否修改了文档；默认应为“未修改任何文档，仅完成扫描”
 - 当前项目是“已基本合规”“存在可选优化”还是“存在需要先确认的结构偏移”
 - 用户下一步最适合做什么，而不是只给内部 skill 名
+- 若补充提及开发侧扫描，必须明确标注为“可选后续动作”，且前提是 OMS 侧无需先整改
+- 面向首次接触 OMS 的用户时，避免直接输出 `project_docs_optimize`、`context_sync`、`capability_bootstrap`、`workflow_repair`、`baseline`、`owner` 等术语，统一改写成白话动作
+- 若已经在“是否需要用户确认”中明确列出当前要确认的事项，默认不再输出展开式“下一步建议”；避免重复推动用户
 
 ### Step 4: Route Explicitly
 
@@ -84,12 +98,16 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 - 若只缺 capability owner 文档且结构稳定 → `capability_bootstrap`
 - 若 spec / progress 状态不闭环 → `workflow_repair`
 
-对用户展示“下一步建议”时，优先使用自然语言，并在括号中保留 skill 标识：
+仅当 baseline 已基本合规、且用户明确希望继续补充开发检查时，才可在结尾追加一句自然语言建议，提示后续可单独执行 README / 构建 / 运行环境扫描；这不属于 `project_init` 默认输出。
 
-- 当前文档已基本合规，可以继续恢复项目上下文或直接开始新需求（`context_sync`）
-- 存在文档结构偏移，建议先查看整理方案，确认后再执行收敛（`project_docs_optimize analyze`）
-- 缺少某类能力文档，建议先补建对应 owner 文档（`capability_bootstrap`）
-- 当前 spec 或进度状态不闭环，建议先修复流程状态（`workflow_repair`）
+内部可以按 skill 路由，但对用户展示“建议调整项 / 是否需要用户确认 / 下一步建议”时，只写下一步动作，不写 skill 名。
+
+- 当前文档已基本合规，可以继续恢复项目上下文或直接开始新需求
+- 存在文档结构偏移，建议先确认是否要建立 AI 工作文档，并把现有规则整理到统一位置
+- 缺少某类能力文档，建议先补齐对应的能力说明
+- 当前 spec 或进度状态不闭环，建议先修复流程状态
+
+若 `是否需要用户确认 = 是`，`下一步建议` 默认省略；只有当前无需用户确认时，才输出一句简短的下一步动作。
 
 ## Output
 
@@ -122,7 +140,7 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 **建议调整项**:
 - ...
 
-**是否需要用户确认**: 是 | 否
+**是否需要用户确认**: 是（用白话写清要确认的决定） | 否
 
-**下一步建议**: 当前文档已基本合规，可先恢复项目上下文继续工作（`context_sync`）
+**下一步建议**: （仅在无需用户确认时输出）可直接继续后续需求流程
 ```
