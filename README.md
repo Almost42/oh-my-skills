@@ -79,7 +79,7 @@ Feature 类 spec 的子目录结构：
 ```text
 docs/ai/spec/YYYY-MM-DD-{slug}/
 ├── index.md     ← 状态锚点，持有所有 frontmatter，节点变更只写这里
-├── req.md       ← 需求范围与验收标准（requirement_probe 阶段写入）
+├── req.md       ← 需求理解、范围、验收标准、待确认问题（requirement_probe 阶段持续更新）
 ├── design.md    ← 技术方案与影响分析（feature_plan 阶段写入）
 └── impl.md      ← 执行包、回滚计划、测试计划（feature_confirm lock 后写入）
 ```
@@ -91,6 +91,8 @@ docs/ai/spec/YYYY-MM-DD-{slug}/
 OMS 将上下文视为有限资源，通过以下机制减少不必要加载：
 
 **Spec 按需定位**：新对话开始时，先读 `docs/ai/progress.md` 定位活跃 spec，而不是全量扫描 `docs/ai/spec/`。
+
+**需求先落文档**：`requirement_probe` 创建或更新需求文档，把当前理解与未确认问题一起落盘；后续重复进入时持续维护，直到问题清空再进入 `feature_plan`。
 
 **项目背景校准**：需求阶段先读 `docs/ai/context/project_brief.md`（若存在），用项目目的、范围、成功标准和术语表校准需求判断。
 
@@ -119,7 +121,7 @@ OMS 将上下文视为有限资源，通过以下机制减少不必要加载：
 
 各 skill 对应的核心约束：
 
-- `requirement_probe`：有歧义先问，不假设，不替用户填补验收标准
+- `requirement_probe`：先落 `req.md`，显式维护待确认问题，不假设，不替用户填补验收标准
 - `feature_plan`：YAGNI，最小可行方案，不加未被要求的抽象
 - `feature_confirm`：Simplicity Gate，execution package 不得超出需求范围
 - `code_implement_confirm`：只改 execution package 列出的文件；执行前检查工具可用性；相同错误连续 2 次必须停下来报告
@@ -279,11 +281,14 @@ Agent：[project_init] 扫描项目文档、外部 AI 规则和 `docs/ai/skills/
 Agent：[context_sync] 读取 AGENTS.md + progress.md，当前无活跃 spec，进入正常开发链路。
 
 用户：我要新增一个"创建任务"的接口，POST /api/tasks。
-Agent：[requirement_probe] 补齐鉴权规则、入参校验、返回结构、错误码和验收标准。
-       Scope 判断：Feature（涉及新接口和数据写入）→ 将使用 multi-file spec。
+Agent：[requirement_probe] 创建 docs/ai/spec/2026-04-20-create-task/index.md + req.md + design.md + impl.md（空骨架），
+       先把当前需求理解写入 req.md，并列出待确认的鉴权规则、入参校验、返回结构、错误码与验收标准。
+       Scope 判断：Feature（涉及新接口和数据写入）→ 使用 multi-file spec。
 
 用户：标题不能为空，截止时间不能早于当前时间，成功返回任务 id 和 createdAt。
-Agent：[feature_plan] 创建 docs/ai/spec/2026-04-20-create-task/index.md + req.md + design.md + impl.md（空），并更新 docs/ai/spec/index.md。
+Agent：[requirement_probe] 更新 req.md，移除已解决问题；若待确认问题清空，则进入方案设计阶段。
+
+Agent：[feature_plan] 基于现有 req.md 产出 design.md，并更新 docs/ai/spec/index.md。
        YAGNI 自查通过：无未被要求的抽象。
 
 用户：先输出实施方案，我要 review。

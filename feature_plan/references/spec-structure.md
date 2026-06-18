@@ -16,7 +16,7 @@
 
 - 目录：`docs/ai/spec/YYYY-MM-DD-{slug}/`
 - 状态锚点：`index.md`（持有所有 frontmatter，状态变更只写这里）
-- 需求内容：`req.md`（业务背景、需求范围、验收标准）
+- 需求内容：`req.md`（业务背景、需求范围、验收标准、待确认问题）
 - 设计内容：`design.md`（技术方案、接口影响、影响分析）
 - 实施包：`impl.md`（ReadyForImplementation 后由 feature_confirm 填充）
 - 模板：`feature_plan/templates/spec-index.v3.md` / `spec-req.v3.md` / `spec-design.v3.md` / `spec-impl.v3.md`

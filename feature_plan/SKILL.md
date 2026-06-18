@@ -18,9 +18,9 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 
 ## When to Use
 
-- `requirement_probe` 已判断请求可以进入 `DesignDraft`。
-- 现有 spec 需要补充或修订设计方案、影响分析、验收标准。
-- 用户要求先出方案、先写 spec、先看设计稿。
+- `requirement_probe` 已完成 `req.md`（或单文件需求段）更新，且未确认问题已清空。
+- 现有 spec 需要补充或修订设计方案、影响分析。
+- 用户要求先出方案、先写设计稿、先看技术方案。
 
 ## Never
 
@@ -54,10 +54,11 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 - `Scope: Feature` → **Multi-file**: `docs/ai/spec/YYYY-MM-DD-{slug}/`，子文件为 `index.md` + `req.md` + `design.md` + `impl.md`
 - 命名规则与完整模板清单见 `references/spec-structure.md`
 - 创建或修订后同步 `docs/ai/spec/index.md`（只写简略检索信息）
+- 若 `requirement_probe` 已创建 spec 容器，必须直接复用，不重建 `req.md`
 
 ### Step 3: Decide Whether To Create Or Revise
 
-- 若尚无对应 spec，按 Step 2 的模式新建文件。
+- 若尚无对应 spec，按 Step 2 的模式新建文件，并补齐最小 `req.md` / 需求段后再写设计。
 - 若已有目标 spec，在原文件基础上修订，不新开平行草案。
 - 若当前发现的是已确认节点上的需求/设计缺口，不要静默改写已批准状态，改走 `workflow_repair`。
 
@@ -75,7 +76,7 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 - `Rollback_Target`
 - `Split_Mode: single | multi`
 
-对 multi-file spec，设计内容写入 `design.md`，需求内容写入或更新 `req.md`，`index.md` 只持有 frontmatter 和摘要，不重复详细内容。
+对 multi-file spec，设计内容写入 `design.md`；`req.md` 仅在缺失最小结构时补齐，不接管需求澄清职责；`index.md` 只持有 frontmatter 和摘要，不重复详细内容。
 
 同步 `docs/ai/spec/index.md` 时只写简略检索信息：spec 路径、创建日期、Scope、Current_Node、Module_Tags、处理方向、最近更新日期；不得把详细需求、设计或实施包复制进去。
 
@@ -83,7 +84,7 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 
 写完设计草案后，必须自查：
 
-- [ ] 方案中每一项是否都能在 `req.md`（或"需求范围"）中找到对应来源？
+- [ ] 方案中每一项是否都能在 `req.md`（或“需求范围”）中找到对应来源？
 - [ ] 是否存在"以防万一"的抽象或接口设计？
 - [ ] 如果去掉最复杂的那部分，需求还能满足吗？
 
@@ -101,7 +102,7 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 ### Step 7: Report And Auto-Continue
 
 - 正常结果：保持在 `DesignDraft`，输出设计草案摘要后**直接进入 `feature_confirm (review)`**，不输出"下一步建议"停等。
-- 若设计仍暴露需求空洞：回到 `requirement_probe`。
+- 若设计仍暴露需求空洞或 `待确认问题` 未清空：回到 `requirement_probe`。
 - 若是在已确认流程中发现问题：提议 `workflow_repair`。
 
 ## Output

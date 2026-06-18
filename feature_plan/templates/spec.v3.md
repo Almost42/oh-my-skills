@@ -54,6 +54,11 @@ Updated: YYYY-MM-DD
 - [ ] 标准 1
 - [ ] 标准 2
 
+## 待确认问题
+
+- [ ] 问题 1
+- [ ] 问题 2
+
 ## 执行包
 
 _(由 feature_confirm lock 时填充)_
