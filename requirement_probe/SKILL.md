@@ -21,10 +21,12 @@ OMS v3 的需求澄清入口。首次进入时先把当前理解落成 `req.md` 
 - 用户提出新功能、补丁、需求补充或模糊修改请求。
 - 当前还不能稳定产出 `design.md`，需要先澄清目标、边界、验收标准或影响面。
 - 已有 spec 仍停留在需求澄清阶段，需要继续补齐 `req.md`。
+- 已确认需要代码变更，准备把前置诊断结果转成 Patch/Feature 需求。
 
 ## Never
 
 - Never 替用户补写成功标准或未确认约束
+- Never 把“先帮我分析/排查”误判为“立即创建需求文档”
 - Never 因为问题不多就跳过 `req.md` 落盘
 - Never 把未确认事项藏在正文描述里而不单列
 - Never 在未确认问题仍存在时推进到 `feature_plan`
@@ -40,18 +42,19 @@ OMS v3 的需求澄清入口。首次进入时先把当前理解落成 `req.md` 
 2. `docs/ai/context/project_brief.md`（若存在）
 3. `docs/ai/progress.md`
 4. `docs/ai/spec/index.md`（若存在）
-5. 当前活跃 spec 状态锚点（若已存在）
+5. 当前目标 spec，或与本次变更可能交叉的活跃 spec 状态锚点（按需）
 6. 当前问题直接涉及的 capability docs
 7. `docs/ai/knowledge/lessons/design.md`（若存在）
 
 不要因为“先看看再说”而整库扫描文档。
+纯逻辑分析、漏洞研判或日志排障不进入本 skill；先直接完成诊断，确认需要变更后再进入。
 
 ### Step 2: Decide Spec Container
 
 - `Scope: Feature`：使用 `docs/ai/spec/YYYY-MM-DD-{slug}/`，需求写入 `req.md`
 - `Scope: Patch`：使用 `docs/ai/spec/YYYY-MM-DD-{slug}.md`，在单文件中更新“业务背景 / 需求范围 / 验收标准 / 待确认问题”
 
-若目标 spec 不存在，先创建对应容器与最小状态锚点；若已存在，则在原文件基础上更新，不新开平行草案。
+若修复属于既有 spec 的范围，则更新原文件；若不属于其范围，则创建独立 Patch spec。其他活跃 spec 不构成阻塞，除非与本次改动存在实质交叉。
 
 ### Step 3: Write Or Update Requirement Record
 

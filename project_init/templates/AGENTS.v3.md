@@ -41,6 +41,7 @@
 - 新项目、旧 docs 迁移到 OMS v3、或已有档案重新对账 -> `project_init`
 - 文档结构、owner 边界、legacy 输入或外部 AI 规则需要规范化 -> `project_docs_optimize`
 - 恢复工作 -> `context_sync`
+- 逻辑分析、漏洞排查、日志排障 -> 直接分析相关证据；不创建 spec、不检查节点
 - 新需求 -> `requirement_probe`
 - 设计草案评审 -> `feature_confirm (review)`；执行批准 -> `feature_confirm (lock)`；代码执行 -> `code_implement_confirm`
 - 修复或回退提案 -> `workflow_repair`；完成声明 -> `verification_gate`

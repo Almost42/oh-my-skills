@@ -21,7 +21,7 @@ OMS 解决的是 AI 参与开发时最常见的几类失控问题：
 - **文档化状态管理**：spec 状态锚点持有真实节点，`docs/ai/progress.md` 只做摘要。
 - **设计与实施分离**：只有进入 `ReadyForImplementation` 后才允许实施代码。
 - **显式修复机制**：当设计或实现不闭环时，走 `workflow_repair`，而不是偷偷改状态。
-- **精准上下文注入**：每个 skill 只加载当前步骤必需的文档，多开发者场景下自动识别活跃 spec 并要求用户确认。
+- **精准上下文注入**：每个 skill 只加载当前步骤必需的文档；多开发者场景只在继续目标不明或改动范围交叉时确认活跃 spec。
 - **AI 行为约束**：每个 skill 内置 Iron Law、Never 规则和 Red Flags，防止 agent 假设替代澄清、顺手修改范围外代码、声称完成但没有证据。
 - **可分发运行时**：模板资产跟随 skill 一起分发，不依赖仓库中的统一模板目录。
 - **历史 spec 可回溯**：spec 文件或目录名包含创建日期，`docs/ai/spec/index.md` 按模块与处理方向索引历史需求。
@@ -92,11 +92,13 @@ OMS 将上下文视为有限资源，通过以下机制减少不必要加载：
 
 **Spec 按需定位**：新对话开始时，先读 `docs/ai/progress.md` 定位活跃 spec，而不是全量扫描 `docs/ai/spec/`。
 
+**诊断不入流程**：当用户只想分析逻辑、排查日志或确认漏洞是否存在时，直接围绕相关证据开展分析；不读取工作流状态、不创建 spec、也不推进节点。只有确认需要代码变更且用户明确要继续时，才转入 `requirement_probe`。
+
 **需求先落文档**：`requirement_probe` 创建或更新需求文档，把当前理解与未确认问题一起落盘；后续重复进入时持续维护，直到问题清空再进入 `feature_plan`。
 
 **项目背景校准**：需求阶段先读 `docs/ai/context/project_brief.md`（若存在），用项目目的、范围、成功标准和术语表校准需求判断。
 
-**多开发者场景**：若 `docs/ai/progress.md` 中存在多个活跃 spec（多人并行开发），agent 会列出所有进行中的工作项并要求用户明确指定，而不是自行猜测：
+**多开发者场景**：多个活跃 spec 不会自动阻塞新补丁。只有用户只说“继续”而目标不明，或本次改动与活跃 spec 在模块、接口、数据契约、验收目标或改动文件上实质交叉时，agent 才要求确认：
 
 ```
 当前项目有多个进行中的工作项，请确认本次对话要处理哪个：
@@ -121,6 +123,7 @@ OMS 将上下文视为有限资源，通过以下机制减少不必要加载：
 
 各 skill 对应的核心约束：
 
+- `workflow_guard`：纯诊断不入 spec；并行补丁只在范围交叉时做冲突确认
 - `requirement_probe`：先落 `req.md`，显式维护待确认问题，不假设，不替用户填补验收标准
 - `feature_plan`：YAGNI，最小可行方案，不加未被要求的抽象
 - `feature_confirm`：Simplicity Gate，execution package 不得超出需求范围
@@ -221,9 +224,9 @@ skillshare sync
 - 给出面向开发者的初始化结论：当前是否合规、是否可以继续工作、是否需要先确认结构调整
 - 在需要时建议转到 `project_docs_optimize (analyze)` 输出调整报告
 
-### 3. 新会话先执行 `context_sync`
+### 3. 恢复工作时执行 `context_sync`
 
-项目接入完成后，新的对话或继续工作时，优先从`context_sync`（恢复/继续）开始。
+项目接入完成后，用户明确要求恢复或继续既有工作时，优先从 `context_sync` 开始。新对话中的纯逻辑分析、漏洞排查或日志诊断直接处理相关证据，不加载工作流上下文。
 
 它会读取最小 baseline 文档，自动定位当前活跃 spec，并在需要时提示你补做 `capability_bootstrap`、`progress_sync` 或 `session_resume`。
 
@@ -243,6 +246,7 @@ requirement_probe           #描述需求
 - 会话暂存`session_archive`：当前工作做了一半需要暂停（适用于切换模型、IDE）
 - 会话恢复`session_resume`：快速恢复手头正在执行的工作（适用于新开对话）
 - 恢复/恢复上下文/继续`context_sync`：让AI加载当前项目的背景和规则（适用于主动向AI声明当前背景,或任务漂移时重置状态）
+- 逻辑分析/漏洞排查/日志排障：直接收集相关证据并给出结论；确认需要改动后才进入 `requirement_probe`
 - 整理文档`project_docs_optimize`：按照oms标准整理文档（适用于发现docs文件杂乱时）
 - 将xxx提取为团队skill`project_skill_extract`：将指定规则提取成skill供团队复用（适用于较固定的规则应用场景）
 
@@ -336,7 +340,7 @@ Agent：加载 docs/ai/spec/2026-04-20-create-task/index.md，恢复上下文，
 - `docs/ai/lessons.md` 废弃，改为 `docs/ai/knowledge/lessons/` 分类体系，按操作类型精准注入。
 - 长期知识默认直接进入 owner：`docs/ai/domain_rules.md`、`docs/ai/architecture.md` 或 capability docs，不再保留常规长期 knowledge 大层。
 - 每个 skill 内置 Iron Law、Never、Red Flags，AI 行为约束从"软提示"变为"硬规则"。
-- `workflow_guard` 和 `context_sync` 改为两步定位，多个活跃 spec 时暂停并要求用户确认。
+- `workflow_guard` 与 `context_sync` 按需定位；多个活跃 spec 仅在继续目标不明或改动范围交叉时暂停确认。
 - `architecture.md`：v2 曾作为「仅 Feature/跨模块才读」的轻量策略；v3 现已改为在设计与确认阶段**若文件存在则读**（含 Patch、优先相关节），并在 `code_implement_confirm` / `verification_gate` 执行验证前**强制**读取，以与 `AGENTS.md` baseline 及仓库内工具约定一致。`workflow_guard` 仅定位意图时可不读。
 - `feature_confirm` 吸收了实施方案确认动作，旧的独立 `code_implement_plan` 已被移除。
 - `workflow_repair` 成为显式修复入口。

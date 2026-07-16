@@ -12,7 +12,6 @@ OMS v3 的默认恢复入口。优先依赖 baseline 文档，不主动加载非
 
 ## When to Use
 
-- 开始新对话。
 - 用户说"继续""接着做""恢复上下文"。
 - 怀疑代码结构与文档不一致。
 
@@ -78,18 +77,15 @@ OMS v3 的默认恢复入口。优先依赖 baseline 文档，不主动加载非
 - 若当前消息同时带有具体新需求或补丁，恢复完成后应立即转入 `requirement_probe`，不得直接开始实现。
 - 若存在团队 skill，补充一句当前可用团队 skill，优先读取 `docs/ai/skills/index.md`；缺失时扫描 `docs/ai/skills/*/SKILL.md`。
 - 若团队通过 skillshare 维护 skill，恢复上下文后补充固定提示：执行 `skillshare install ./docs/ai/skills -p -f` 与 `skillshare sync -p`。
-- 输出格式：一句话状态摘要 + 当前节点 + 可直接执行的动作（如"需要我继续当前 spec 的验证吗？"或"需要我继续实施吗？"）
+- 输出格式：一句话状态摘要 + 当前节点 + 可直接执行的动作（如"需要我继续当前 spec 的验证吗？"）
 
 若 baseline 不足：
-
 - 升级到 `session_resume`
 
 若发现能力缺口：
-
 - 建议 `capability_bootstrap`
 
 若发现进度漂移：
-
 - 自动执行 `progress_sync` 修正，不单独建议用户调用
 
 ## Output
@@ -109,7 +105,7 @@ OMS v3 的默认恢复入口。优先依赖 baseline 文档，不主动加载非
 **当前可用 Skills**:
 - ...（若存在团队 skill；优先读 `docs/ai/skills/index.md`，缺失时扫描 `docs/ai/skills/*/SKILL.md`）
 
-**可直接继续**: [一句话说明当前可做什么，如"需要我继续当前 spec 的验证吗？"]
+**可直接继续**: [一句话说明当前可做什么]
 
 **小提示**: 若团队通过 skillshare 维护技能，恢复上下文后请执行 `skillshare install ./docs/ai/skills -p -f` 与 `skillshare sync -p`
 ```

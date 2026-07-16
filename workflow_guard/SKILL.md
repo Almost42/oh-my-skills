@@ -1,12 +1,12 @@
 ---
 name: workflow_guard
 description: >-
-  在任何重要动作开始前使用，识别当前用户意图、当前节点和缺失门禁，并路由到正确的 OMS v3 skill。
+  在进入会改变代码、文档或工作流状态的任务前使用，识别用户意图、冲突范围和缺失门禁；纯代码分析、漏洞排查和日志诊断不进入 spec 流程。
 ---
 
 # 工作流守卫
 
-OMS v3 的第一入口。先判断"该走哪条链路"，再建议任何动作。
+OMS 的治理入口。先区分纯诊断与变更请求；只有变更请求才进入 spec 与节点流程。
 
 **执行时宣告**："[workflow_guard] 分析意图与节点..."
 
@@ -14,67 +14,71 @@ OMS v3 的第一入口。先判断"该走哪条链路"，再建议任何动作�
 
 ```
 先识别意图，再建议动作。
-没有明确节点和意图，不能建议任何修改操作。
+只有会改变代码、文档或状态的请求才检查节点和门禁。
 ```
 
 ## When to Use
 
-- 新对话开始时。
-- 用户提出新需求、补丁、继续开发、开始实现、修复问题、发布版本。
-- AI 在执行任何重要动作前，需要确认当前节点和缺失门禁。
+- 用户提出新需求、补丁、继续开发、开始实现、修复问题或发布版本。
+- 用户的分析请求同时包含明确的修复、改动或验收意图。
+- AI 准备执行会改变代码、文档或状态的动作前。
 
 ## Never
 
-- Never 在 Step 2 完成前就有"下一步要做什么"的输出
-- Never 跳过 Step 3 的门禁检查直接路由
+- Never 把纯逻辑分析、漏洞排查或日志诊断升级为 spec 流程
+- Never 因为存在多个活跃 spec 就阻塞范围无交叉的补丁
+- Never 跳过变更请求的门禁检查直接进入实现
 - Never 把"用户语气紧迫"当作跳过意图识别的理由
-- Never 在多个活跃 spec 的情况下自行选择一个继续，必须先让用户确认
+- Never 在用户只说"继续"且有多个活跃 spec 时自行选择
 
 ## Instructions
 
-### Step 1: Locate Context（最小集优先）
+### Step 1: Triage Intent
 
-**第一步：只读最小定位文档**（2 个文件，足够判断活跃 spec 情况）
+先按用户的实际授权分类：
+
+- **纯诊断**：解释现有逻辑、分析日志/报错、研判漏洞或确认现状，未要求改动。
+  - 直接读取与问题有关的代码、日志、配置和测试；不读 `progress.md`，不选择 spec，不输出节点或门禁。
+  - 输出事实、推断、证据范围和未确认项；只有用户明确要求修复，才在后续转入 Patch 链路。
+- **变更请求**：新增、修改、修复、实施、发布、验收，或用户已明确要求修复已确认的问题。
+  - 进入 Step 2。
+- **混合请求**：如“先定位并修复”。先完成最小诊断；确认变更范围后进入 Patch 链路，不在诊断开始前创建 spec。
+
+✅ “检查这段鉴权代码是否可绕过” -> 直接分析代码与证据
+✅ “这个异常已经确认，修复它” -> 判断范围后进入 `requirement_probe`（`Scope: Patch`）
+❌ “检查现有代码有没有 SQL 注入风险” -> 创建 patch spec
+
+### Step 2: Locate Change Context（最小集优先）
+
+只读定位文档：
 
 1. `AGENTS.md`
 2. `docs/ai/progress.md`
 
-从 `docs/ai/progress.md` 识别当前活跃 spec 列表：
+从 `docs/ai/progress.md` 识别当前活跃 spec，并按本次变更范围处理：
 
 **情况 A：只有一个活跃 spec**
-→ 暂不加载 spec 锚点，仅在 Step 4 决定路由后由目标 skill 按需加载
+→ 暂不加载状态锚点，仅在目标 skill 需要时加载。
 
 **情况 B：有多个活跃 spec**
-→ 不加载任何 spec，直接向用户列出所有活跃 spec 并要求确认：
 
-```
-当前项目有多个进行中的工作项，请确认本次对话要处理哪个：
+- 用户只说“继续/恢复”且未给出目标 -> 列出所有活跃 spec 并要求确认。
+- 用户提出具体补丁或需求 -> 仅根据摘要与必要的状态锚点判断是否交叉；无交叉则并行处理，无需选择。
+- 同一模块、接口、数据契约、验收目标或改动文件存在实质交叉，且无法安全拆分 -> 列出相关 spec，请用户决定合并、排序或调整范围。
 
-1. [spec 名称] — [Current_Node] — [一句话摘要]
-2. [spec 名称] — [Current_Node] — [一句话摘要]
-...
-
-请指定编号或名称。
-```
-
-等待用户回复后，不加载 spec，将用户选择传递到目标 skill。
+用户确认后，只加载所选或发生交叉的 spec 状态锚点。
 
 **情况 C：没有活跃 spec**
-→ 不加载任何 spec，直接进入 Step 2 的意图识别
+→ 不加载任何 spec，继续识别路由。
 
-**第二步：按意图决定是否补载**（在 Step 2 识别意图后）
+仅在意图为非 `context_sync` 的变更请求时，补载：
 
-仅在 Step 2 识别为非 context_sync 意图时，补载：
 - `docs/ai/spec/index.md`（若存在）
 - `docs/ai/knowledge/lessons/workflow.md`（若存在）
 
-若意图为 `context_sync`，跳过上述补载——这些文档由 context_sync 自行加载，避免重复。
+`docs/ai/architecture.md` 不在此步骤加载；由目标 skill 按需读取。
 
-⚠️ `docs/ai/architecture.md` 在此步骤不加载——workflow_guard 不需要架构细节来识别意图和路由。
-
-### Step 2: Identify Intent
-
-将当前请求归类为以下之一：
+### Step 3: Identify Change Route
 
 - 新项目初始化、旧文档体系迁移到 OMS v3、或已有 OMS 档案需要重新扫描对账 -> `project_init`
 - 恢复上下文 -> `context_sync`
@@ -85,51 +89,48 @@ OMS v3 的第一入口。先判断"该走哪条链路"，再建议任何动作�
 - 执行包已确认 -> `feature_confirm` (`lock`)
 - 已批准的实现开始落地 -> `code_implement_confirm`
 - 发现需求/设计/验证不闭环 -> `workflow_repair`
-- 声称完成或修复 -> `verification_gate`
-- 需求验收通过 / 验收通过 / 验证完成 -> `verification_gate`（单个 spec 的验收确认，验收通过后自动归档）
+- 声称完成、修复或验收通过 -> `verification_gate`
 
-若识别为补丁需求，默认仍先进入 `requirement_probe`，并明确标注 `Scope: Patch`。
+补丁需求进入 `requirement_probe` 并标注 `Scope: Patch`；不相关的活跃 spec 不是门禁。
 
-✅ "用户说'修一个 bug'，当前无活跃 spec → 意图归类为 Patch 需求 → requirement_probe"
-❌ "用户说'修一个 bug' → 直接建议开始改代码"
+### Step 4: Check Gates
 
-### Step 3: Check Gates
+检查：
 
-检查是否缺少前置门禁：
-
-- 是否存在对应 spec 状态锚点
-- 当前 spec 是否处于正确节点
-- 是否仍处于 `DesignDraft`
-- 是否已有执行包批准
-- 当前任务是否暴露了新的 capability signal，但对应文档尚未建立
+- 是否存在目标或冲突 spec 的状态锚点
+- 目标 spec 是否处于正确节点
+- 是否仍处于 `DesignDraft`，或是否已有执行包批准
+- 当前任务是否暴露新的 capability signal，但对应文档尚未建立
 - 是否应该先修复而非继续前进
 
-### Step 4: Route
+不把其他活跃 spec 的存在本身视为门禁；只处理实际交叉造成的冲突。
+
+### Step 5: Route
 
 若检测到 new capability growth 或 capability docs 缺口，应优先建议 `capability_bootstrap`。
-
-若意图属于初始化 / 迁移 / 对账，先路由到 `project_init`。
+若意图属于初始化、迁移或对账，先路由到 `project_init`。
 
 **静默路由规则**：以下场景跳过完整报告，直接进入目标 skill：
 
-- **意图 = 纯 `context_sync` 且只有一个活跃 spec**：不输出"工作流状态"报告，直接加载 `context_sync`。若同条消息还带有新需求，不适用静默路由。
-- **意图 = `feature_confirm (review)`，spec 处在 `DesignDraft`，门禁无缺失**：跳过报告，直接进入 `feature_confirm (review)`。
+- **意图 = 纯 `context_sync` 且只有一个活跃 spec**：直接加载 `context_sync`。若同条消息还带有具体新需求，不适用静默路由。
+- **意图 = `feature_confirm (review)`，spec 处在 `DesignDraft`，门禁无缺失**：直接进入 `feature_confirm (review)`。
 
-其他情况正常输出路由报告。
+其他变更请求正常输出路由报告。
 
 ## Red Flags - STOP
 
-- 文档状态（spec Current_Node）与用户描述的进度不一致，但你准备忽略继续
-- 用户语气急迫，你感到"先做再说"的冲动
-- 意图识别出来多于一个，但你只选了其中一个没有说明原因
-- 发现多个活跃 spec 但没有让用户确认就继续处理
+- 文档状态与用户描述不一致，但你准备忽略继续
+- 用户语气急迫，你感到“先做再说”的冲动
+- 意图包含多个变更目标，但你只选了其中一个没有说明原因
+- 你把范围无交叉的并行补丁误当成流程冲突
+- 用户只说“继续”且有多个活跃 spec，你却自行选择
 
 ## Output
 
 ```markdown
 ## 工作流状态
 
-**当前 Spec**: ...（用户确认后）
+**当前 Spec**: ...（目标或相关冲突 spec）
 **当前节点**: ...
 **识别意图**: ...
 **建议技能**: ...
@@ -139,8 +140,8 @@ OMS v3 的第一入口。先判断"该走哪条链路"，再建议任何动作�
 **缺失门禁**:
 - ...
 
+**并行判断**: 无交叉，可并行 | 存在交叉，待确认
 **下一步建议**: 先执行项目初始化扫描（`project_init`） | 先恢复项目上下文（`context_sync`） | 先进入需求澄清（`requirement_probe`） | 先补建能力文档（`capability_bootstrap`） | 当前流程存在缺口，建议先修复（`workflow_repair`）
 ```
 
-> **静默路由时不输出此报告**。单 spec + context_sync 意图时，直接进入目标 skill。
-> 多 spec 需用户确认时，仅列出选项，不输出完整路由报告。
+> 纯诊断不输出此报告，直接开始分析。多 spec 仅在“继续”目标不明或范围实质交叉时需要确认。
