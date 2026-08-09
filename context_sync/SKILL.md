@@ -65,6 +65,7 @@ OMS v3 的默认恢复入口。优先依赖 baseline 文档，不主动加载非
 - 是否有迹象表明 `docs/ai/architecture.md` 可能落后（如用户提到了新模块或新服务）
 - 当前问题是否其实是新需求而非恢复上下文
 - 当前消息是否同时携带具体新需求或补丁
+- 若存在 `docs/ai/knowledge/lessons/`，只汇总近期“已固化”“待继续验证”“冲突待处理”条目，不全量加载经验正文
 
 若发现架构漂移迹象 → 此时才加载 `docs/ai/architecture.md` 做进一步检查。
 
@@ -78,6 +79,7 @@ OMS v3 的默认恢复入口。优先依赖 baseline 文档，不主动加载非
 - 若存在团队 skill，补充一句当前可用团队 skill，优先读取 `docs/ai/skills/index.md`；缺失时扫描 `docs/ai/skills/*/SKILL.md`。
 - 若团队通过 skillshare 维护 skill，恢复上下文后补充固定提示：执行 `skillshare install ./docs/ai/skills -p -f` 与 `skillshare sync -p`。
 - 输出格式：一句话状态摘要 + 当前节点 + 可直接执行的动作（如"需要我继续当前 spec 的验证吗？"）
+- 若有自动固化或冲突知识，附带“知识收口摘要”，说明 owner、处理状态和是否需要人工介入
 
 若 baseline 不足：
 - 升级到 `session_resume`
@@ -98,6 +100,7 @@ OMS v3 的默认恢复入口。优先依赖 baseline 文档，不主动加载非
 **当前活跃 Spec**: ...（用户确认后 / 单一 spec 自动识别）
 **当前节点**: ...
 **当前焦点**: ...
+**知识收口摘要**: 已固化 ...；待继续验证 ...；冲突待处理 ...；人工介入：需要 | 不需要
 
 **已加载文档**:
 - ...

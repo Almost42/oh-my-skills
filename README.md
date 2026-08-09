@@ -4,6 +4,8 @@ Oh My Skills（OMS）是一套面向 AI 编程协作的仓库内治理框架。
 
 它不是零散提示词集合，而是一整套可分发的 skills、模板资产和工作流规则，用来约束 agent 如何澄清需求、产出设计、确认方案、执行代码、验证结果、处理回退，以及沉淀长期知识。
 
+> README 是 OMS 当前版本的最新说明书；技能与模板的实际行为以本仓库内容为准。
+
 
 ## 它能带来什么
 
@@ -140,10 +142,10 @@ OMS v3.1 采用 owner-first 的精简知识体系：
 - `docs/ai/domain_rules.md`：项目级硬约束、禁区、协议规则
 - capability docs：能力专属稳定事实与操作约束，仅在能力成体系时创建
 - `docs/ai/knowledge/index.md`：路由器，只决定“该读哪些 owner 文件”
-- `docs/ai/knowledge/lessons/*`：短期纠错缓冲层
-- `docs/ai/history/*`：初始化、发布/归档、治理审计等事件摘要
+- `docs/ai/knowledge/lessons/*`：按类型保存经验条目、证据和固化状态
+- `docs/ai/history/*`：初始化、发布、治理审计等事件摘要，不复制需求归档
 
-**Lessons 分类体系**：Lessons 只保存短期经验，不直接充当长期知识仓库：
+**Lessons 分类体系**：Lessons 是唯一的经验缓冲层；条目在原文件内记录状态，固化后只保留来源和验证记录：
 
 ```text
 docs/ai/knowledge/lessons/
@@ -151,10 +153,10 @@ docs/ai/knowledge/lessons/
 ├── code.md      ← 实现阶段的操作失误与禁止行为
 ├── testing.md   ← 验证/测试相关的遗漏
 ├── workflow.md  ← 节点推进与流程相关
-└── domain.md    ← 业务规则与领域特定约束（收口时再决定是否升格）
+└── domain.md    ← 业务规则与领域特定约束
 ```
 
-对话中的纠正、问题和经验默认先写入 `lessons`。只有在收口节点经 `knowledge_review` 审核后，才允许分流到 `docs/ai/domain_rules.md`、`docs/ai/architecture.md` 或 capability docs，避免长期 owner 文档过拟合单次会话。
+对话中的纠正、问题、验收结果和重复模式先进入对应的 `lessons` 条目。验收收口自动执行 `knowledge_review(auto)`：低风险、高置信度规则自动固化到正确 owner；中风险标记为“待继续验证”；高风险或冲突项标记为“冲突待处理”。用户不主动维护时，系统仍会持续积累和安全固化。
 
 ## 会生成哪些文档
 
@@ -170,8 +172,8 @@ docs/ai/
 ├── progress.md
 ├── knowledge/
 │   ├── index.md                   # 知识路由与 lessons 加载规则
-│   └── lessons/                   # 按操作类型分类的纠错经验
-├── history/                       # 初始化 / 发布归档 / 治理审计等事件摘要
+│   └── lessons/                   # 按操作类型分类的经验、证据与固化状态
+├── history/                       # 初始化 / 发布 / 治理审计等事件摘要
 └── memory/                        # optional, only when archive/resume is enabled
 ```
 
@@ -186,14 +188,15 @@ docs/ai/
 - `docs/ai/domain_rules.md`：项目级硬约束、禁区与协议规则；仅在相关任务确实依赖时加载。
 - capability docs：能力专属的稳定事实与操作约束；不是必建全套。
 - `docs/ai/knowledge/index.md`：owner 路由入口，含 lessons 加载规则。
-- `docs/ai/knowledge/lessons/`：按操作类型分类的短期纠错经验，精准注入，不全量加载。
-- `docs/ai/history/`：只记录初始化、发布/归档、治理审计等事件摘要，不记录需求正文；spec 主档案始终保留在 `docs/ai/spec/`。
-- `docs/ai/memory/`：可选快照层，只在 handoff 或历史重建需要时启用。
+- `docs/ai/knowledge/lessons/`：按操作类型分类的经验条目，精准注入，不全量加载；条目内保留证据、范围、状态和来源。
+- `docs/ai/history/`：只记录初始化、发布、治理审计等事件摘要，不记录需求正文；spec 主档案始终保留在 `docs/ai/spec/`。
+- `docs/ai/memory/`：可选快照层，只在 handoff 或历史重建需要时启用；`project_init` 默认不创建 `docs/ai/memory/`。
 
 写入约束：
 
 - `docs/ai/context/`：只允许 `project_init` 和 `project_docs_optimize` 写入或重组。
-- `docs/ai/history/`：只允许 `project_init` 和 `project_docs_optimize` 写入，`verification_gate (advance)` 追加事件摘要。
+- `docs/ai/history/`：只允许 `project_init`、`project_docs_optimize` 和明确的发布/治理动作写入；普通需求归档不追加 per-demand history。
+- owner 自动固化必须通过受管区块写入，并保留原 lessons 来源、证据和最近验证日期。
 
 ## 快速开始
 
@@ -254,11 +257,13 @@ requirement_probe           #描述需求
 
 当一个 spec 的验收通过时，`verification_gate (advance)` 会自动完成：
 
+- 运行 `lesson_capture`，提取本次纠正、决策、修正和重复模式；
+- 运行 `knowledge_review(auto)`，自动固化安全经验或标记“待继续验证/冲突待处理”；
 - 更新 `docs/ai/progress.md`，移除已完成 spec
-- 更新 `docs/ai/history/`，追加事件摘要
 - 更新 `docs/ai/spec/index.md`，标记为 `Archived`
+- 普通需求不生成 `docs/ai/history/<feature>.md`；只有治理或发布事件才写 history
 
-需求验收通过即视为流程闭环完成。如需对 lessons 进行升格审查，可主动触发 `knowledge_review`。
+需求验收通过且知识收口有明确结果，即视为流程闭环完成。用户可以主动触发 `knowledge_review(manual)` 处理高风险或冲突经验，但不是日常积累的前置条件。
 
 ### 6. （可选）团队Skill加载
 当`./docs/ai/skills`中存在团队技能时，需要按照如下步骤加载，确保开发者使用的ide/cli/agent能够读取到对应的skill。
@@ -305,11 +310,11 @@ Agent：[feature_confirm lock] 将 Current_Node 推进到 ReadyForImplementation
 Agent：[code_implement_confirm] Pre-flight 检查工具可用 → 按 impl.md 执行。
 
 用户：增加规则：protocol 文件由自动化工具生成，禁止手动修改。
-Agent：[lesson_capture] 分类为 domain → 写入 docs/ai/knowledge/lessons/domain.md。
-       当前保持在缓冲层；待收口时由 knowledge_review 决定是否升格到 docs/ai/domain_rules.md。
+Agent：[lesson_capture] 分类为 domain → 写入 `lessons/domain.md` 的经验条目，记录来源、范围和证据。
+       验收收口时 `knowledge_review(auto)` 检查证据和范围；低风险规则自动固化，其他经验标记为“待继续验证/冲突待处理”。
 
 用户：需求验收通过。
-Agent：[verification_gate] 运行测试，输出实际运行证据，逐条核对验收标准，验收通过后自动归档 spec 并同步 progress/history/index。流程闭环完成。
+Agent：[verification_gate] 运行测试并逐条核对验收标准 → 自动提取经验和收口知识 → 归档 spec、同步 progress/index；普通需求不生成 history 副本。
 ```
 
 ### 示例：多开发者并行场景
@@ -338,7 +343,7 @@ Agent：加载 docs/ai/spec/2026-04-20-create-task/index.md，恢复上下文，
 
 - `docs/ai/spec/` 现在支持双模式：Patch 用带日期单文件，Feature 用带日期子目录（index/req/design/impl），并通过 `docs/ai/spec/index.md` 汇总历史模块与处理方向。
 - `docs/ai/lessons.md` 废弃，改为 `docs/ai/knowledge/lessons/` 分类体系，按操作类型精准注入。
-- 长期知识默认直接进入 owner：`docs/ai/domain_rules.md`、`docs/ai/architecture.md` 或 capability docs，不再保留常规长期 knowledge 大层。
+- 长期知识通过 `lessons -> 自动收口 -> owner / 待继续验证 / 冲突待处理` 生命周期自动分流到 `docs/ai/domain_rules.md`、`docs/ai/architecture.md` 或 capability docs；用户审核作为高风险兜底。
 - 每个 skill 内置 Iron Law、Never、Red Flags，AI 行为约束从"软提示"变为"硬规则"。
 - `workflow_guard` 与 `context_sync` 按需定位；多个活跃 spec 仅在继续目标不明或改动范围交叉时暂停确认。
 - `architecture.md`：v2 曾作为「仅 Feature/跨模块才读」的轻量策略；v3 现已改为在设计与确认阶段**若文件存在则读**（含 Patch、优先相关节），并在 `code_implement_confirm` / `verification_gate` 执行验证前**强制**读取，以与 `AGENTS.md` baseline 及仓库内工具约定一致。`workflow_guard` 仅定位意图时可不读。

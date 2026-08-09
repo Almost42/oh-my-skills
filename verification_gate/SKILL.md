@@ -1,99 +1,68 @@
 ---
 name: verification_gate
-description: 在 agent 准备声称工作已完成、已修复或已通过时使用，以核验新鲜证据并判断 Verifying 是否可以推进。
+description: 在准备声称完成、验收通过或归档时核验新鲜证据，并完成经验提取与知识收口。
 ---
 
 # 验证门禁
 
-OMS v3 的完成门禁。没有新鲜证据，就不能把 `Verifying` 说成完成。
+OMS v3 的完成门禁。没有新鲜证据，不能把 `Verifying` 说成完成；验收通过后必须完成一次知识收口，不再依赖用户主动维护。
 
-**执行时宣告**："[verification_gate] 核验完成证据..."
+**执行时宣告**："[verification_gate] 核验完成证据并收口知识..."
 
 ## Iron Law
 
 ```
-没有运行新鲜证据，就不能声称完成。
-"应该过了"不是证据。"之前测过"不是证据。子代理说成功不是证据。
+没有新鲜运行证据不能声称完成；没有知识收口结果不能静默归档。
 ```
 
 ## When to Use
 
-- `code_implement_confirm` 已把工作推进到 `Verifying`。
-- AI 准备声称"完成了""修好了""测试通过了"。
-- 用户说"需求验收通过""验收通过""验证完成"——单个 spec 的验收确认。
+- `code_implement_confirm` 已将工作推进到 `Verifying`。
+- AI 准备声称完成、修复或验收通过。
+- 用户明确说“需求验证通过”或“验收通过”。
 
 ## Instructions
 
 ### Step 1: Confirm Current State
 
-先读取：
-
-1. spec 状态锚点（`docs/ai/spec/YYYY-MM-DD-{slug}.md` 或 `docs/ai/spec/YYYY-MM-DD-{slug}/index.md`）
-2. 若 multi-file spec：读取 `req.md`（验收标准）和 `impl.md`（测试计划、验证步骤）
-3. `docs/ai/knowledge/lessons/testing.md`（若存在）
-4. **读取 `docs/ai/architecture.md`（若存在）**：与 `code_implement_confirm` 同样优先关注 `## 构建与验证`、`## 开发环境与工具约定` 等；未分节则读全文。验证阶段选用的构建/测试命令必须与文档及 `AGENTS.md` 中的明确约定一致，**禁止**凭记忆或通例执行。
-5. 确认 `Current_Node: Verifying`
+读取 spec 状态锚点、验收标准、实施包、相关 testing lessons、`architecture.md`（若存在），以及当前 lessons 中与本次经验相关的条目；确认 `Current_Node: Verifying`。
 
 ### Step 2: Run Fresh Evidence
 
-必须基于当前工作区重新执行（命令选择遵循 Step 1 的 architecture/AGENTS 约定）：
+按架构和项目规则重新执行测试、构建、验收步骤及必要的手动检查。旧日志、旧记忆或子代理报告不能替代本轮证据。
 
-- 测试
-- 构建
-- 验收步骤
-- 必要的手动检查
+### Step 3: Verify Line By Line
 
-✅ 运行 `npm test`，看到 "34/34 pass"，粘贴完整输出
-❌ "上次跑测试是通过的，应该还好"
+逐条核对验收标准，并检查设计阶段形成的关键决策是否有实现和验证证据。任何未覆盖决策、失败检查或环境问题，都不能推进归档。
 
-旧日志、旧记忆、对子代理的信任，都不能替代新鲜证据。
+### Step 4: Close Knowledge Before Archive
 
-### Step 3: Verify Acceptance Criteria Line By Line
+验收证据通过后依次执行：
 
-逐条核对 `req.md`（或"验收标准"）中的每一项：
+1. 调用 `lesson_capture`，从用户纠正、设计决策、实现修正、测试/审查结果和重复模式中提取经验。
+2. 调用 `knowledge_review(auto)`，合并规则指纹、检查 owner 边界，并自动处理低风险条目；未满足条件的条目仍留在原 lessons 中。
+3. 确认收口结果为“已固化”“待继续验证”“冲突待处理”“已替代/已过期”“一次性内容”或“无新增经验”；不得无结果跳过。
 
-- [ ] 每条验收标准是否有对应的证据？
-- [ ] 是否存在验收标准没有对应测试/检查的情况？
+知识收口失败但业务证据完整时，可以归档业务 spec，但必须在输出中说明“知识收口未完成”及失败原因，并保留原 lessons 条目，不能伪装成已完成沉淀。
 
-不得只凭"测试通过"跳过验收标准的逐条核对。
+### Step 5: Archive And Sync
 
-### Step 4: Decide The Gate Result
+`advance` 时：
 
-结果只能是：
+- 更新 `docs/ai/progress.md`，移除当前活跃 spec；
+- 更新 `docs/ai/spec/index.md`，将当前条目标记为 `Archived`；
+- 普通需求归档不再生成或追加对应的 `docs/ai/history/<feature>.md`；完整需求档案只保留在 `docs/ai/spec/`；
+- 只有初始化、发布、治理审计等事件才写入 `docs/ai/history/`。
 
-1. `stay`：继续留在 `Verifying`，还缺证据或还有未完成项
-2. `advance`：验收通过，自动归档并同步状态。流程结束
-3. `repair_required`：发现需求、设计或实现假设不成立，转到 `workflow_repair`
-
-### Step 5: Advance — Archive And Sync
-
-`advance` 时自动完成三项操作：
-
-1. **更新 `docs/ai/progress.md`**：移除当前 spec，调整活跃项
-2. **更新 `docs/ai/history/`**：追加事件摘要（spec 完成日期、验收结论、关键产出）
-3. **更新 `docs/ai/spec/index.md`**：当前 spec 条目状态改为 `Archived`
-
-然后输出验证结果。用户可见输出必须同时展示证据和当前状态。
-
-> `advance` 不输出任何"下一步建议"——需求验收通过后 spec 进入 `Archived`，流程闭环完成。如需 lessons 升格审查，用户可主动触发 `knowledge_review`。
+结果只能是 `stay`、`advance` 或 `repair_required`。`advance` 输出证据、逐条验收核对和知识收口结果。
 
 ## Red Flags - STOP
 
-- 准备声明完成但没有这轮的实际运行输出
-- 用"看起来""应该""理论上""逻辑上"描述验证状态
-- 把子代理的"成功"报告当作本轮验证证据
-- 验收标准没有逐条核对，只看"测试通过"
-
-## Rationalization 防御
-
-常见理由与实际含义对照表见 `references/rationalization.md`。
+- 准备声明完成但没有本轮实际运行输出。
+- 验收标准或关键决策没有逐条证据。
+- 自动固化准备覆盖冲突的 owner 规则。
+- 业务已归档但知识收口失败且没有说明未完成原因。
 
 ## Output
 
-> 完整模板见 `references/output-templates.md`
-
-**stay** — 输出证据日志 + 验收标准核对 + 缺失证据，建议回到 `code_implement_confirm`。
-
-**advance** — 不输出"下一步建议"。输出证据日志 + 验收标准核对（全部通过），自动同步 progress。需求已完成。
-
-**repair_required** — 输出受阻原因，路由到 `workflow_repair`。
+> 完整输出模板见 `verification_gate/references/output-templates.md`。

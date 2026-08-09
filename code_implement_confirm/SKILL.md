@@ -91,7 +91,7 @@ OMS v3 的执行器。只处理已经获批的 execution package，不负责替�
 
 - 运行相关测试、构建或验收命令
 - 记录实际通过/失败情况
-- 标记是否仍需继续实现，记录 lesson 或 pitfall candidates
+- 标记是否仍需继续实现，记录 lessons 中待继续验证的经验
 
 #### 重试上限规则
 

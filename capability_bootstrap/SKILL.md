@@ -25,6 +25,9 @@ description: >-
 - 用户明确说明
 
 ### Step 2: Create Missing Capability Docs
+
+先做内容边界判断：当前需求的完整流程、临时字段、一次性接口和实现细节只进入 `docs/ai/spec/`；只有已抽象、可复用、可验证的稳定事实才进入 capability doc。候选经验先进入对应的 lessons 条目，不得在补建能力文档时顺手复制 spec。
+
 按能力补建，并优先使用本 skill 自带模板：
 
 - UI / Client -> `docs/ai/frontend/guidelines.md` <- `capability_bootstrap/templates/frontend-guidelines.v3.md`
@@ -40,6 +43,8 @@ description: >-
 - `AGENTS.md` 中的文档槽位和加载入口
 - `docs/ai/architecture.md`
 - `docs/ai/knowledge/index.md`
+
+同步时补充能力范围、稳定事实与来源；不得把当前需求名称写入 `AGENTS.md` 或知识路由。验收后的长期规则由 `knowledge_review(auto)` 按证据门槛写入受管 owner 区块。
 
 ### Step 4: Report
 输出新增能力、补建文档、以及治理层同步情况。

@@ -52,6 +52,7 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 
 - `Scope: Patch` → **Single-file**: `docs/ai/spec/YYYY-MM-DD-{slug}.md`，模板 `spec.v3.md`
 - `Scope: Feature` → **Multi-file**: `docs/ai/spec/YYYY-MM-DD-{slug}/`，子文件为 `index.md` + `req.md` + `design.md` + `impl.md`
+- 模板来源固定为本 skill 的 `feature_plan/templates/spec.v3.md` 及同目录阶段模板，不读取项目中的旧模板。
 - 命名规则与完整模板清单见 `references/spec-structure.md`
 - 创建或修订后同步 `docs/ai/spec/index.md`（只写简略检索信息）
 - 若 `requirement_probe` 已创建 spec 容器，必须直接复用，不重建 `req.md`

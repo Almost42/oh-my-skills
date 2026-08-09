@@ -42,10 +42,10 @@
 - [x] 标准 1: ...
 - [x] 标准 2: ...
 
-（已自动同步 docs/ai/progress.md、docs/ai/history/、docs/ai/spec/index.md）
+（已自动同步 `docs/ai/progress.md`、`docs/ai/spec/index.md`，并完成经验收口：`已固化 / 待继续验证 / 冲突待处理 / 无新增经验`）
 ```
 
-> advance 不输出"下一步建议"。验收通过后 spec 进入 `Archived`，progress/history/index 已自动更新。需求已完成，流程闭环。
+> advance 不输出"下一步建议"。验收通过后 spec 进入 `Archived`；普通需求不生成按需求拆分的 history 副本，知识收口结果必须可追溯。
 
 ## repair_required（需要修复）
 

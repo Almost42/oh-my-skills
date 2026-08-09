@@ -20,6 +20,7 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 
 - Never 默认执行 `README`、`make init`、构建、起服务或其他开发侧初始化
 - Never 把开发环境可用性问题混入 OMS 扫描主结论
+- Never 不创建 `docs/ai/memory/`；会话快照只由 `session_archive` 按需启用，`session_resume` 仅在 baseline 不足时读取
 
 ## Instructions
 
@@ -37,6 +38,7 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 8. 外部 AI 规则来源：`CLAUDE.md`、`.claude/`、`.cursor/`、`.cursor/rules/`、`.codex/`、`docs/ai/` 下 AI/rules/prompt/agent 相关文件、常见自定义目录
 9. `docs/ai/skills/`（若存在）
 
+生成时使用本 skill 内置模板：`project_init/templates/AGENTS.v3.md`、`project_init/templates/project_brief.v3.md`、`project_init/templates/architecture.v3.md`、`project_init/templates/progress.v3.md`、`project_init/templates/knowledge-index.v3.md`、`project_init/templates/history-entry.v3.md`。
 识别：
 
 - always-on 文档是否缺失
@@ -57,6 +59,7 @@ OMS v3.1 的治理入口。它负责重复扫描项目文档与规则资产，�
 - 缺失 baseline owner 文件
 - `AGENTS.md`、`progress.md`、`spec/index.md`、`knowledge/index.md` 职责混杂
 - lessons / domain / capability / architecture 的 owner 边界不清
+- lessons 条目缺少状态、来源或目标 owner，或长期规则与 owner 重复/冲突
 - spec 结构或命名不规范
 - 外部 AI 规则尚未映射进 OMS owner
 - `docs/ai/skills/` 存在但尚未被盘点

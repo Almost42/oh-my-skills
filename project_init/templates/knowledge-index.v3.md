@@ -6,6 +6,7 @@
 - 优先加载明确 owner：`docs/ai/domain_rules.md` > capability docs > `docs/ai/architecture.md` > lessons。
 - baseline 只读取：`AGENTS.md`、`docs/ai/progress.md`、`docs/ai/spec/index.md`、活跃 spec 状态锚点、`docs/ai/knowledge/index.md`
 - `docs/ai/knowledge/lessons/` 永不进入 baseline，只在对应动作开始前按分类精准加载。
+- lessons 条目不进入 baseline，只加载与当前模块、能力或 spec 标签匹配的经验。
 
 ## Owner 路由
 
@@ -34,6 +35,13 @@ Lessons 文件路径：`docs/ai/knowledge/lessons/{design|code|testing|workflow|
 
 若对应文件不存在，跳过加载，不报错。
 
+## 经验条目状态
+
+- “已记录 / 待继续验证”：保留在原 lessons 条目中，只作为提示，不能覆盖正式规则。
+- “已固化”：规则已写入目标 owner，lessons 只保留来源、证据和最近验证日期。
+- “冲突待处理”：保留冲突证据，只供诊断，不得指导实现或覆盖现有规则。
+- “已替代 / 已过期 / 一次性内容”：保留简短审计记录，不再主动注入。
+
 ## Spec 引用规范
 
 - 先用 `docs/ai/spec/index.md` 按模块和处理方向定位历史 spec，再按需加载具体状态锚点。
@@ -44,6 +52,7 @@ Lessons 文件路径：`docs/ai/knowledge/lessons/{design|code|testing|workflow|
 
 ## 收口原则
 
-- 新的长期知识优先直接进入 owner：`docs/ai/domain_rules.md`、`docs/ai/architecture.md` 或 capability docs。
-- `docs/ai/knowledge/lessons/*` 只保存短期纠错与待判断经验。
+- 新的长期知识由 `knowledge_review(auto)` 按证据和风险自动分流到 owner；用户审核是高风险兜底，不是运行前提。
+- `docs/ai/knowledge/lessons/*` 保存短期纠错、待验证条目和固化后的来源记录。
+- `AGENTS.md` 只接收跨任务、低风险、通用治理规则；当前需求事实始终留在 spec。
 - 若发现 legacy knowledge、旧 lessons 或职责混杂，交给 `project_docs_optimize` 分析和调整。

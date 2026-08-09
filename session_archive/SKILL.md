@@ -34,8 +34,8 @@ OMS v3 的会话交接器。它只在确有 handoff 价值时创建 memory 快�
 - 待办
 - 风险与注意事项
 
-### Step 4: Review Knowledge Candidates
-若会话中出现值得升格的经验，交给 `knowledge_review` 进入审核流程。
+### Step 4: Review Reusable Lessons
+若会话中出现可复用经验，先由 `lesson_capture` 写入对应 lessons 条目，再调用 `knowledge_review(auto)`；低风险经验可自动固化，高风险或冲突经验保留为“待继续验证”或“冲突待处理”，不因用户未响应而丢失。
 
 ### Step 5: Report
 明确说明：
