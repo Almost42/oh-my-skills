@@ -89,7 +89,7 @@ OMS 的治理入口。先区分纯诊断与变更请求；只有变更请求才�
 - 执行包已确认 -> `feature_confirm` (`lock`)
 - 已批准的实现开始落地 -> `code_implement_confirm`
 - 发现需求/设计/验证不闭环 -> `workflow_repair`
-- 声称完成、修复或验收通过 -> `verification_gate`
+- 声称完成、修复或“验收完毕/验收通过” -> `verification_gate`
 
 补丁需求进入 `requirement_probe` 并标注 `Scope: Patch`；不相关的活跃 spec 不是门禁。
 

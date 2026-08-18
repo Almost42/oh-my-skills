@@ -28,6 +28,8 @@ OMS v3.1 的经验入口。以已有的 `lessons/{category}.md` 为唯一缓冲�
 
 从用户纠正、spec 决策、实现修正、测试/验收证据和重复模式中提取一条可执行规则，按主要触发场景归类：
 
+若本轮只有一次性命令适配、环境噪声或没有可复用规则，返回“无新增经验”，不创建 lesson 条目。
+
 | 分类 | Lesson 文件 | 可能的长期 owner |
 | :--- | :--- | :--- |
 | `design` | `docs/ai/knowledge/lessons/design.md` | architecture / workflow |
@@ -53,7 +55,7 @@ OMS v3.1 的经验入口。以已有的 `lessons/{category}.md` 为唯一缓冲�
 
 ### Step 3: Hand Off Without Blocking
 
-`verification_gate` 收口时自动调用 `knowledge_review(auto)`；未达固化条件的条目继续保留在原 lessons 文件，并标记为“待继续验证”或“冲突待处理”。已固化条目压缩为来源记录，避免与 owner 重复保存正文。
+`verification_gate` 仅在存在候选时调用本 skill 和 `knowledge_review(auto)`；未达固化条件的条目继续保留在原 lessons 文件，并标记为“待继续验证”或“冲突待处理”。已固化条目压缩为来源记录，避免与 owner 重复保存正文。
 
 ## Output
 

@@ -91,6 +91,7 @@ OMS v3 的执行器。只处理已经获批的 execution package，不负责替�
 
 - 运行相关测试、构建或验收命令
 - 记录实际通过/失败情况
+- 若准备进入 `Verifying`，在当前 spec 状态锚点的“验证快照”中记录最小证据：生成时间、执行包实现指纹、精确命令/结果、已覆盖的验收项和构建/手动检查结果；输出中只复述摘要。
 - 标记是否仍需继续实现，记录 lessons 中待继续验证的经验
 
 #### 重试上限规则
@@ -102,7 +103,7 @@ OMS v3 的执行器。只处理已经获批的 execution package，不负责替�
 结果只能是：
 
 1. `stay`：保持在 `Implementing`，说明剩余工作与下一步
-2. `advance`：条件满足时把 `Current_Node` 推进到 `Verifying`，然后自动同步 `docs/ai/progress.md`，**直接进入 `verification_gate`**，不输出"下一步建议"停等
+2. `advance`：条件满足时把 `Current_Node` 推进到 `Verifying`，保存验证快照，然后自动同步 `docs/ai/progress.md`，**直接进入 `verification_gate`**；快照有效时，验收门禁不重复跑同一命令
 3. `repair_required`：发现需求、设计、实施边界或验收假设存在问题，转到 `workflow_repair`
 
 ## Red Flags - STOP

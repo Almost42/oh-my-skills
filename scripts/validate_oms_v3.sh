@@ -18,6 +18,7 @@ PROGRESS_TEMPLATE="$PROJECT_INIT_TEMPLATE_DIR/progress.v3.md"
 KNOWLEDGE_INDEX_TEMPLATE="$PROJECT_INIT_TEMPLATE_DIR/knowledge-index.v3.md"
 HISTORY_ENTRY_TEMPLATE="$PROJECT_INIT_TEMPLATE_DIR/history-entry.v3.md"
 SPEC_TEMPLATE="$FEATURE_PLAN_TEMPLATE_DIR/spec.v3.md"
+SPEC_INDEX_TEMPLATE="$FEATURE_PLAN_TEMPLATE_DIR/spec-index.v3.md"
 
 DESIGN_DOC=""
 if [[ -f "design_v3.md" ]]; then
@@ -64,6 +65,7 @@ for path in \
   "$CAPABILITY_TEMPLATE_DIR/data-model.v3.md" \
   "$CAPABILITY_TEMPLATE_DIR/operations.v3.md" \
   "$CAPABILITY_TEMPLATE_DIR/domain-rules.v3.md" \
+  "$SPEC_INDEX_TEMPLATE" \
   "$PROMOTION_POLICY"
 do
   test -f "$path" || fail "$path missing"
@@ -127,6 +129,9 @@ for section in \
 do
   rg -q "^$section" "$SPEC_TEMPLATE" || fail "spec.v3.md missing $section"
 done
+
+rg -q "^## 验证快照" "$SPEC_TEMPLATE" || fail "spec.v3.md missing verification snapshot"
+rg -q "^## 验证快照" "$SPEC_INDEX_TEMPLATE" || fail "spec-index.v3.md missing verification snapshot"
 
 for bullet in \
   "Trigger:" \
@@ -258,6 +263,10 @@ rg -q "patch path" code_implement_confirm/SKILL.md || fail "code_implement_confi
 rg -q "repair_required" verification_gate/SKILL.md || fail "verification_gate must support repair_required"
 rg -q "Verifying" verification_gate/SKILL.md || fail "verification_gate must stay grounded in Verifying"
 rg -F -q "knowledge_review(auto)" verification_gate/SKILL.md || fail "verification_gate must run automatic knowledge closeout"
+rg -q "fast" verification_gate/SKILL.md || fail "verification_gate must define fast verification profile"
+rg -q "验证快照" verification_gate/SKILL.md || fail "verification_gate must consume verification snapshots"
+rg -q "无新增经验" verification_gate/SKILL.md || fail "verification_gate must support no-new-lesson closeout"
+rg -q "不得修改.*测试" verification_gate/SKILL.md || fail "verification_gate must protect test integrity"
 rg -F -q "普通需求归档" verification_gate/SKILL.md || fail "verification_gate must reject per-demand history"
 
 rg -q "当前节点" progress_sync/SKILL.md || fail "progress_sync must report current node"

@@ -33,7 +33,7 @@
 - 初始化、迁移、对账 -> `project_init`；文档结构偏移 -> `project_docs_optimize`。
 - 恢复上下文 -> `context_sync`；新需求 -> `requirement_probe`。
 - 设计确认 -> `feature_confirm`；实施 -> `code_implement_confirm`；完成声明 -> `verification_gate`。
-- 验收收口自动执行 `lesson_capture` 与 `knowledge_review(auto)`；高风险和冲突项再进入人工审核。
+- 验收收口先判断是否有可复用经验；有候选时执行 `lesson_capture` 与 `knowledge_review(auto)`，无候选时记录“无新增经验”；高风险和冲突项再进入人工审核。
 
 ## 更新策略
 

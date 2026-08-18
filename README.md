@@ -257,13 +257,14 @@ requirement_probe           #描述需求
 
 当一个 spec 的验收通过时，`verification_gate (advance)` 会自动完成：
 
-- 运行 `lesson_capture`，提取本次纠正、决策、修正和重复模式；
-- 运行 `knowledge_review(auto)`，自动固化安全经验或标记“待继续验证/冲突待处理”；
+- 先检查是否有可复用经验；有候选时运行 `lesson_capture`，再运行 `knowledge_review(auto)` 自动固化安全经验或标记“待继续验证/冲突待处理”；没有候选时直接记录 `无新增经验`；
 - 更新 `docs/ai/progress.md`，移除已完成 spec
 - 更新 `docs/ai/spec/index.md`，标记为 `Archived`
 - 普通需求不生成 `docs/ai/history/<feature>.md`；只有治理或发布事件才写 history
 
 需求验收通过且知识收口有明确结果，即视为流程闭环完成。用户可以主动触发 `knowledge_review(manual)` 处理高风险或冲突经验，但不是日常积累的前置条件。
+
+验收默认采用最小必要路径：实施阶段有有效“验证快照”且实现文件未变时直接复用；没有快照时先跑一次定向验证，只在验收标准或风险明确要求时升级到全量测试/构建。验收门禁不得修改测试断言或生产代码来制造通过。
 
 ### 6. （可选）团队Skill加载
 当`./docs/ai/skills`中存在团队技能时，需要按照如下步骤加载，确保开发者使用的ide/cli/agent能够读取到对应的skill。
@@ -314,7 +315,7 @@ Agent：[lesson_capture] 分类为 domain → 写入 `lessons/domain.md` 的经�
        验收收口时 `knowledge_review(auto)` 检查证据和范围；低风险规则自动固化，其他经验标记为“待继续验证/冲突待处理”。
 
 用户：需求验收通过。
-Agent：[verification_gate] 运行测试并逐条核对验收标准 → 自动提取经验和收口知识 → 归档 spec、同步 progress/index；普通需求不生成 history 副本。
+Agent：[verification_gate] 复用未变更工作树的验证快照，或只补跑缺失的定向证据 → 逐条核对验收标准 → 按需收口知识 → 归档 spec、同步 progress/index；普通需求不生成 history 副本。
 ```
 
 ### 示例：多开发者并行场景
