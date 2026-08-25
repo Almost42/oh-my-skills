@@ -30,6 +30,7 @@ OMS 的治理入口。先区分纯诊断与变更请求；只有变更请求才�
 - Never 跳过变更请求的门禁检查直接进入实现
 - Never 把"用户语气紧迫"当作跳过意图识别的理由
 - Never 在用户只说"继续"且有多个活跃 spec 时自行选择
+- Never 因为同一会话里又出现一项任务，就擅自新建平行 spec
 
 ## Instructions
 
@@ -55,7 +56,10 @@ OMS 的治理入口。先区分纯诊断与变更请求；只有变更请求才�
 1. `AGENTS.md`
 2. `docs/ai/progress.md`
 
-从 `docs/ai/progress.md` 识别当前活跃 spec，并按本次变更范围处理：
+先检查本会话是否已有**会话当前 Spec**：它由本会话中创建、恢复或用户指定的目标建立，只用于当前对话路由，不写入 `progress.md` 或 memory。
+- 若存在：后续变更先以它为目标；属于同一目标的补充、细化或范围扩展必须更新原 spec，不因“又一个任务”新建。用户明确要求新开/切换，或任务明显不能服务该目标时，才改变绑定；边界不清时写入当前 spec 的待确认问题。
+- 若该 spec 已处于确认后节点，新增范围走 `workflow_repair`，不得借新建 spec 绕过已确认方案。
+仅在没有会话当前 Spec 时，从 `docs/ai/progress.md` 识别活跃 spec，并按本次变更范围处理：
 
 **情况 A：只有一个活跃 spec**
 → 暂不加载状态锚点，仅在目标 skill 需要时加载。
@@ -82,7 +86,7 @@ OMS 的治理入口。先区分纯诊断与变更请求；只有变更请求才�
 
 - 新项目初始化、旧文档体系迁移到 OMS v3、或已有 OMS 档案需要重新扫描对账 -> `project_init`
 - 恢复上下文 -> `context_sync`
-- 新需求或补丁需求 -> `requirement_probe`
+- 新需求或补丁需求 -> `requirement_probe`；已有会话当前 Spec 时先复用它
 - 同一条消息同时包含“恢复/继续”和具体新需求或补丁 -> 先 `context_sync`，随即进入 `requirement_probe`
 - 发现新能力、缺失 capability docs、或代码结构长出新的 frontend/API/data/ops/domain concern -> `capability_bootstrap`
 - Draft 方案评审 -> `feature_confirm` (`review`)
@@ -97,7 +101,7 @@ OMS 的治理入口。先区分纯诊断与变更请求；只有变更请求才�
 
 检查：
 
-- 是否存在目标或冲突 spec 的状态锚点
+- 是否存在会话当前、目标或冲突 spec 的状态锚点
 - 目标 spec 是否处于正确节点
 - 是否仍处于 `DesignDraft`，或是否已有执行包批准
 - 当前任务是否暴露新的 capability signal，但对应文档尚未建立
@@ -107,8 +111,7 @@ OMS 的治理入口。先区分纯诊断与变更请求；只有变更请求才�
 
 ### Step 5: Route
 
-若检测到 new capability growth 或 capability docs 缺口，应优先建议 `capability_bootstrap`。
-若意图属于初始化、迁移或对账，先路由到 `project_init`。
+若检测到 new capability growth 或 capability docs 缺口，应优先建议 `capability_bootstrap`；初始化、迁移或对账则先路由到 `project_init`。
 
 **静默路由规则**：以下场景跳过完整报告，直接进入目标 skill：
 
@@ -130,7 +133,7 @@ OMS 的治理入口。先区分纯诊断与变更请求；只有变更请求才�
 ```markdown
 ## 工作流状态
 
-**当前 Spec**: ...（目标或相关冲突 spec）
+**当前 Spec**: ...（会话当前、目标或相关冲突 spec）
 **当前节点**: ...
 **识别意图**: ...
 **建议技能**: ...
@@ -144,4 +147,4 @@ OMS 的治理入口。先区分纯诊断与变更请求；只有变更请求才�
 **下一步建议**: 先执行项目初始化扫描（`project_init`） | 先恢复项目上下文（`context_sync`） | 先进入需求澄清（`requirement_probe`） | 先补建能力文档（`capability_bootstrap`） | 当前流程存在缺口，建议先修复（`workflow_repair`）
 ```
 
-> 纯诊断不输出此报告，直接开始分析。多 spec 仅在“继续”目标不明或范围实质交叉时需要确认。
+> 纯诊断不输出此报告，直接开始分析。已有会话当前 Spec 时优先复用；无绑定的多 spec 仅在“继续”目标不明或范围实质交叉时需要确认。

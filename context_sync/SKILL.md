@@ -33,8 +33,10 @@ OMS v3 的默认恢复入口。优先依赖 baseline 文档，不主动加载非
 
 从 `docs/ai/progress.md` 识别当前活跃 spec 列表：
 
+若本会话已经建立**会话当前 Spec**且它仍活跃，直接读取它的状态锚点，不重新列出其他活跃 spec。该绑定只存在于当前对话；用户明确新开/切换时才替换。
+
 **情况 A：只有一个活跃 spec**
-→ 读取该 spec 的状态锚点（`docs/ai/spec/YYYY-MM-DD-{slug}.md` 或 `docs/ai/spec/YYYY-MM-DD-{slug}/index.md`）
+→ 读取该 spec 的状态锚点，并将其设为会话当前 Spec（`docs/ai/spec/YYYY-MM-DD-{slug}.md` 或 `docs/ai/spec/YYYY-MM-DD-{slug}/index.md`）
 
 **情况 B：有多个活跃 spec**
 → 不加载任何 spec，向用户说明并请求确认：
@@ -49,7 +51,7 @@ OMS v3 的默认恢复入口。优先依赖 baseline 文档，不主动加载非
 请指定编号或名称，之后我只加载对应的 spec 内容。
 ```
 
-等待用户指定后，只读取该 spec 状态锚点。
+等待用户指定后，只读取该 spec 状态锚点，并将其设为会话当前 Spec。
 
 **情况 C：没有活跃 spec**
 → 直接进入 Step 2，无需加载任何 spec
@@ -76,6 +78,7 @@ OMS v3 的默认恢复入口。优先依赖 baseline 文档，不主动加载非
 - **直接呈现当前焦点和可执行动作**，让用户可以立即开始工作。
 - **不输出"下一步建议"路由列表**。用户已经知道当前状态，不需要再选 routing 目标。
 - 若当前消息同时带有具体新需求或补丁，恢复完成后应立即转入 `requirement_probe`，不得直接开始实现。
+- 同一会话后续任务默认复用会话当前 Spec；只有明确新开/切换或明显不兼容时才另选 spec。
 - 若存在团队 skill，补充一句当前可用团队 skill，优先读取 `docs/ai/skills/index.md`；缺失时扫描 `docs/ai/skills/*/SKILL.md`。
 - 若团队通过 skillshare 维护 skill，恢复上下文后补充固定提示：执行 `skillshare install ./docs/ai/skills -p -f` 与 `skillshare sync -p`。
 - 输出格式：一句话状态摘要 + 当前节点 + 可直接执行的动作（如"需要我继续当前 spec 的验证吗？"）
@@ -98,6 +101,7 @@ OMS v3 的默认恢复入口。优先依赖 baseline 文档，不主动加载非
 ## 上下文同步
 
 **当前活跃 Spec**: ...（用户确认后 / 单一 spec 自动识别）
+**会话当前 Spec**: ...（后续任务默认复用）
 **当前节点**: ...
 **当前焦点**: ...
 **知识收口摘要**: 已固化 ...；待继续验证 ...；冲突待处理 ...；人工介入：需要 | 不需要

@@ -42,19 +42,18 @@ OMS v3 的需求澄清入口。首次进入时先把当前理解落成 `req.md` 
 2. `docs/ai/context/project_brief.md`（若存在）
 3. `docs/ai/progress.md`
 4. `docs/ai/spec/index.md`（若存在）
-5. 当前目标 spec，或与本次变更可能交叉的活跃 spec 状态锚点（按需）
-6. 当前问题直接涉及的 capability docs
-7. `docs/ai/knowledge/lessons/design.md`（若存在）
+5. 会话当前/目标 spec，或与本次变更可能交叉的活跃 spec 状态锚点（按需）
+6. 当前问题的 capability docs 与 `docs/ai/knowledge/lessons/design.md`（若存在）
 
-不要因为“先看看再说”而整库扫描文档。
-纯逻辑分析、漏洞研判或日志排障不进入本 skill；先直接完成诊断，确认需要变更后再进入。
+不要因为“先看看再说”而整库扫描文档；纯逻辑分析、漏洞研判或日志排障不进入本 skill，先直接完成诊断，确认需要变更后再进入。
 
 ### Step 2: Decide Spec Container
 
-- `Scope: Feature`：使用 `docs/ai/spec/YYYY-MM-DD-{slug}/`，需求写入 `req.md`
-- `Scope: Patch`：使用 `docs/ai/spec/YYYY-MM-DD-{slug}.md`，在单文件中更新“业务背景 / 需求范围 / 验收标准 / 待确认问题”
+- `Scope: Feature` 使用 `docs/ai/spec/YYYY-MM-DD-{slug}/` 与 `req.md`；`Scope: Patch` 使用 `docs/ai/spec/YYYY-MM-DD-{slug}.md` 并更新“业务背景 / 需求范围 / 验收标准 / 待确认问题”。
 
-若修复属于既有 spec 的范围，则更新原文件；若不属于其范围，则创建独立 Patch spec。其他活跃 spec 不构成阻塞，除非与本次改动存在实质交叉。
+会话已有当前 spec 时默认复用它：把本轮任务作为既有目标的补充、细化或范围扩展写入原需求记录，不能仅因用户又提出一项任务而新建 spec。
+
+只有用户明确要求独立工作项/切换，或任务明显与当前目标不兼容，才创建或选择新 spec；边界不清时写入当前 spec 的 `待确认问题`。已确认节点上出现范围扩展时改走 `workflow_repair`，不借新 spec 绕过确认。
 
 ### Step 3: Write Or Update Requirement Record
 
@@ -120,6 +119,7 @@ OMS v3 的需求澄清入口。首次进入时先把当前理解落成 `req.md` 
 - 你准备把“猜测大概率正确”直接写进已确认需求
 - 需求已影响多个模块，但 `req.md` 里没有明确边界
 - 用户刚补充了新约束，你却只回答问题没有更新需求文档
+- 会话已有当前 spec，你却因任务措辞变化新建了平行 spec
 
 ## Output
 

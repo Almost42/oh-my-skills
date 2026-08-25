@@ -60,7 +60,7 @@ OMS v3 的设计草案器。把已经足够清晰的需求写成 `DesignDraft` s
 ### Step 3: Decide Whether To Create Or Revise
 
 - 若尚无对应 spec，按 Step 2 的模式新建文件，并补齐最小 `req.md` / 需求段后再写设计。
-- 若已有目标 spec，在原文件基础上修订，不新开平行草案。
+- 若已有目标 spec（包括会话当前 Spec），在原文件基础上修订；任务措辞变化不是新开平行草案的理由。
 - 若当前发现的是已确认节点上的需求/设计缺口，不要静默改写已批准状态，改走 `workflow_repair`。
 
 ### Step 4: Write Or Update The DesignDraft Spec

@@ -98,9 +98,11 @@ OMS 将上下文视为有限资源，通过以下机制减少不必要加载：
 
 **需求先落文档**：`requirement_probe` 创建或更新需求文档，把当前理解与未确认问题一起落盘；后续重复进入时持续维护，直到问题清空再进入 `feature_plan`。
 
+**会话内连续任务**：一旦本会话创建、恢复或指定了一个 spec，它就是会话当前 Spec。之后的变更请求默认作为该目标的补充、细化或范围扩展，更新原 spec 而不是自动新建；只有用户明确说新开/切换，或任务明显无法服务该目标时，才分拆。会话当前 Spec 只是对话内路由，不写入 `progress.md` 或 memory；已确认节点上的范围扩展仍走 `workflow_repair`。
+
 **项目背景校准**：需求阶段先读 `docs/ai/context/project_brief.md`（若存在），用项目目的、范围、成功标准和术语表校准需求判断。
 
-**多开发者场景**：多个活跃 spec 不会自动阻塞新补丁。只有用户只说“继续”而目标不明，或本次改动与活跃 spec 在模块、接口、数据契约、验收目标或改动文件上实质交叉时，agent 才要求确认：
+**多开发者场景**：已有会话当前 Spec 时优先复用它，不因项目中还有其他活跃 spec 重新要求选择。没有该绑定时，多个活跃 spec 不会自动阻塞新补丁；只有用户只说“继续”而目标不明，或本次改动与活跃 spec 在模块、接口、数据契约、验收目标或改动文件上实质交叉时，agent 才要求确认：
 
 ```
 当前项目有多个进行中的工作项，请确认本次对话要处理哪个：
@@ -298,6 +300,9 @@ Agent：[requirement_probe] 创建 docs/ai/spec/2026-04-20-create-task/index.md 
 用户：标题不能为空，截止时间不能早于当前时间，成功返回任务 id 和 createdAt。
 Agent：[requirement_probe] 更新 req.md，移除已解决问题；若待确认问题清空，则进入方案设计阶段。
 
+用户：再加一个“查询任务”接口，也沿用刚才的任务管理目标。
+Agent：[requirement_probe] 继续更新 `2026-04-20-create-task/req.md` 的范围与验收项，不新建 spec；若该补充影响已确认方案，则转入 `workflow_repair`。
+
 Agent：[feature_plan] 基于现有 req.md 产出 design.md，并更新 docs/ai/spec/index.md。
        YAGNI 自查通过：无未被要求的抽象。
 
@@ -331,7 +336,7 @@ Agent：[context_sync] 发现 progress.md 中有 2 个活跃 spec：
 请指定编号或名称。
 
 用户：1
-Agent：加载 docs/ai/spec/2026-04-20-create-task/index.md，恢复上下文，继续实施阶段。
+Agent：加载 docs/ai/spec/2026-04-20-create-task/index.md，将其设为会话当前 Spec，恢复上下文，继续实施阶段。
 ```
 
 
@@ -346,7 +351,7 @@ Agent：加载 docs/ai/spec/2026-04-20-create-task/index.md，恢复上下文，
 - `docs/ai/lessons.md` 废弃，改为 `docs/ai/knowledge/lessons/` 分类体系，按操作类型精准注入。
 - 长期知识通过 `lessons -> 自动收口 -> owner / 待继续验证 / 冲突待处理` 生命周期自动分流到 `docs/ai/domain_rules.md`、`docs/ai/architecture.md` 或 capability docs；用户审核作为高风险兜底。
 - 每个 skill 内置 Iron Law、Never、Red Flags，AI 行为约束从"软提示"变为"硬规则"。
-- `workflow_guard` 与 `context_sync` 按需定位；多个活跃 spec 仅在继续目标不明或改动范围交叉时暂停确认。
+- `workflow_guard` 与 `context_sync` 按需定位；会话已选定 spec 时后续任务默认复用，未绑定的多个活跃 spec 才在继续目标不明或改动范围交叉时暂停确认。
 - `architecture.md`：v2 曾作为「仅 Feature/跨模块才读」的轻量策略；v3 现已改为在设计与确认阶段**若文件存在则读**（含 Patch、优先相关节），并在 `code_implement_confirm` / `verification_gate` 执行验证前**强制**读取，以与 `AGENTS.md` baseline 及仓库内工具约定一致。`workflow_guard` 仅定位意图时可不读。
 - `feature_confirm` 吸收了实施方案确认动作，旧的独立 `code_implement_plan` 已被移除。
 - `workflow_repair` 成为显式修复入口。
